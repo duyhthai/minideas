@@ -1,0 +1,12 @@
+# build output and dependencies (recreate with npm install / npm run build)
+dist/
+node_modules/
+
+# Sâu Sách source data: the backup holds member emails and password hashes, so it must never be committed.
+# The raw photo folders are large and include publisher images; photos used on the site are copied into
+# src/books/photos/.
+*.bak
+ideas/sausach/Images/
+
+# OS files
+.DS_Store

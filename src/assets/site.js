@@ -1,0 +1,81 @@
+// Ideas Illustrated: remembers the reader's language and drives the swipeable card stack.
+// Pages are fully rendered at build time; without this script the panels still scroll sideways.
+(() => {
+  const store = {
+    set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} },
+  };
+  store.set("lang", document.documentElement.lang);
+
+  // Switching language keeps you on the same panel.
+  document.querySelectorAll(".lang a").forEach(a => a.addEventListener("click", () => {
+    store.set("lang", a.hreflang);
+    if (/^#p\d+$/.test(location.hash)) a.href = a.href.split("#")[0] + location.hash;
+  }));
+
+  // Share: the phone's share sheet where there is one, otherwise copy the link (it keeps the #pN panel).
+  const share = document.getElementById("share");
+  if (share) {
+    const label = share.querySelector("span");
+    const original = label.textContent;
+    share.hidden = false;
+    share.addEventListener("click", async () => {
+      const url = location.href;
+      if (navigator.share) {
+        try { await navigator.share({ title: document.title, text: share.dataset.text, url }); } catch (e) { /* closed the sheet */ }
+        return;
+      }
+      try { await navigator.clipboard.writeText(url); } catch (e) { window.prompt(share.dataset.copyPrompt, url); return; }
+      label.textContent = share.dataset.copied;
+      setTimeout(() => { label.textContent = original; }, 2000);
+    });
+  }
+
+  const viewer = document.getElementById("viewer");
+  if (!viewer) return;
+  const d = viewer.dataset;
+  const track = document.getElementById("track");
+  const dots = [...viewer.querySelectorAll(".dot")];
+  const prev = document.getElementById("prev"), next = document.getElementById("next");
+  const n = track.children.length;
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let panel = -1;
+  viewer.querySelector(".controls").hidden = false;
+
+  function update(j) {
+    if (j === panel) return;
+    panel = j;
+    dots.forEach((dot, k) => dot.setAttribute("aria-current", k === j ? "true" : "false"));
+    prev.textContent = j === 0 && d.prevUrl ? d.tPrevIdea : d.tBack;
+    prev.disabled = j === 0 && !d.prevUrl;
+    next.textContent = j < n - 1 ? d.tNext : d.nextUrl ? d.tNextIdea : d.tDone;
+    next.disabled = j === n - 1 && !d.nextUrl;
+    try { history.replaceState(null, "", j ? `#p${j + 1}` : location.pathname + location.search); } catch (e) {}
+  }
+  const go = j => track.scrollTo({ left: j * track.clientWidth, behavior: reduce ? "auto" : "smooth" });
+  function step(dir) {
+    const j = panel + dir;
+    if (j >= 0 && j < n) go(j);
+    else if (dir > 0 && d.nextUrl) location.href = d.nextUrl;
+    else if (dir < 0 && d.prevUrl) location.href = d.prevUrl;
+  }
+
+  let raf = 0;
+  track.addEventListener("scroll", () => {
+    cancelAnimationFrame(raf);
+    raf = requestAnimationFrame(() => update(Math.round(track.scrollLeft / track.clientWidth)));
+  }, { passive: true });
+  dots.forEach((dot, k) => dot.addEventListener("click", () => go(k)));
+  prev.addEventListener("click", () => step(-1));
+  next.addEventListener("click", () => step(1));
+  document.addEventListener("keydown", e => {
+    if (e.altKey || e.metaKey || e.ctrlKey || /input|textarea|select/i.test(e.target.tagName)) return;
+    if (e.key === "ArrowRight") { e.preventDefault(); step(1); }
+    if (e.key === "ArrowLeft") { e.preventDefault(); step(-1); }
+  });
+  addEventListener("resize", () => { track.scrollLeft = panel * track.clientWidth; });
+
+  const m = /^#p(\d+)$/.exec(location.hash);
+  const start = m ? Math.min(Math.max(+m[1] - 1, 0), n - 1) : 0;
+  track.scrollLeft = start * track.clientWidth;
+  update(start);
+})();
