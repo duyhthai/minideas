@@ -9,8 +9,8 @@
 //
 //   node build.mjs                    normal build (directory-style links)
 //   node build.mjs --explicit-index   links end in index.html (for file hosts without directory indexes)
-//   SITE_URL=https://example.com node build.mjs   adds absolute hreflang/canonical links and the
-//   preview-image tags (social sites only accept absolute image URLs, so set it for real deploys)
+//   The site's address is https://minideas.com, used for canonical/hreflang links and preview-image tags (social
+//   sites only accept absolute image URLs). SITE_URL=https://other.example overrides it, e.g. for a pages.dev test.
 import { mkdir, rm, writeFile, copyFile, rename, readFile } from "node:fs/promises";
 import { readFileSync, existsSync, statSync } from "node:fs";
 import { createHash } from "node:crypto";
@@ -18,6 +18,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { ART, E } from "./src/draw.js";
 import { renderOg } from "./src/og.js";
+import { Resvg } from "@resvg/resvg-js";
 import { SHELF } from "./src/stacks.js";
 import { BOOKS } from "./src/books/index.js";
 import en from "./src/i18n/en.js";
@@ -29,7 +30,7 @@ const OUT = join(ROOT, "dist");
 const TMP = join(ROOT, "dist-tmp"); // built here first, then swapped in, so a running preview never sees a half-built site
 const CACHE = join(ROOT, "node_modules/.cache/og"); // preview images keyed by their inputs; most rebuilds render none
 const INDEX = process.argv.includes("--explicit-index") ? "index.html" : "";
-const SITE_URL = (process.env.SITE_URL || "").replace(/\/$/, "");
+const SITE_URL = (process.env.SITE_URL || "https://minideas.com").replace(/\/$/, "");
 
 const FONTS = `<link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -41,6 +42,14 @@ const ROUGH = `<svg width="0" height="0" style="position:absolute" aria-hidden="
     <feDisplacementMap in="SourceGraphic" scale="1.8"/>
   </filter>
 </svg>`;
+
+// The icon (src/assets/icon.svg, a bulb with an "m" filament) becomes the favicon, app icons and web manifest; BRAND_MARK is the header's logo (a small card stack with the same "m" bulb on top),
+// drawn with theme colors so it works on light and dark backgrounds.
+const iconLinks = rel => `<link rel="icon" href="${rel}favicon.svg" type="image/svg+xml">
+<link rel="icon" href="${rel}favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="${rel}apple-touch-icon.png">
+<link rel="manifest" href="${rel}site.webmanifest">`;
+const BRAND_MARK = `<svg class="mark" viewBox="0 0 32 32" width="40" height="40" aria-hidden="true"><g stroke="var(--ink)" stroke-width="1.3" stroke-linejoin="round"><rect x="8" y="4" width="17" height="24" rx="3" fill="var(--f-blue)" transform="rotate(-17 16.5 30)"/><rect x="8" y="4" width="17" height="24" rx="3" fill="var(--f-mint)" transform="rotate(-8.5 16.5 30)"/><rect x="8" y="4" width="17" height="24" rx="3" fill="var(--fk)"/><path d="M16.5 7.6a5.2 5.2 0 0 1 3.1 9.4c-.55.45-.85 1.05-.85 1.75v.3h-4.5v-.3c0-.7-.3-1.3-.85-1.75A5.2 5.2 0 0 1 16.5 7.6z" fill="var(--f-yellow)"/></g><path d="M14.2 15.2v-2.4a1.15 1.15 0 0 1 2.3 0v2.4M16.5 12.8a1.15 1.15 0 0 1 2.3 0v2.4" fill="none" stroke="var(--on)" stroke-width="1.15" stroke-linecap="round" stroke-linejoin="round"/><path d="M14.7 21.3h3.6M15.3 23.4h2.4" stroke="var(--ink)" stroke-width="1.3" stroke-linecap="round"/></svg>`;
 
 // sun shows in dark mode (switch to light), moon in light mode (switch to dark); CSS picks which
 const THEME_ICONS = `<svg class="moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>`;
@@ -160,7 +169,7 @@ function shell({ t, depth, segs, title, desc, body, og, langs = LANGS }) {
   const to = linker(depth), segsOf = o => (typeof segs === "function" ? segs(o) : segs);
   const alternates = SITE_URL ? langs.map(o => `<link rel="alternate" hreflang="${o.lang}" href="${SITE_URL}/${[o.lang, ...segsOf(o)].join("/")}/">`).join("\n") +
     `\n<link rel="alternate" hreflang="x-default" href="${SITE_URL}/">\n<link rel="canonical" href="${SITE_URL}/${[t.lang, ...segsOf(t)].join("/")}/">` : "";
-  const switcher = LANGS.map(o => `<a href="${langs.includes(o) ? to(o.lang, ...segsOf(o)) : to(o.lang)}" hreflang="${o.lang}" lang="${o.lang}" aria-current="${o === t}">${o.name}</a>`).join("");
+  const switcher = LANGS.map(o => `<a href="${langs.includes(o) ? to(o.lang, ...segsOf(o)) : to(o.lang)}" hreflang="${o.lang}" lang="${o.lang}" aria-current="${o === t}"><span class="lang-long">${o.name}</span><span class="lang-short" aria-hidden="true">${o.lang.toUpperCase()}</span></a>`).join("");
   return `<!doctype html>
 <html lang="${t.lang}">
 <head>
@@ -180,6 +189,7 @@ ${SITE_URL ? `<meta property="og:url" content="${SITE_URL}/${[t.lang, ...segsOf(
 ${alternates}
 ${FONTS}
 <script>(function () { var t = "light"; try { t = localStorage.getItem("theme") || "light"; } catch (e) {} document.documentElement.setAttribute("data-theme", t); })();</script>
+${iconLinks("../".repeat(depth))}
 <link rel="stylesheet" href="${"../".repeat(depth)}assets/style.css">
 <script src="${"../".repeat(depth)}assets/site.js" defer></script>
 </head>
@@ -187,7 +197,7 @@ ${FONTS}
 ${ROUGH}
 <div class="wrap">
 <header class="topbar">
-  <a class="brand" href="${to(t.lang)}">${E(t.ui.site)}</a>
+  <a class="brand" href="${to(t.lang)}">${BRAND_MARK}<span>${E(t.ui.site)}</span></a>
   <div class="top-tools">
     <button class="theme-toggle" id="theme" type="button" hidden data-light="${E(t.ui.themeLight)}" data-dark="${E(t.ui.themeDark)}">${THEME_ICONS}</button>
     <nav class="lang" aria-label="${E(t.ui.language)}">${switcher}</nav>
@@ -236,7 +246,7 @@ function homePage(t) {
 <h2 class="shelf-label">${E(t.ui.shelfBooks)}</h2><ul class="tile-grid">${bookTiles}</ul>`;
   const body = `<main>
 <section class="hero">
-  <h1>${E(t.ui.site)}</h1>
+  <h1 class="visually-hidden">${E(t.ui.site)}</h1>
   <p class="lede">${E(t.ui.lede)}</p>
 </section>
 ${tiles}
@@ -425,6 +435,7 @@ function rootPage() {
 <noscript><meta http-equiv="refresh" content="0; url=en/${INDEX}"></noscript>
 ${FONTS}
 <script>(function () { var t = "light"; try { t = localStorage.getItem("theme") || "light"; } catch (e) {} document.documentElement.setAttribute("data-theme", t); })();</script>
+${iconLinks("")}
 <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
@@ -460,6 +471,21 @@ for (const [path, html] of Object.entries(files)) {
 }
 await mkdir(join(TMP, "assets"), { recursive: true });
 for (const f of ["style.css", "site.js"]) await copyFile(join(ROOT, "src/assets", f), join(TMP, "assets", f));
+// icons at the site root, where browsers and phones look for them
+const iconSvg = readFileSync(join(ROOT, "src/assets/icon.svg"));
+const iconPng = size => new Resvg(iconSvg, { fitTo: { mode: "width", value: size } }).render().asPng();
+await writeFile(join(TMP, "favicon.svg"), iconSvg);
+for (const [file, size] of [["favicon-32.png", 32], ["apple-touch-icon.png", 180], ["icon-192.png", 192], ["icon-512.png", 512]]) await writeFile(join(TMP, file), iconPng(size));
+{ // favicon.ico for browsers that ask for it by name: one 32px PNG wrapped in an ICO header
+  const png = iconPng(32), head = Buffer.alloc(22);
+  head.writeUInt16LE(1, 2); head.writeUInt16LE(1, 4); head[6] = 32; head[7] = 32;
+  head.writeUInt16LE(1, 10); head.writeUInt16LE(32, 12); head.writeUInt32LE(png.length, 14); head.writeUInt32LE(22, 18);
+  await writeFile(join(TMP, "favicon.ico"), Buffer.concat([head, png]));
+}
+await writeFile(join(TMP, "site.webmanifest"), JSON.stringify({
+  name: en.ui.site, short_name: en.ui.site, start_url: "/", display: "standalone", background_color: "#edf0f6", theme_color: "#1c2333",
+  icons: [{ src: "/icon-192.png", sizes: "192x192", type: "image/png" }, { src: "/icon-512.png", sizes: "512x512", type: "image/png" }],
+}, null, 2));
 for (const b of BOOK_PARTS) for (const file of bookPhotos(b)) {
   await mkdir(join(TMP, "photos", photoDir(b)), { recursive: true });
   await copyFile(photoSource(b, file), join(TMP, "photos", photoDir(b), file));

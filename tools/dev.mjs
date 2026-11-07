@@ -66,6 +66,6 @@ createServer((req, res) => {
   console.error(e.code === "EADDRINUSE" ? `Port ${PORT} is already in use. Stop the other server, or run PORT=5000 npm run dev.` : e.message);
   process.exit(1);
 }).listen(PORT, () => {
-  console.log(`Ideas Illustrated: http://localhost:${PORT}  (watching src/ and build.mjs; Ctrl+C to stop)`);
+  console.log(`Minideas: http://localhost:${PORT}  (watching src/ and build.mjs; Ctrl+C to stop)`);
   build();
 });

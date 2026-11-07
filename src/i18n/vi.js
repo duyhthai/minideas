@@ -4,8 +4,8 @@ export default {
   name: "Tiếng Việt",
 
   ui: {
-    site: "Ideas Illustrated",
-    lede: "Những ý tưởng lớn, giải thích bằng từng bức hình đơn giản. Chọn một bộ thẻ và vuốt để xem.",
+    site: "Minideas",
+    lede: "Ý tưởng lớn, hiểu trong một phút, qua từng bức hình đơn giản. Chọn một bộ thẻ và vuốt để xem.",
     language: "Ngôn ngữ",
     themeDark: "Chuyển sang nền tối",
     themeLight: "Chuyển sang nền sáng",

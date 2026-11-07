@@ -1,12 +1,12 @@
-# Ideas Illustrated
+# Minideas
 
-Static, bilingual (English / Vietnamese) site of illustrated explainers and book reviews. Product notes: `ideas-illustrated.md`.
+Static, bilingual (English / Vietnamese) site of illustrated explainers and book reviews, at https://minideas.com. Product notes: `minideas.md`.
 
 ## Commands
 
 - `npm run build`: builds everything into `dist/` (pages, preview images, photos). Preview images are cached in `node_modules/.cache/og/`, so a rebuild takes about a second; a cold build takes about 10s.
 - `npm run dev` (or `npm run preview`): serves `dist/` at http://localhost:4321, rebuilds when `src/` or `build.mjs` changes, and reloads open pages. The owner keeps it running: **never kill port 4321**. To check changes, wait for the rebuild and screenshot http://localhost:4321 with `?noreload` (the reload connection never settles, so headless Chrome would hang); for one-off pages, write them into `dist/` (the next rebuild removes them).
-- `SITE_URL=https://domain npm run build`: needed for real deploys. Social sites only accept absolute `og:image` URLs; without it the image tags are left out.
+- The site address defaults to https://minideas.com (absolute `og:image`, canonical and hreflang links). Override it with `SITE_URL=https://… npm run build`, e.g. for a `pages.dev` test deploy.
 - `node build.mjs --explicit-index`: links end in `index.html`, for hosts without directory indexes.
 - `node tools/import-review.mjs <id> <slug>`: turns a Sâu Sách review into `src/books/<slug>-full.js`.
 
@@ -20,6 +20,7 @@ There are no tests. The build is the check: it stops and lists problems (missing
 - `src/draw.js` is the drawing vocabulary. Every drawing is a 320×220 SVG fragment built from helpers (`T`, `L`, `C`, `R`, `P`, `A`, `pill`, `fig`). It receives the language's label table as `lb`.
 - `src/og.js` renders 1200×630 PNGs with resvg: one per idea, collection and book, used both as home tiles and as link previews.
 - `build.mjs` produces pages at `/<lang>/`, `/<lang>/<collection>/` and `/<lang>/<slug>/`. Collections, ideas and books share one URL namespace.
+- `src/assets/icon.svg` is the logo: a lightbulb whose filament is a lowercase "m". The build turns it into `favicon.svg`/`.ico`/`-32.png`, `apple-touch-icon.png`, `icon-192/512.png` and `site.webmanifest` at the site root. `brand/` holds a copy and a 1024px profile picture for social accounts. The header logo is a different mark, a small card stack with the same "m" bulb, drawn in `build.mjs` (`BRAND_MARK`) with theme colors.
 - `ideas/` is source material (PDFs, the Sâu Sách backup and export, photos). It is not part of the site.
 
 ## Adding things

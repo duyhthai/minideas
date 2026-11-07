@@ -4,8 +4,8 @@ export default {
   name: "English",
 
   ui: {
-    site: "Ideas Illustrated",
-    lede: "Big ideas, explained one simple picture at a time. Pick a card stack and swipe through.",
+    site: "Minideas",
+    lede: "Big ideas in a minute, one simple picture at a time. Pick a card stack and swipe through.",
     language: "Language",
     themeDark: "Switch to dark mode",
     themeLight: "Switch to light mode",

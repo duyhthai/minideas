@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Minideas logo: a lightbulb whose filament is a lowercase "m". Source for the favicon, app icons and profile picture. -->
+  <rect width="64" height="64" rx="14" fill="#1c2333"/>
+  <path d="M32 5.5v4.5M15.5 12.5l3.2 3.2M48.5 12.5l-3.2 3.2M9.5 28h4.5M50 28h4.5" stroke="#ffd466" stroke-width="3.2" stroke-linecap="round"/>
+  <path d="M32 14a14 14 0 0 1 8.4 25.2c-1.5 1.2-2.4 3-2.4 4.9V45H26v-.9c0-1.9-.9-3.7-2.4-4.9A14 14 0 0 1 32 14z" fill="#ffd466"/>
+  <path d="M24.6 36.5v-7.3a3.7 3.7 0 0 1 7.4 0v7.3M32 29.2a3.7 3.7 0 0 1 7.4 0v7.3" fill="none" stroke="#1c2333" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="25.5" y="47.5" width="13" height="4" rx="2" fill="#e1e7f6"/>
+  <rect x="27.5" y="53.5" width="9" height="3.6" rx="1.8" fill="#e1e7f6"/>
+</svg>

@@ -1,4 +1,4 @@
-// Ideas Illustrated: remembers the reader's language and drives the swipeable card stack.
+// Minideas: remembers the reader's language and drives the swipeable card stack.
 // Pages are fully rendered at build time; without this script the panels still scroll sideways.
 (() => {
   const store = {
