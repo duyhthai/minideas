@@ -6,6 +6,20 @@
   };
   store.set("lang", document.documentElement.lang);
 
+  // Light by default; the sun/moon button switches theme and remembers it (the page head applies it before paint).
+  const themeBtn = document.getElementById("theme");
+  if (themeBtn) {
+    const root = document.documentElement;
+    const label = () => { const dark = root.dataset.theme === "dark"; themeBtn.setAttribute("aria-label", dark ? themeBtn.dataset.light : themeBtn.dataset.dark); themeBtn.title = themeBtn.getAttribute("aria-label"); };
+    themeBtn.hidden = false;
+    label();
+    themeBtn.addEventListener("click", () => {
+      root.dataset.theme = root.dataset.theme === "dark" ? "light" : "dark";
+      store.set("theme", root.dataset.theme);
+      label();
+    });
+  }
+
   // Switching language keeps you on the same panel.
   document.querySelectorAll(".lang a").forEach(a => a.addEventListener("click", () => {
     store.set("lang", a.hreflang);

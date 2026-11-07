@@ -3,7 +3,7 @@
 //   node tools/import-review.mjs <review id> <slug>     e.g.  node tools/import-review.mjs 2 outliers
 //
 // Reads ideas/sausach/sausach-reviews.json (exported from the SauSach2 database: book and review fields only)
-// and writes src/books/<slug>.js with the Vietnamese text split into intro, sections (your headings),
+// and writes src/books/<slug>-full.js with the Vietnamese text split into intro, sections (your headings),
 // paragraphs and quotes. *text* marks italics, **text** bold. English is left as null until written.
 import { readFile, writeFile, mkdir, access } from "node:fs/promises";
 import { dirname, join } from "node:path";
@@ -19,7 +19,7 @@ if (!id || !/^[a-z0-9-]+$/.test(slug || "")) {
 const reviews = JSON.parse(await readFile(join(ROOT, "ideas/sausach/sausach-reviews.json"), "utf8"));
 const r = reviews.find(x => String(x.id) === String(id));
 if (!r) { console.error(`No published review with id ${id}. Ids: ${reviews.map(x => x.id).join(", ")}`); process.exit(1); }
-const out = join(ROOT, "src/books", `${slug}.js`);
+const out = join(ROOT, "src/books", `${slug}-full.js`);
 if (await access(out).then(() => true, () => false)) { console.error(`${out} already exists; delete it first to re-import.`); process.exit(1); }
 
 /* ---------- HTML → text blocks ---------- */
@@ -94,6 +94,7 @@ export default ${JSON.stringify({
 `;
 await mkdir(dirname(out), { recursive: true });
 await writeFile(out, file);
-console.log(`Wrote src/books/${slug}.js: ${intro.length} intro paragraphs, ${sections.length} sections${vi.conclusion ? ", conclusion" : ""}.`);
+console.log(`Wrote src/books/${slug}-full.js: ${intro.length} intro paragraphs, ${sections.length} sections${vi.conclusion ? ", conclusion" : ""}.`);
 if (unknown.size) console.log(`Check these entities by hand: ${[...unknown].join(" ")}`);
-console.log(`Next: add "${slug}" to BOOKS in src/books/index.js, then run npm run build.`);
+console.log(`Next: write the card stack in src/books/${slug}.js (see outliers.js; import this file as \`full\`), add it to
+src/books/index.js, then run npm run build. To publish only the full review, list this file in index.js instead.`);

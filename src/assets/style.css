@@ -53,6 +53,11 @@ a:focus-visible, button:focus-visible, .track:focus-visible { outline: 3px solid
 /* top bar */
 .topbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding-block: 14px; }
 .brand { font: 700 12px/1 var(--body); letter-spacing: .14em; text-transform: uppercase; color: var(--blue); text-decoration: none; padding: 8px 0; }
+.top-tools { display: flex; align-items: center; gap: 10px; }
+.theme-toggle { display: grid; place-items: center; width: 38px; height: 38px; padding: 0; border: 1.5px solid var(--ink); border-radius: 50%; background: var(--card); color: var(--ink); cursor: pointer; }
+.theme-toggle .sun { display: none; }
+:root[data-theme="dark"] .theme-toggle .sun { display: block; }
+:root[data-theme="dark"] .theme-toggle .moon { display: none; }
 .lang { display: inline-flex; border: 1.5px solid var(--ink); border-radius: 999px; overflow: hidden; }
 .lang a { display: flex; align-items: center; min-height: 36px; padding: 0 14px; font-size: 13.5px; font-weight: 700; color: var(--ink); text-decoration: none; }
 .lang a[aria-current="true"] { background: var(--ink); color: var(--card); }
@@ -92,6 +97,9 @@ figure.book-photo img { display: block; width: 100%; height: auto; border-radius
 .review .note { font-size: 13.5px; line-height: 1.5; color: var(--ink-2); margin-top: 1.4em; }
 .review .share-row { max-width: none; margin-top: 18px; }
 .review .source { margin: 0; }
+.quick-link { display: inline-block; margin-top: 10px; font-weight: 700; font-size: 14.5px; color: var(--blue); text-decoration: none; }
+.quick-link:hover { text-decoration: underline; }
+.art img.photo-panel { display: block; width: 100%; height: auto; aspect-ratio: 320 / 220; object-fit: cover; object-position: 50% 0%; border-radius: 14px; }
 .gallery ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 150px), 1fr)); }
 .gallery li { min-width: 0; }
 .gallery a { display: block; border-radius: 10px; overflow: hidden; border: 1px solid var(--line); }
@@ -146,9 +154,14 @@ figure.book-photo img { display: block; width: 100%; height: auto; border-radius
 .btn.share { min-height: 40px; padding: 0 14px; }
 .btn:disabled { opacity: .35; cursor: default; }
 .dots { display: flex; flex-wrap: wrap; justify-content: center; min-width: 0; }
-.dot { width: 24px; height: 28px; padding: 0; border: 0; background: none; display: grid; place-items: center; cursor: pointer; border-radius: 6px; }
+.dot { width: 16px; height: 28px; padding: 0; border: 0; background: none; display: grid; place-items: center; cursor: pointer; border-radius: 6px; }
 .dot::before { content: ""; width: 9px; height: 9px; border-radius: 5px; background: var(--line); transition: width .2s, background .2s; }
-.dot[aria-current="true"]::before { width: 20px; background: var(--ink); }
+.dot[aria-current="true"]::before { width: 18px; background: var(--ink); }
+@media (max-width: 480px) {
+  .dot { width: 12px; }
+  .dot::before { width: 7px; height: 7px; }
+  .dot[aria-current="true"]::before { width: 14px; }
+}
 .hint { font-size: 13px; color: var(--ink-2); margin: 10px 0 0; }
 
 .pager { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr)); max-width: 540px; margin-top: 32px; }

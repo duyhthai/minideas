@@ -489,6 +489,39 @@ export const ART = {
     return s + T(80, 194, t.herder, { c: "b", max: 140 }) + T(80, 212, t.herderSub, { c: "sm mut", max: 150 }) +
       T(240, 194, t.farmer, { c: "b", max: 140 }) + T(240, 212, t.farmerSub, { c: "sm mut", max: 150 });
   },
+  outContents(lb) {
+    const t = lb.book;
+    let s = R(24, 26, 94, 128, "fk", "", 4) + T(71, 48, t.contentsTitle, { c: "b", size: 13, max: 80 });
+    for (let i = 0; i < 5; i++) { const y = 68 + i * 18; s += L(36, y, 92 - (i % 2) * 14, y, "thin") + T(106, y + 5, "?", { c: "cor b", size: 15 }); }
+    s += A(130, 90, 168, 90);
+    s += P("M180,54 Q212,46 244,58 L244,150 Q212,140 180,146 Z", "ft") + P("M244,58 Q276,46 308,54 L308,146 Q276,140 244,150 Z", "ft");
+    s += L(196, 70, 204, 104, "w3") + L(204, 104, 214, 104, "w3") + EL(210, 112, 6, 2.5, "fi");
+    s += L(231, 108, 231, 80, "w3") + EL(231, 128, 10, 9, "fy") + EL(231, 113, 8, 7, "fy") + C(231, 124, 2.5, "fi");
+    s += P("M258,92 L296,84 L300,87 L299,90 L262,99 Z", "fb") + P("M276,88 L268,74 L274,74 L288,86 Z", "fb");
+    s += T(276, 130, "10.000", { c: "b", size: 13 });
+    return s + T(71, 180, t.cryptic, { c: "sm b", max: 130 }) + T(244, 180, t.inside, { c: "sm b", max: 140 });
+  },
+  outTrades(lb) {
+    const t = lb.book;
+    let s = R(28, 94, 70, 48, "fy", "", 6) + P("M50,94 L50,84 L76,84 L76,94") + L(46, 94, 46, 142, "thin") + L(80, 94, 80, 142, "thin");
+    s += A(106, 118, 136, 118) + A(194, 118, 224, 118);
+    s += L(150, 74, 176, 52, "w3") + C(173, 55, 3, "fk") + P("M173,55 Q190,64 178,76 T186,92", "", "thin blue-s");
+    s += R(146, 100, 30, 10, "fb", "", 2) + L(161, 110, 161, 132, "w3");
+    s += R(144, 146, 38, 10, "fk", "thin", 2) + [0, 1, 2, 3, 4].map(i => L(150 + i * 7, 146, 150 + i * 7, 151, "thin")).join("");
+    s += fig(256, 156, "walk") + R(266, 128, 22, 16, "fc", "", 3) + L(272, 128, 272, 124, "thin") + L(282, 128, 282, 124, "thin") + L(272, 124, 282, 124, "thin");
+    return s + T(160, 26, t.flomCaption, { c: "sm mut", max: 290 }) + T(63, 172, t.hardship, { c: "sm b", max: 110 }) +
+      T(163, 184, t.trades, { c: "sm", max: 100 }) + T(258, 184, t.professional, { c: "sm b", max: 110 });
+  },
+  outMore(lb) {
+    const t = lb.book;
+    let s = R(22, 62, 84, 50, "ft", "thin", 4);
+    for (let r = 0; r < 3; r++) for (let c = 0; c < 6; c++) s += L(32 + c * 13, 76 + r * 14, 32 + c * 13, 69 + r * 14, "thin");
+    s += R(132, 76, 56, 38, "fk") + P("M126,76 L160,52 L194,76 Z", "fb") + R(153, 94, 14, 20, "fy", "thin", 2) + L(160, 52, 160, 38, "thin") + P("M160,38 l12,4 l-12,4 Z", "fc");
+    s += C(262, 86, 16, "fy");
+    for (let i = 0; i < 8; i++) { const a = i * Math.PI / 4; s += L(262 + 22 * Math.cos(a), 86 + 22 * Math.sin(a), 262 + 30 * Math.cos(a), 86 + 30 * Math.sin(a), "thin"); }
+    t.more.forEach((label, i) => s += T([64, 160, 262][i], 142, label, { c: "sm b", max: 96 }));
+    return s + pill(160, 184, t.price, "fm", { on: true, size: 14 });
+  },
   outPlanes(lb) {
     const t = lb.book;
     let s = P("M64,16 L256,16 L290,62 L30,62 Z", "ft") + L(160, 16, 160, 62, "thin") + R(30, 62, 260, 14, "fk", "thin", 3);
