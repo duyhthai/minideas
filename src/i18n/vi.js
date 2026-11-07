@@ -5,7 +5,7 @@ export default {
 
   ui: {
     site: "Minideas",
-    lede: "Ý tưởng lớn, hiểu trong một phút, qua từng bức hình đơn giản. Chọn một bộ thẻ và vuốt để xem.",
+    lede: "Ý tưởng lớn, hiểu qua từng bức hình đơn giản. Chọn một bộ thẻ và vuốt để xem.",
     language: "Ngôn ngữ",
     themeDark: "Chuyển sang nền tối",
     themeLight: "Chuyển sang nền sáng",
@@ -18,7 +18,7 @@ export default {
     nextIdea: "Ý tưởng tiếp →",
     done: "Tất cả chủ đề →",
     hint: "Vuốt thẻ sang bên, hoặc dùng phím mũi tên.",
-    shelfIdeas: "Ý tưởng",
+    shelfTech: "Công nghệ",
     shelfBooks: "Sách",
     bookReview: "Điểm sách",
     originalTitle: "Tên gốc",

@@ -5,7 +5,7 @@ export default {
 
   ui: {
     site: "Minideas",
-    lede: "Big ideas in a minute, one simple picture at a time. Pick a card stack and swipe through.",
+    lede: "Big ideas, one simple picture at a time. Pick a card stack and swipe through.",
     language: "Language",
     themeDark: "Switch to dark mode",
     themeLight: "Switch to light mode",
@@ -18,7 +18,7 @@ export default {
     nextIdea: "Next idea →",
     done: "All topics →",
     hint: "Swipe the card, or use the arrow keys.",
-    shelfIdeas: "Ideas",
+    shelfTech: "Tech",
     shelfBooks: "Books",
     bookReview: "Book review",
     originalTitle: "Original title",

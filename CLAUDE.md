@@ -14,7 +14,7 @@ There are no tests. The build is the check: it stops and lists problems (missing
 
 ## How content is organised
 
-- `src/stacks.js` holds `SHELF`, the home page "Ideas" list in order. An item is either a **collection** (`id`, `chapters`, `resources`, `ideas`) or a **standalone idea** (`slug`, `panels`, `resources`). Each panel is `[drawingName, ...args]` pointing at a function in `src/draw.js`.
+- `src/stacks.js` holds `SHELF`, the home page "Tech" (Công nghệ) shelf in order; books form the "Books" (Sách) shelf. Shelf icons are `SHELF_ICONS` in `build.mjs`. An item is either a **collection** (`id`, `chapters`, `resources`, `ideas`) or a **standalone idea** (`slug`, `panels`, `resources`). Each panel is `[drawingName, ...args]` pointing at a function in `src/draw.js`.
 - `src/i18n/en.js` and `src/i18n/vi.js` hold all words: `ui`, `collections[id]`, `ideas[slug]` (title, gist, one `[heading, text]` per panel, `links` for a standalone idea's resources), and `art`, the labels used inside drawings.
 - `src/books/<slug>.js` is a book: a card stack of `panels` (one per idea of the review, with `vi` / `en` text), listed in `src/books/index.js`. It can carry the full review in `full` (imported from `<slug>-full.js`, an article: intro, sections, quotes, conclusion, gallery), published at `/<lang>/<slug>/full/` (`/vi/<slug>/day-du/`). A book without `en` appears only on the Vietnamese site.
 - `src/draw.js` is the drawing vocabulary. Every drawing is a 320×220 SVG fragment built from helpers (`T`, `L`, `C`, `R`, `P`, `A`, `pill`, `fig`). It receives the language's label table as `lb`.
