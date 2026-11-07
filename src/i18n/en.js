@@ -45,14 +45,14 @@ export default {
   collections: {
     "ai-fundamentals": {
       title: "AI Fundamentals",
-      lede: "Fourteen ideas behind AI, machine learning and generative AI.",
-      chapters: { big: "The big picture", ml: "Machine learning", dl: "Deep learning", gen: "Generative AI", use: "Using AI well" },
+      lede: "How machines learn, how chatbots write, and how to use AI well, in fifteen short card stacks.",
+      chapters: { big: "What AI is", learn: "How machines learn", work: "Making it work", gen: "Generative AI", use: "Using AI well" },
       links: {
         coursera: "Machine Learning Specialization by Andrew Ng",
         kaggle: "Practice on real datasets with a data science community",
         dlai: "Short courses on deep learning and generative AI",
       },
-      source: "Adapted from the 22-slide “AI Fundamentals” deck.",
+      source: "Grew out of the “AI Fundamentals” slide deck.",
     },
   },
 
@@ -71,10 +71,10 @@ export default {
       ["Learning from labeled examples", "Record a phone’s motion sensor while people walk, run, cycle and golf, and label each recording. The model finds the pattern for each one, golf included."],
     ]},
     "model-errors": { title: "How a model knows it’s wrong", gist: "A model makes guesses, measures how far off they are, and adjusts to shrink the gap.", panels: [
-      ["Start with real examples", "Each dot is a real house: its size along the bottom and its price going up."],
+      ["Start with real examples", "Each dot is a real house: its size along the bottom and its price going up. The model’s job is to predict a price from a size."],
       ["The model draws its best guess", "The blue line is the model’s predicted price for every size. It can’t pass through every dot."],
       ["The gaps are errors", "The distance from each real dot to the line shows how wrong the guess was for that house."],
-      ["Training shrinks the squares", "Square each gap so big misses count much more, then average them. Training moves the line until that score, the mean squared error, is as small as it can get."],
+      ["Training shrinks the error", "Training nudges the line, again and again, until the total error is as small as it can get. Each gap is squared first, so big misses count extra. Experts call this score the mean squared error."],
     ]},
     "overfitting": { title: "Too simple, too fussy, just right", gist: "A good model learns the general trend, not every quirk of its practice data.", panels: [
       ["Too simple: underfitting", "A straight line can’t follow a curve. It’s like a student who learned one rule and uses it for every question. Experts call this high bias."],
@@ -90,10 +90,9 @@ export default {
     ]},
     "types-of-learning": { title: "Three ways machines learn", gist: "With an answer key, without one, or by trial and error.", panels: [
       ["Supervised: learning with an answer key", "Every example comes with the right answer. Show it emails marked spam or not spam, and it learns to sort new ones."],
-      ["Two kinds of answers", "Classification picks a group, like spam or not spam. Regression predicts a number, like a house price."],
+      ["Two kinds of answers", "Classification picks a group, like spam or not spam. Regression predicts a number, like a house price. The next idea shows how a regression model learns."],
       ["Unsupervised: finding groups on its own", "No answers are given. The model spots which examples are alike, such as customers who shop the same way. This is called clustering."],
       ["Reinforcement: trial and error", "The model tries actions and gets a reward or a penalty, like a dog learning tricks for treats. Game-playing AI and robots learn this way."],
-      ["Most AI at work today is supervised", "Spam filters, speech-to-text, medical scans, defect spotting and ad clicks all learn from labeled examples. Generative AI is the fast-growing newcomer."],
     ]},
     "ml-lifecycle": { title: "From idea to working model", gist: "Building a model is a loop: gather, train, test, launch, watch, repeat.", panels: [
       ["It’s a loop, not a launch", "Machine learning projects run in a cycle. The work doesn’t stop when the model goes live."],
@@ -102,39 +101,53 @@ export default {
       ["Launch and keep watching", "Once it’s live, watch how it performs. The world changes, so feed in new data and retrain. Running this loop well is called MLOps."],
     ]},
     "neural-networks": { title: "Neural networks", gist: "Layers of tiny calculators that pass numbers forward and discover useful in-between ideas.", panels: [
-      ["Layers of tiny calculators", "Each circle takes in numbers, weighs how much each one matters, and passes a single number on."],
+      ["Layers of tiny calculators", "Each circle takes in numbers, gives each one a weight for how much it matters, and passes a single number on."],
       ["Input, hidden, output", "The input layer takes the raw facts, hidden layers work on them, and the output layer gives the answer. “Deep” just means many hidden layers."],
       ["Example: will this T-shirt sell?", "Four facts go in. The middle layer turns them into ideas like “is it affordable?” and “do people know about it?”. The output is the chance it becomes a best-seller."],
       ["Nobody names the middle ideas", "We never tell the network to think about affordability. During training it finds whatever in-between ideas help it guess right. That’s where its power comes from."],
+      ["How it learns: guess, check, nudge", "It’s the same trick as the line through the house dots. The network guesses, measures how far off it was, and nudges every weight a little to do better next time. Big networks have billions of weights, which is why training takes so much data and computing power."],
     ]},
-    "foundation-models": { title: "Foundation models", gist: "One huge model trained on a mountain of data, then adapted to many jobs.", panels: [
-      ["Train once, on almost everything", "A foundation model studies a huge pile of text, images and code, with no labels needed. It learns how language and pictures usually fit together."],
+    "next-word": { title: "How a chatbot writes", gist: "It guesses the next word, adds it, and guesses again.", panels: [
+      ["It guesses the next word", "Give it some text and it scores every word that could come next. After “The cat sat on the”, “mat” scores high and “moon” scores low. The scores come from patterns in everything it has read."],
+      ["Then it does it again", "It adds the chosen word and guesses the next one, then the next. Every answer, from an email to a poem, is built one piece at a time. (Strictly, the pieces are often parts of words, called tokens.)"],
+      ["A little luck in every pick", "It doesn’t always take the top word. A bit of randomness keeps the writing natural, which is why the same question can get a different answer each time."],
+      ["A chat is one long document", "Your messages and its replies are joined into one text, and it keeps continuing it. It rereads all of it before each new word, up to a limit, which is why very long chats can lose track of the beginning."],
+    ]},
+    "foundation-models": { title: "Foundation models", gist: "One huge model, trained once on a mountain of data, then used for many jobs.", panels: [
+      ["Practice on almost everything", "The guessing skill comes from practice on a huge pile of text, and often images and code too. No labels are needed: the real next word is the answer key. Along the way it picks up grammar, facts and how ideas connect."],
       ["Then put it to work on many jobs", "The same model can write, summarize, pull out facts, chat and answer questions. You don’t need a new model for each task."],
-      ["You rarely build your own", "Several companies offer ready-trained models you can rent or download. Each has different strengths, sizes and prices."],
+      ["You rarely build your own", "Training one costs a fortune, so only a few large companies do it. Most people use one through an app or online service. Some models are also free to download and run on your own computer."],
     ]},
     "embeddings": { title: "Words as points on a map", gist: "AI turns words into lists of numbers, so similar meanings sit close together.", panels: [
       ["Every word becomes a list of numbers", "Each number scores the word on some trait. “Cat” scores high on feline and “dog” doesn’t. This list is called an embedding."],
       ["Similar words land close together", "Real embeddings have hundreds of numbers. Squash them down to two and plot them like a map: cat and kitten end up neighbors, and houses sits far away."],
       ["Directions carry meaning", "The step from “man” to “woman” is about the same as from “king” to “queen”. That’s how a model captures relationships between words, not just the words themselves."],
+      ["Search by meaning", "Turn documents into points too, and a question lands near the pages that mean the same thing, even with no words in common. This is how AI finds the right pages in your files, which comes back in “Making a model yours”."],
     ]},
-    "customizing-models": { title: "Making a model yours", gist: "Start by giving a model your documents. Retrain only if you must.", panels: [
-      ["Three ways to customize", "Going up the pyramid, each option costs more effort and money, and gives you a more specialized model."],
-      ["Hand it your documents (RAG)", "Before answering, the system looks up relevant pages from your files and gives them to the model. Think of it as an open-book exam: no retraining, and easy to keep up to date."],
+    "customizing-models": { title: "Making a model yours", gist: "Start with a better prompt, then add your documents. Retrain only if you must.", panels: [
+      ["Four ways to customize", "Start at the bottom. Each step up costs more effort and money, and gives you a more specialized model. Most needs are met by the first two."],
+      ["Write a better prompt", "Clear instructions and a few examples, as in the last idea. It’s free, instant, and often all you need."],
+      ["Hand it your documents (RAG)", "Before answering, the system searches your files by meaning, like the map of words, and passes the best pages to the model. Think of it as an open-book exam: no retraining, and easy to keep up to date."],
       ["Give it extra training (fine-tuning)", "Train an existing model a little more on your own examples so it learns your tone or a specialist task. It’s like sending a graduate on a specialist course."],
       ["Build one from scratch", "Train a brand-new model on your own data. It takes huge amounts of data, money and expertise, so very few organizations need to."],
     ]},
     "prompting": { title: "Writing a good prompt", gist: "Brief the AI like a new colleague: what to do, why, with what, and in what shape.", panels: [
       ["The four parts of a clear prompt", "Say what to do, why it matters, what to work with, and what the answer should look like."],
       ["The same brief, filled in", "Here it is for a stock check. Leave out any part and the AI has to guess."],
-      ["Zero-shot vs. few-shot", "Zero-shot means just asking. Few-shot means showing a couple of worked examples first, so the AI copies the exact format you want."],
-      ["Ask it to think step by step", "For math and logic, asking the model to work through the steps before answering often gets better results. This is called chain-of-thought prompting."],
-      ["A few more advanced tricks", "Ask several times and take the most common answer (self-consistency). Let it explore several lines of reasoning (tree of thoughts), look things up (RAG), or use tools like a calculator as it goes (ReAct)."],
+      ["Show, don’t just tell", "Just asking is called zero-shot. Showing a couple of worked examples first (few-shot) gets the AI to copy the exact format you want."],
+      ["Ask it to think step by step", "For math and logic, ask it to work through the steps before answering. Since it writes one word at a time, writing the steps first gives it something to build on. This is called chain-of-thought prompting."],
+      ["More ways to get better answers", "Ask a few times and compare. Ask for several options before picking one. Paste in the documents it should rely on. And where the app allows it, let it search or calculate instead of guessing."],
     ]},
-    "responsible-ai": { title: "Responsible AI", gist: "Eight checks that keep AI fair, trustworthy and under control.", panels: [
-      ["Eight things to get right", "Building AI responsibly means checking more than accuracy. These eight areas come up again and again."],
-      ["Is it fair and safe?", "Fairness: it treats all groups of people equally. Safety: it doesn’t cause harm. Privacy and security: it protects people’s data."],
-      ["Can we trust what it says?", "Explainability: we can see why it gave an answer. Transparency: people know when AI is being used. Veracity and robustness: it stays accurate, even with odd inputs."],
-      ["Who’s in charge?", "Governance: clear rules and owners for how AI is used. Controllability: people can monitor it and step in to correct it."],
+    "made-up-answers": { title: "Why AI makes things up", gist: "It writes what sounds likely, and likely isn’t always true.", panels: [
+      ["Confident and wrong", "Ask about a rare detail and a chatbot may invent one: a book nobody wrote, a quote nobody said, a mayor who never existed. It sounds just as sure as when it’s right. This is called a hallucination."],
+      ["Likely isn’t the same as true", "It writes the words that sound most likely. For famous facts, seen countless times, likely and true line up. For rare names, dates and numbers, a likely-sounding guess fills the gap."],
+      ["How to protect yourself", "Give it a source to work from, ask where each fact came from, and check anything that matters, especially names, numbers and quotes, before you rely on it."],
+    ]},
+    "responsible-ai": { title: "Responsible AI", gist: "Four questions to ask before trusting AI with decisions about people.", panels: [
+      ["Is it fair?", "A model can be accurate on average and still treat some people badly. One trained on past hires, who were mostly men, can learn to rank women lower. It copies the pattern in its examples, bias included."],
+      ["Does it protect people’s data?", "Personal details in its training data can resurface in answers, and what you paste into a chat may be stored or used for training. Know where data goes before you share it."],
+      ["Can it explain itself?", "If a loan is turned down, the person deserves to know why, and many models can’t say. When the stakes are high, choose systems whose reasons can be checked, and tell people when AI is involved."],
+      ["Who’s in charge?", "Every AI system needs an owner: someone who watches how it behaves, hears complaints, and can step in and override it. “The computer decided” is never the final answer."],
     ]},
     "refactoring": { title: "Refactoring", gist: "Tidying up code without changing what it does, so the next change is easier.", panels: [
       ["Same result, tidier inside", "Refactoring means improving how code is organized without changing what it does. The same input still gives the same answer, but the inside is easier to follow."],
@@ -148,11 +161,6 @@ export default {
       catalog: "Martin Fowler’s list of refactorings, each with a worked example",
       stamina: "The Design Stamina Hypothesis: why tidy code pays off over time",
     }},
-    "aws-ai-services": { title: "Ready-made AI on AWS", gist: "Many common AI jobs are available as ready-made Amazon services, with no training needed.", panels: [
-      ["Language and speech", "Need to read scanned forms, translate text, build a chatbot or transcribe calls? Each of these Amazon services does one job well."],
-      ["Images, search and suggestions", "Spot objects and faces in photos, search your own documents, or recommend products. DeepRacer is a toy race car for learning reinforcement learning hands-on."],
-      ["Or go further", "Bedrock gives you foundation models for building generative AI apps, and Amazon Q is an AI assistant for work and coding. SageMaker is the workshop for training your own models."],
-    ]},
   },
 
   /* words inside the drawings */
@@ -170,10 +178,9 @@ export default {
       spam: "spam", notSpam: "not spam", model: "model", spamQ: "spam?", examples: "examples + answers",
       classification: "classification", whichGroup: "which group?", regression: "regression", whatNumber: "what number?",
       unnamed: "nobody named these groups", treat: "+1 treat", tryFail: "try, fail, adjust, repeat",
-      inUse: "AI in use today", supervised: "supervised", generative: "generative", unsupervised: "unsupervised", reinforcement: "reinforcement",
     },
     loop: { problem: "problem", data: "data", train: "train", test: "test", launch: "launch", monitor: "monitor", notYet: "not good\nenough?" },
-    net: { input: "input", hidden: "hidden layers", output: "output", flow: "numbers flow this way" },
+    net: { input: "input", hidden: "hidden layers", output: "output", flow: "numbers flow this way", guess: "guess", right: "right answer", nudge: "nudge every weight a little", repeat: "guess, check, nudge, repeat" },
     demand: {
       inputs: ["price", "shipping", "marketing", "material"], hidden: ["affordable?", "well known?", "good quality?"],
       out: "best-seller?", facts: "4 facts", ideas: "3 ideas", answer: "1 answer",
@@ -181,30 +188,40 @@ export default {
     found: {
       pretrain: "pre-train", pile1: "a mountain of data,", pile2: "no labels needed", model: "foundation model",
       tasks: ["write", "summarize", "pull out facts", "chat", "answer questions", "make images"],
-      makers: "a few of the companies that build them",
+      online: "use it online", onlineSub: "in an app or a service", local: "run it yourself", localSub: "some are free to download",
+    },
+    gen: {
+      start: ["The", "cat", "sat", "on", "the"], options: ["mat", "sofa", "floor", "moon"], scores: "how likely each next word is",
+      next: ["mat", "and", "purred"], loopCaption: "add the word, guess again",
+      tries: ["try 1", "try 2"], endings: ["… mat and purred.", "… sofa and fell asleep."], samplingCaption: "same start, different endings",
+      you: "You:", ai: "AI:", readsAll: "it rereads\nall of this\nbefore each\nnew word",
     },
     embed: {
       traits: ["living", "feline", "human", "gender", "royal", "verb", "plural"], dec: ".",
       cat: "cat", dog: "dog", kitten: "kitten", houses: "houses", caption: "each number scores one trait", close: "close = similar",
       man: "man", woman: "woman", king: "king", queen: "queen", same: "same step",
+      query: "“forgot my login”", near: "Resetting your password", far: ["Office opening hours", "Holiday policy"], noShared: "no words in common, still a match",
     },
-    custom: { rag: "add your documents (RAG)", fine: "fine-tune", scratch: "from\nscratch", effort: "more effort and cost", special: "more specialized" },
+    custom: { prompt: "a better prompt", rag: "your documents (RAG)", fine: "fine-tune", scratch: "from\nscratch", effort: "more effort and cost", special: "more specialized" },
     prompt: {
       parts: [["Instruction", "what to do"], ["Context", "why, and for whom"], ["Input data", "what to work with"], ["Output format", "what the answer should look like"]],
       example: [["Instruction", "Which orders can we ship?"], ["Context", "Stock check for our online shop"], ["Input data", "Order 1: 5×A, 3×B · Stock: A 8, B 4"], ["Output format", "Table: order, ship or restock"]],
       translate: "Translate to French:", cheese: "cheese →", examples: ["sea → mer", "cat → chat"], reply: ["Sure! In French,", "cheese is “fromage”…"],
       question: "3 boxes of 12 eggs. 5 broke.\nHow many good eggs?", think: "“Let’s think step by step.”", answer: "answer: 31",
-      tricks: ["ask a few times, vote", "explore several paths", "look it up first", "use tools"],
+      tricks: ["ask a few times", "ask for options", "give it sources", "let it use tools"],
+    },
+    trust: {
+      ask: "Who was the first mayor\nof Millbrook?", claim: "It was Thomas Hale,\nelected in 1887.", stamp: "made up", sure: "said as surely as a real fact",
+      famous: ["a famous fact", "The capital\nof France is", "Paris", "seen countless times"],
+      rare: ["a rare detail", "Millbrook’s first\nmayor was", "Thomas Hale", "seen rarely, if ever"],
+      checks: ["give it a source", "ask where each\nfact came from", "check names,\nnumbers, quotes"],
     },
     resp: {
-      center: "Responsible\nAI",
-      items: { fair: "Fairness", explain: "Explainability", privacy: "Privacy &\nsecurity", veracity: "Veracity &\nrobustness", transparency: "Transparency", governance: "Governance", safety: "Safety", control: "Controllability" },
-    },
-    aws: {
-      language: [["Understand\ntext", "Comprehend"], ["Translate", "Translate"], ["Read\nscans", "Textract"], ["Chatbots", "Lex"], ["Text to\nspeech", "Polly"], ["Speech\nto text", "Transcribe"]],
-      vision: [["See images", "Rekognition"], ["Search your docs", "Kendra"], ["Recommend", "Personalize"], ["Learn by racing", "DeepRacer"]],
-      control: "more control,\nmore work",
-      steps: [["Ready-made skills", "Comprehend, Polly, Rekognition…"], ["Foundation models", "Bedrock, Amazon Q, JumpStart"], ["Build your own", "SageMaker"]],
+      past: "past hires", model: "model", ranked: "new applicants", copies: "it learned the pattern, bias included",
+      paste: "pasted into a chat:", card: ["salary: 52,000", "ID number", "health notes"], where: ["stored where?", "used for\ntraining?", "seen by whom?"],
+      leakCaption: "know where data goes before you share it",
+      application: "loan application", denied: "denied", why: "why?", noReason: "no reason anyone can check",
+      suggests: "AI suggests", person: "a person checks", decision: "decision", override: "and can override it", owner: "someone owns it, and answers for it",
     },
     refactor: {
       input: "input", before: "before", after: "after", same: "same\nresult",

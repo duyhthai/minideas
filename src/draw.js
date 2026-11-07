@@ -233,14 +233,6 @@ export const ART = {
     s += T(240, 30, t.treat, { c: "sm b blu", size: 12.5 }) + T(222, 145, "−1", { a: "start", c: "b cor" }) + T(160, 206, t.tryFail, { c: "sm mut", size: 12.5 });
     return s;
   },
-  share(lb) {
-    const t = lb.types;
-    return R(8, 8, 304, 204, "", "dash thin", 14) + T(22, 30, t.inUse, { a: "start", c: "sm mut", size: 12.5 }) +
-      C(100, 122, 58, "fm") + T(100, 127, t.supervised, { c: "on b", size: 16, max: 104 }) +
-      C(222, 62, 26, "fc") + T(222, 106, t.generative, { c: "b" }) +
-      C(176, 150, 16, "fb") + T(176, 186, t.unsupervised, { c: "sm", size: 12.5, max: 82 }) +
-      C(268, 152, 5, "fy") + T(268, 186, t.reinforcement, { c: "sm", size: 12.5, max: 82 });
-  },
 
   /* from idea to working model */
   mlLoop(lb, hl, back) {
@@ -265,14 +257,17 @@ export const ART = {
 
   /* neural networks */
   net(lb, mode) {
-    const t = lb.net;
+    const t = lb.net, train = mode === "train";
     const layers = [{ x: 44, n: 3, f: "fy" }, { x: 124, n: 4, f: "fk" }, { x: 204, n: 4, f: "fk" }, { x: 280, n: 1, f: "fc" }];
     const ys = n => Array.from({ length: n }, (_, i) => 108 + (i - (n - 1) / 2) * 42);
     let s = "";
     if (mode === "layers") s += R(26, 34, 36, 148, "", "dash thin", 10) + R(104, 28, 120, 160, "", "dash thin", 10) + R(262, 84, 36, 48, "", "dash thin", 10);
     for (let l = 0; l < 3; l++) ys(layers[l].n).forEach(a => ys(layers[l + 1].n).forEach(b => s += L(layers[l].x, a, layers[l + 1].x, b, "thin faint")));
-    layers.forEach(ly => ys(ly.n).forEach(y => s += C(ly.x, y, 11, ly.f)));
+    layers.forEach((ly, l) => ys(ly.n).forEach(y => s += train && l === 3 ? "" : C(ly.x, y, 11, ly.f)));
     if (mode === "layers") s += T(44, 206, t.input, { c: "b", max: 80 }) + T(164, 206, t.hidden, { c: "b", max: 130 }) + T(282, 206, t.output, { c: "b", max: 70 });
+    else if (train) s += C(280, 108, 17, "fc") + T(280, 113, "62%", { c: "on b sm", size: 12.5 }) + T(280, 80, t.guess, { c: "sm b halo", size: 12.5, max: 70 }) +
+      L(280, 127, 280, 141, "coral-s w3") + pill(280, 156, "100%", "fm", { on: true, size: 13, w: 52 }) + T(280, 186, t.right, { c: "sm mut", size: 12.5, max: 74 }) +
+      A(258, 24, 60, 24, "coral-s dash") + T(160, 14, t.nudge, { c: "sm b cor", size: 12.5, max: 200 }) + T(150, 210, t.repeat, { c: "sm mut", size: 12.5, max: 200 });
     else s += A(70, 206, 250, 206, "thin") + T(160, 199, t.flow, { c: "sm mut halo", size: 12.5 });
     return s;
   },
@@ -307,16 +302,66 @@ export const ART = {
     lb.found.tasks.forEach((label, i) => { const y = 26 + i * 34; s += A(108, 110, 152, y, "thin") + T(158, y + 5, label, { a: "start", max: 156 }); });
     return s;
   },
-  makers(lb) {
-    const rows = [["AI21 Labs", "Amazon", "Anthropic"], ["Cohere", "Meta"], ["Mistral", "Stability AI"]];
-    const fills = ["fb", "fy", "fm", "fc"];
-    let s = T(160, 26, lb.found.makers, { c: "sm mut", size: 12.5, max: 290 }), k = 0;
-    rows.forEach((row, r) => {
-      const ws = row.map(x => x.length * 7.5 + 26), total = ws.reduce((a, b) => a + b, 0) + (row.length - 1) * 12;
-      let x = 160 - total / 2;
-      row.forEach((name, i) => { s += pill(x + ws[i] / 2, 70 + r * 52, name, fills[k++ % 4], { on: true, size: 15, w: ws[i], h: 34 }); x += ws[i] + 12; });
+  rentOrRun(lb) {
+    const t = lb.found;
+    const laptop = (cx, cy) => R(cx - 26, cy - 18, 52, 34, "fk", "", 3) + P(`M${cx - 34},${cy + 16} L${cx + 34},${cy + 16} L${cx + 30},${cy + 23} L${cx - 30},${cy + 23} Z`, "fk");
+    let s = L(160, 14, 160, 170, "dash thin faint");
+    s += P("M42,84 C24,84 22,60 40,58 C40,34 72,28 82,46 C92,30 122,38 118,60 C134,62 132,84 116,84 Z", "ft") + brain(80, 64, .28);
+    s += A(64, 90, 54, 118, "thin") + A(96, 90, 112, 110, "thin") + laptop(50, 140) + R(104, 114, 24, 44, "fk", "", 5) + L(111, 151, 121, 151, "thin");
+    s += brain(240, 48, .42) + A(240, 74, 240, 114, "w3") + laptop(240, 140);
+    return s + T(80, 190, t.online, { c: "b", max: 140 }) + T(80, 208, t.onlineSub, { c: "sm mut", size: 12.5, max: 150 }) +
+      T(240, 190, t.local, { c: "b", max: 140 }) + T(240, 208, t.localSub, { c: "sm mut", size: 12.5, max: 150 });
+  },
+
+  /* how a chatbot writes */
+  nextWord(lb) {
+    const t = lb.gen, pct = [62, 18, 12, 1];
+    let s = R(14, 8, 292, 42, "ft", "", 12) + T(160, 35, `${t.start.join(" ")} …`, { size: 16, max: 270 });
+    t.options.forEach((w, i) => {
+      const y = 66 + i * 32, bw = Math.max(4, pct[i] * 2.4);
+      s += T(98, y + 16, w, { a: "end", c: i ? "" : "b", max: 84 }) + R(108, y, bw, 22, i ? "fb" : "fy", "thin", 5) + T(116 + bw, y + 16, `${pct[i]}%`, { a: "start", c: "sm b", size: 12.5 });
     });
-    return s;
+    return s + T(160, 210, t.scores, { c: "sm mut", size: 12.5, max: 290 });
+  },
+  wordLoop(lb) {
+    const t = lb.gen, x0 = 34, gap = 4, pad = 10;
+    const rows = t.next.map((_, i) => [...t.start, ...t.next.slice(0, i + 1)]);
+    let sz = 15;
+    const cw = w => w.length * sz * .52 + pad;
+    const width = ws => ws.reduce((a, w) => a + cw(w), 0) + (ws.length - 1) * gap;
+    while (width(rows[rows.length - 1]) > 304 - x0 && sz > 10) sz -= .5;
+    let s = "";
+    rows.forEach((ws, r) => {
+      const y = 38 + r * 62;
+      let x = x0;
+      s += T(18, y + 5, String(r + 1), { c: "sm mut b", size: 12.5 });
+      ws.forEach((w, i) => {
+        const last = i === ws.length - 1;
+        s += R(x, y - 14, cw(w), 28, last ? "fy" : "fk", "thin", 6) + T(x + cw(w) / 2, y + 5, w, { size: sz, c: last ? "on b" : "" });
+        if (last && r < rows.length - 1) s += A(x + cw(w) / 2, y + 16, x + cw(w) / 2, y + 46, "thin");
+        x += cw(w) + gap;
+      });
+    });
+    return s + T(160, 210, t.loopCaption, { c: "sm mut", size: 12.5, max: 290 });
+  },
+  sampling(lb) {
+    const t = lb.gen;
+    let s = R(14, 8, 292, 40, "ft", "", 12) + T(160, 34, `${t.start.join(" ")} …`, { size: 15, max: 270 });
+    s += A(60, 52, 60, 86, "thin") + R(36, 92, 48, 48, "fk", "", 10);
+    [[48, 104], [72, 104], [60, 116], [48, 128], [72, 128]].forEach(([x, y]) => s += C(x, y, 3.5, "fi"));
+    s += A(90, 104, 120, 86, "thin") + A(90, 128, 120, 152, "thin");
+    [[84, 0], [158, 1]].forEach(([y, i]) =>
+      s += T(124, y - 24, t.tries[i], { a: "start", c: "sm mut b", size: 12.5 }) + R(124, y - 16, 182, 34, "fb", "", 12) + T(136, y + 6, t.endings[i], { a: "start", c: "on", max: 160 }));
+    return s + T(160, 208, t.samplingCaption, { c: "sm mut", size: 12.5, max: 290 });
+  },
+  chatTurns(lb) {
+    const t = lb.gen;
+    const block = (y, who, cls, lens) => T(36, y, who, { a: "start", c: `sm b ${cls}`, size: 12.5 }) + lens.map((w, i) => L(36, y + 14 + i * 12, 36 + w, y + 14 + i * 12, "thin")).join("");
+    let s = R(22, 8, 200, 204, "fk", "", 8);
+    s += block(30, t.you, "blu", [150, 96]) + block(80, t.ai, "cor", [168, 160, 120]) + block(142, t.you, "blu", [110]);
+    s += T(36, 180, t.ai, { a: "start", c: "sm b cor", size: 12.5 }) + L(36, 194, 110, 194, "thin") + R(116, 186, 14, 16, "fy", "thin", 3);
+    s += P("M232,14 Q242,14 242,24 L242,100 L250,110 L242,120 L242,196 Q242,206 232,206", "", "thin");
+    return s + T(287, 110, t.readsAll, { c: "sm", size: 12.5, max: 62 });
   },
 
   /* words as points on a map */
@@ -346,17 +391,24 @@ export const ART = {
     [[64, 128, t.man, "fb", 26], [112, 52, t.woman, "fc", -14], [196, 176, t.king, "fy", 24], [244, 100, t.queen, "fm", -14]].forEach(([x, y, w, fl, dy]) => s += C(x, y, 6, fl) + T(x, y + dy, w, { c: "b" }));
     return s + T(158, 120, t.same, { c: "sm cor b", size: 12.5 });
   },
+  meaningSearch(lb) {
+    const t = lb.embed;
+    let s = R(14, 10, 292, 198, "fk", "", 12) + EL(112, 132, 52, 38, "", "dash thin");
+    s += C(92, 120, 7, "fy") + T(92, 102, t.query, { c: "b halo", max: 150 }) + C(134, 146, 6, "fm") + T(134, 172, t.near, { c: "sm halo", size: 12.5, max: 150 });
+    s += C(236, 44, 6, "ft") + T(236, 66, t.far[0], { c: "sm mut", size: 12.5, max: 110 }) + C(252, 112, 6, "ft") + T(252, 134, t.far[1], { c: "sm mut", size: 12.5, max: 96 });
+    return s + T(296, 198, t.noShared, { a: "end", c: "sm b blu", size: 12.5, max: 270 });
+  },
 
-  /* making a model yours: k = highlighted band (0 bottom … 2 top), -1 = all */
+  /* making a model yours: k = highlighted band (0 bottom … 3 top), -1 = all */
   pyramid(lb, k) {
     const t = lb.custom, half = y => 120 * (y - 14) / 190, cx = 170;
-    const bands = [[150, 204, "fy", t.rag, 184, 200], [92, 150, "fb", t.fine, 127, 130], [14, 92, "fm", t.scratch, 72, 64]];
+    const bands = [[160, 204, "fm", t.prompt, 188, 196], [116, 160, "fy", t.rag, 144, 140], [70, 116, "fb", t.fine, 99, 96], [14, 70, "fc", t.scratch, 54, 50]];
     let s = "";
     bands.forEach(([y0, y1, fl, lab, ly, max], i) => {
-      const on = k < 0 || k === i, a = half(y0), b = half(y1);
-      const pts = i === 2 ? `${cx},${y0} ${f1(cx + b)},${y1} ${f1(cx - b)},${y1}` : `${f1(cx - a)},${y0} ${f1(cx + a)},${y0} ${f1(cx + b)},${y1} ${f1(cx - b)},${y1}`;
+      const on = k < 0 || k === i, a = half(y0), b = half(y1), top = i === bands.length - 1;
+      const pts = top ? `${cx},${y0} ${f1(cx + b)},${y1} ${f1(cx - b)},${y1}` : `${f1(cx - a)},${y0} ${f1(cx + a)},${y0} ${f1(cx + b)},${y1} ${f1(cx - b)},${y1}`;
       s += `<polygon points="${pts}" class="sf ${on ? fl : "fk"} ${on ? "" : "dash"}"/>`;
-      s += T(cx, ly, lab, { size: i === 2 ? 13 : 15, max, c: on ? `on ${k === i ? "b" : ""}` : "mut" });
+      s += T(cx, ly, lab, { size: top ? 13 : 15, max, c: on ? `on ${k === i ? "b" : ""}` : "mut" });
     });
     return s + A(28, 196, 28, 24, "thin") + T(16, 110, t.effort, { rot: -90, c: "sm mut", size: 12.5 }) +
       A(302, 196, 302, 24, "thin") + T(313, 110, t.special, { rot: 90, c: "sm mut", size: 12.5 });
@@ -405,37 +457,75 @@ export const ART = {
     return s + T(242, 202, t.tricks[3], { c: "sm", size: 12.5, max: 144 });
   },
 
-  /* responsible AI: set = highlighted item ids, null = all */
-  ring(lb, set) {
-    const t = lb.resp;
-    const items = [["fair", -90], ["explain", -45], ["privacy", 0], ["veracity", 45], ["transparency", 90], ["governance", 135], ["safety", 180], ["control", 225]];
-    let s = EL(160, 110, 112, 84, "", "thin");
-    items.forEach(([id, d]) => {
-      const a = d * Math.PI / 180, x = 160 + 112 * Math.cos(a), y = 110 + 84 * Math.sin(a);
-      const on = !set || set.includes(id), fill = !set ? "fb" : on ? "fy" : "fk";
-      s += pill(x, y, t.items[id], fill, { size: 12.5, on: fill !== "fk", tc: on ? "b" : "mut" });
-    });
-    return s + T(160, 112, t.center, { c: "b", size: 17 });
+  /* why AI makes things up */
+  madeUp(lb) {
+    const t = lb.trust;
+    let s = R(104, 10, 202, 54, "ft", "", 12) + P("M290,64 l4,10 l-18,-10", "ft") + T(118, 37, t.ask, { a: "start", max: 176 });
+    s += R(14, 86, 234, 62, "fb", "", 12) + P("M34,148 l-4,10 l14,-10", "fb") + T(28, 117, t.claim, { a: "start", c: "on", max: 212 });
+    s += `<g transform="rotate(-8 240 170)">` + R(186, 152, 108, 36, "", "coral-s w3", 6) + T(240, 176, t.stamp, { c: "b cor", size: 18, max: 96 }) + "</g>";
+    return s + T(16, 208, t.sure, { a: "start", c: "sm mut", size: 12.5, max: 160 });
   },
-
-  /* ready-made AI on AWS */
-  tiles(lb, which) {
-    const list = lb.aws[which], cols = list.length > 4 ? 3 : 2;
-    const rows = Math.ceil(list.length / cols), gap = 10, w = (296 - (cols - 1) * gap) / cols, h = (196 - (rows - 1) * gap) / rows;
-    const fills = ["fb", "fy", "fm", "fc"];
-    let s = "";
-    list.forEach(([job, svc], i) => {
-      const x = 12 + (i % cols) * (w + gap), y = 12 + Math.floor(i / cols) * (h + gap), cx = x + w / 2, cy = y + h / 2;
-      s += R(x, y, w, h, fills[i % 4], "", 12) + T(cx, cy - 4, job, { c: "on b", size: 14, max: w - 12 }) + T(cx, y + h - 12, svc, { c: "on sm", size: 12.5 });
+  likelyTrue(lb) {
+    const t = lb.trust;
+    const row = (y, tag, tagC, prompt, ans, fill, seen, mark) => {
+      const w = pillW(ans, 14), px = 306 - w / 2;
+      return T(20, y - 28, tag, { a: "start", c: `sm b ${tagC}`, size: 12.5 }) + T(20, y + 5, prompt, { a: "start", max: 306 - w - 54 }) +
+        A(306 - w - 30, y, 306 - w - 8, y, "thin") + pill(px, y, ans, fill, { on: true, size: 14, w }) +
+        T(20, y + 36, seen, { a: "start", c: "sm mut", size: 12.5, max: 200 }) + mark(px, y + 32);
+    };
+    const tick = (x, y) => P(`M${x - 9},${y - 2} l6,6 l12,-14`, "", "blue-s w3");
+    const ask = (x, y) => T(x, y + 8, "?", { c: "cor b", size: 24 });
+    return row(52, t.famous[0], "blu", t.famous[1], t.famous[2], "fm", t.famous[3], tick) + L(14, 106, 306, 106, "dash thin faint") +
+      row(156, t.rare[0], "cor", t.rare[1], t.rare[2], "fc", t.rare[3], ask);
+  },
+  checkIt(lb) {
+    const t = lb.trust;
+    let s = R(56, 20, 208, 190, "fk", "", 10) + R(130, 10, 60, 20, "ft", "", 6);
+    t.checks.forEach((item, i) => {
+      const y = 66 + i * 52;
+      s += R(74, y - 13, 26, 26, "ft", "thin", 5) + P(`M80,${y} l6,6 l12,-14`, "", "blue-s w3") + T(114, y + 5, item, { a: "start", max: 138 });
     });
     return s;
   },
-  stairs(lb) {
-    const t = lb.aws;
-    return A(26, 200, 26, 30, "thin") + T(38, 28, t.control, { a: "start", c: "sm mut", size: 12.5, max: 104 }) +
-      R(44, 152, 264, 54, "fy", "", 10) + T(58, 175, t.steps[0][0], { a: "start", c: "on b" }) + T(58, 194, t.steps[0][1], { a: "start", c: "on sm", size: 12.5, max: 240 }) +
-      R(96, 94, 212, 52, "fb", "", 10) + T(110, 116, t.steps[1][0], { a: "start", c: "on b" }) + T(110, 135, t.steps[1][1], { a: "start", c: "on sm", size: 12.5, max: 190 }) +
-      R(148, 36, 160, 52, "fm", "", 10) + T(162, 58, t.steps[2][0], { a: "start", c: "on b", max: 140 }) + T(162, 77, t.steps[2][1], { a: "start", c: "on sm", size: 12.5 });
+
+  /* responsible AI */
+  biasHire(lb) {
+    const t = lb.resp;
+    const person = (x, y, f) => C(x, y - 9, 6, f) + P(`M${x - 9},${y + 9} Q${x - 9},${y} ${x},${y} Q${x + 9},${y} ${x + 9},${y + 9} Z`, f);
+    let s = T(60, 28, t.past, { c: "sm b", size: 12.5, max: 100 }) + R(14, 38, 92, 104, "fk", "", 10);
+    [29, 49, 69, 89].forEach((x, i) => s += person(x, 72, "fb") + person(x, 116, i === 1 ? "fc" : "fb"));
+    s += A(110, 90, 134, 90) + R(138, 66, 60, 48, "fb", "", 10) + T(168, 95, t.model, { c: "on b", max: 52 }) + A(202, 90, 222, 90);
+    s += T(266, 28, t.ranked, { c: "sm b", size: 12.5, max: 96 });
+    [["fb", 44], ["fb", 40], ["fc", 16], ["fc", 10]].forEach(([f, w], i) => {
+      const y = 56 + i * 34;
+      s += T(232, y + 5, String(i + 1), { c: "sm mut b", size: 12.5 }) + person(250, y, f) + R(264, y - 6, w, 12, f, "thin", 3);
+    });
+    return s + T(160, 204, t.copies, { c: "sm mut", size: 12.5, max: 290 });
+  },
+  dataLeak(lb) {
+    const t = lb.resp;
+    let s = R(14, 26, 158, 140, "ft", "", 12) + T(26, 46, t.paste, { a: "start", c: "sm mut", size: 12.5, max: 134 });
+    s += R(26, 58, 134, 94, "fk", "coral-s dash", 6);
+    t.card.forEach((line, i) => s += T(38, 82 + i * 24, line, { a: "start", c: "sm", size: 12.5, max: 112 }));
+    [44, 96, 148].forEach((y, i) => s += A(176, 96, 198, y, "thin") + R(202, y - 18, 104, 36, "fk", "", 10) + T(254, y + 5, t.where[i], { c: "sm b", size: 12.5, max: 94 }));
+    return s + T(160, 204, t.leakCaption, { c: "sm mut", size: 12.5, max: 290 });
+  },
+  blackBox(lb) {
+    const t = lb.resp;
+    let s = R(16, 44, 60, 76, "fk", "", 4);
+    for (let i = 0; i < 4; i++) s += L(26, 62 + i * 14, i === 3 ? 50 : 66, 62 + i * 14, "thin");
+    s += T(46, 140, t.application, { c: "sm b", size: 12.5, max: 90 });
+    s += A(82, 82, 108, 82) + R(112, 46, 84, 72, "fk", "w3", 10) + T(154, 96, "?", { c: "cor b", size: 40 }) + T(154, 140, t.model, { c: "sm b", size: 12.5, max: 90 });
+    s += A(200, 82, 222, 82) + pill(266, 82, t.denied, "fc", { on: true, size: 15 });
+    s += fig(214, 206, "walk") + R(232, 136, 72, 32, "ft", "", 12) + P("M240,168 l-6,8 l14,-8", "ft") + T(268, 157, t.why, { c: "b cor", max: 62 });
+    return s + T(20, 190, t.noReason, { a: "start", c: "sm mut", size: 12.5, max: 160 });
+  },
+  inCharge(lb) {
+    const t = lb.resp;
+    let s = pill(62, 52, t.suggests, "fb", { on: true, size: 14 }) + A(116, 52, 140, 52) + fig(162, 100, "walk") + T(162, 122, t.person, { c: "sm b", size: 12.5, max: 110 });
+    s += A(184, 52, 208, 52) + pill(262, 52, t.decision, "fm", { on: true, size: 14 });
+    s += P("M162,136 Q66,166 62,84", "", "coral-s dash") + head(62, 72, -Math.PI / 2, "coral-s", 10) + T(84, 172, t.override, { a: "start", c: "sm b cor", size: 12.5, max: 150 });
+    return s + T(160, 206, t.owner, { c: "sm mut", size: 12.5, max: 290 });
   },
 
   /* book reviews: lb.book holds the book's labels (from src/books/<slug>.js) */
