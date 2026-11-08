@@ -85,11 +85,15 @@ for (const t of LANGS) {
   }
   for (const idea of STANDALONE) for (const r of idea.resources || []) if (!t.ideas[idea.slug]?.links?.[r.key]) problems.push(`${t.lang}/${idea.slug}: no description for link "${r.key}"`);
 }
+// each shelf item shows when it was published: a collection on its own page (not on each idea), a standalone idea on its page
+const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
+for (const item of SHELF) if (!ISO_DATE.test(item.date || "")) problems.push(`"${item.id || item.slug}": no date (YYYY-MM-DD)`);
 // A book is a card stack (panels) that may carry its full review in `full` (an article: intro + sections), or an
 // article on its own. Vietnamese is required (the original review); other languages are optional but must match.
 const BOOK_PARTS = BOOKS.flatMap(b => [b, ...(b.full ? [b.full] : [])]);
 for (const b of BOOK_PARTS) {
   if (!b.vi) { problems.push(`book "${b.slug}": no Vietnamese text`); continue; }
+  if (!ISO_DATE.test(b.date || "")) problems.push(`book "${b.slug}": no date (YYYY-MM-DD) for when the review was published`);
   const parts = b.panels ? ["panels"] : ["intro", "sections"];
   for (const t of LANGS) {
     const bl = b[t.lang];
@@ -231,6 +235,17 @@ function deeper(t, resources, text) {
 // *italic* and **bold** in book text
 const rich = s => E(s).replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>").replace(/\*(.+?)\*/g, "<em>$1</em>");
 
+// "Published 8 November 2026" (or where a review first appeared), plus any extras such as reading time
+function dateline(t, date, source, ...extra) {
+  const line = E(source ? t.ui.publishedOn(source, "\0") : t.ui.published("\0")).replace("\0", `<time datetime="${date}">${E(t.ui.date(date))}</time>`);
+  return `<p class="dateline">${[line, ...extra.map(E)].join(" · ")}</p>`;
+}
+// minutes to read an article, at the language's reading speed in words per minute
+function readMinutes(t, bl) {
+  const text = [...bl.intro, ...bl.sections.flatMap(s => [s.h, ...s.body]), bl.conclusion || ""].map(x => typeof x === "string" ? x : x.quote || x.text).join(" ");
+  return Math.max(1, Math.round(text.split(/\s+/).filter(Boolean).length / t.ui.wordsPerMinute));
+}
+
 /* ---------- pages ---------- */
 function homePage(t) {
   // Ideas: one tile per shelf item (a collection's ideas are on its own page). Books: reviews in this language.
@@ -276,6 +291,7 @@ function collectionPage(t, c) {
   <p class="eyebrow">${E(t.ui.ideaCount(c.ideas.length))}</p>
   <h1>${E(ct.title)}</h1>
   <p class="lede">${E(ct.lede)}</p>
+  ${dateline(t, c.date)}
 </section>
 ${groups}
 </main>
@@ -284,13 +300,15 @@ ${deeper(t, c.resources, ct)}`;
 }
 
 // The swipeable card stack shared by ideas and quick-read reviews. slides: [{ art, h, p }], where art is the
-// markup inside the picture box; data: URLs and button labels for site.js; top: what goes above the title.
-function cardStack({ t, slides, data, top, title, gist, after = "" }) {
+// markup inside the picture box; data: URLs and button labels for site.js; top: what goes above the title;
+// meta: the line under the gist.
+function cardStack({ t, slides, data, top, title, gist, meta = "", after = "" }) {
   const n = slides.length;
   return `<main class="viewer" id="viewer" ${Object.entries(data).map(([k, v]) => `data-${k}="${E(v)}"`).join(" ")}>
   ${top}
   <h1 class="stack-title">${E(title)}</h1>
   <p class="gist">${E(gist)}</p>
+  ${meta}
   <div class="card"><div class="track" id="track" tabindex="0" aria-label="${E(t.ui.trackLabel)}">
 ${slides.map(({ art, h, p }, j) => `<section class="slide" aria-roledescription="slide" aria-label="${j + 1} / ${n}">
       <div class="art dw">${art}</div>
@@ -327,10 +345,9 @@ function bookStackPage(t, b) {
     "t-next-idea": full ? t.ui.fullReviewNext : t.ui.done, "t-done": t.ui.done };
   const top = `<a class="back" href="${to(t.lang)}">← ${E(t.ui.allTopics)}</a>
   <p class="eyebrow">${E(t.ui.bookReview)} · ${E(b.author)}</p>`;
-  const after = (full ? `<nav class="pager"><a class="next" href="${fullUrl}"><small>${E(t.ui.fullReview)}</small><strong>${E(full.title)}</strong></a></nav>` : "") +
-    (b.source ? `<p class="source">${E(t.ui.originallyOn(b.source))}</p>` : "");
+  const after = full ? `<nav class="pager"><a class="next" href="${fullUrl}"><small>${E(t.ui.fullReview)}</small><strong>${E(full.title)}</strong></a></nav>` : "";
   const body = `<div class="layout solo">
-${cardStack({ t, slides, data, top, title: bl.title, gist: bl.abstract.replace(/\*/g, ""), after })}
+${cardStack({ t, slides, data, top, title: bl.title, gist: bl.abstract.replace(/\*/g, ""), meta: dateline(t, b.date, b.source), after })}
 </div>`;
   return shell({ t, depth: 2, segs: [b.slug], title: `${bl.title} · ${t.ui.site}`, desc: bl.abstract.replace(/\*/g, ""), body, og: bookImage(t, b), langs: LANGS.filter(o => b[o.lang]) });
 }
@@ -359,7 +376,7 @@ function ideaPage(t, idea, c = null, i = 0) {
   const eyebrow = !c ? "" : total > 1 ? [t.ui.ideaOf(i + 1, total), ...(c.chapters ? [ct.chapters[idea.chapter]] : [])].map(E).join(" · ") : E(ct.title);
   const top = c ? `<p class="eyebrow">${eyebrow}</p>` : `<a class="back" href="${to(t.lang)}">← ${E(t.ui.allTopics)}</a>`;
   const body = `<div class="layout${c ? "" : " solo"}">
-${cardStack({ t, slides, data, top, title: it.title, gist: it.gist, after: pager ? `<nav class="pager">${pager}</nav>` : "" })}
+${cardStack({ t, slides, data, top, title: it.title, gist: it.gist, meta: c ? "" : dateline(t, idea.date), after: pager ? `<nav class="pager">${pager}</nav>` : "" })}
 ${toc}
 </div>
 ${c ? deeper(t, c.resources, ct) : idea.resources?.length ? deeper(t, idea.resources, it) : ""}`;
@@ -370,7 +387,9 @@ ${c ? deeper(t, c.resources, ct) : idea.resources?.length ? deeper(t, idea.resou
 // quotes, and the conclusion. With parent, it is that card stack's full review, one level below it.
 function bookPage(t, b, parent = null) {
   const bl = b[t.lang], depth = parent ? 3 : 2, to = linker(depth), rel = "../".repeat(depth), where = `${t.lang}/${b.slug}${parent ? "/full" : ""}`;
-  const block = x => typeof x === "string" ? `<p>${rich(x)}</p>` : `<blockquote><p>${rich(x.quote)}</p></blockquote>`;
+  const block = x => typeof x === "string" ? `<p>${rich(x)}</p>`
+    : x.link ? `<p class="watch"><a href="${E(x.link)}" target="_blank" rel="noopener">${rich(x.text)} ↗</a></p>`
+    : `<blockquote><p>${rich(x.quote)}</p></blockquote>`;
   // the reviewer's own photos, together in one gallery before the conclusion; each opens full size
   const gallery = !b.photos?.length ? "" : `<section class="gallery">
     <h2>${E(t.ui.photos)}</h2>
@@ -391,6 +410,7 @@ function bookPage(t, b, parent = null) {
   <p class="eyebrow">${[t.ui.bookReview, parent && t.ui.fullReview, b.author].filter(Boolean).map(E).join(" · ")}</p>
   <h1 class="stack-title">${E(bl.title)}</h1>
   ${about ? `<p class="edition">${E(about)}</p>` : ""}
+  ${dateline(t, b.date, b.source, t.ui.readTime(readMinutes(t, bl)))}
   ${parent ? `<a class="quick-link" href="${to(t.lang, parent.slug)}">${E(t.ui.quickLink(parent.panels.length))}</a>` : ""}
   <div class="book-head${b.cover ? "" : " no-photo"}">
     ${b.cover ? (() => {
@@ -409,7 +429,7 @@ function bookPage(t, b, parent = null) {
     ${bl.conclusion ? `<aside class="verdict"><h2>${E(t.ui.conclusion)}</h2><p>${rich(bl.conclusion)}</p></aside>` : ""}
     ${bl.note ? `<p class="note">${E(bl.note)}</p>` : ""}
     <div class="share-row">
-      ${b.source ? `<p class="source">${E(t.ui.originallyOn(b.source))}</p>` : "<span></span>"}
+      <span></span>
       <button class="btn share" id="share" type="button" hidden data-text="${E(bl.abstract.replace(/\*/g, ""))}" data-copied="${E(t.ui.copied)}" data-copy-prompt="${E(t.ui.copyPrompt)}">${SHARE_ICON}<span>${E(t.ui.share)}</span></button>
     </div>
   </article>

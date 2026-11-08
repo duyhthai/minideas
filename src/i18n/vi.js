@@ -28,7 +28,11 @@ export default {
     fullSlug: "day-du",
     fullReviewNext: "Bài đầy đủ →",
     quickLink: n => `← Bản đọc nhanh: ${n} hình`,
-    originallyOn: site => `Đăng lần đầu trên ${site}.`,
+    date: iso => iso.split("-").reverse().map(Number).join("/"),
+    published: date => `Đăng ngày ${date}`,
+    publishedOn: (site, date) => `Đăng lần đầu trên ${site} ngày ${date}`,
+    readTime: n => `${n} phút đọc`,
+    wordsPerMinute: 330, // a Vietnamese word is one syllable, so the same text has about 1.4× as many
     share: "Chia sẻ",
     copied: "Đã sao chép liên kết",
     copyPrompt: "Sao chép liên kết này:",

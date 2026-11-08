@@ -5,6 +5,7 @@
 // Reads ideas/sausach/sausach-reviews.json (exported from the SauSach2 database: book and review fields only)
 // and writes src/books/<slug>-full.js with the Vietnamese text split into intro, sections (your headings),
 // paragraphs and quotes. *text* marks italics, **text** bold. English is left as null until written.
+// date: when the review was published on Sâu Sách (reviewedDate in the export).
 import { readFile, writeFile, mkdir, access } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -84,7 +85,7 @@ const file = `// Imported from Sâu Sách review #${r.id} by tools/import-review
 // Every photo needs a caption per language in vi.captions / en.captions, keyed by file name.
 // en: null until the English version is written; the book then only appears on the Vietnamese site.
 export default ${JSON.stringify({
-  slug, author: r.author, genres: r.genres || null, source: "Sâu Sách",
+  slug, author: r.author, genres: r.genres || null, source: "Sâu Sách", date: r.reviewedDate || null,
   cover: null,
   art: {},
   photos: [],

@@ -81,6 +81,9 @@ a:focus-visible, button:focus-visible, .track:focus-visible { outline: 3px solid
 .shelf-label .shelf-icon { flex: none; }
 .shelf-label + .tile-grid { margin-top: 14px; }
 .edition { margin: 6px 0 0; font-size: 13.5px; color: var(--ink-2); }
+.dateline { margin: 6px 0 0; font-size: 13.5px; color: var(--ink-2); }
+.gist + .dateline { margin-top: 8px; }
+.hero .lede + .dateline { margin-top: 10px; }
 
 /* book review: one article in the reviewer's words */
 .book-head { display: grid; gap: 28px; grid-template-columns: minmax(0, 220px) minmax(0, 1fr); align-items: center; margin-top: 22px; max-width: 760px; }
@@ -102,6 +105,8 @@ figure.book-photo img { display: block; width: 100%; height: auto; border-radius
 .review figure .art { max-width: 520px; }
 .review blockquote { margin: 1.3em 0; padding: 2px 0 2px 20px; border-left: 3px solid var(--blue); }
 .review blockquote p { font-style: italic; margin: 0; }
+.review .watch a { font-weight: 700; color: var(--blue); text-decoration: none; }
+.review .watch a:hover { text-decoration: underline; }
 .verdict { margin-top: 2.4em; padding: 22px 24px 8px; background: var(--card); border: 1px solid var(--line); border-radius: 18px; }
 .verdict h2 { margin-top: 0; }
 .review .note { font-size: 13.5px; line-height: 1.5; color: var(--ink-2); margin-top: 1.4em; }

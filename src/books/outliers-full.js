@@ -1,11 +1,12 @@
 // The full Outliers review, imported from Sâu Sách review #2 by tools/import-review.mjs. The Vietnamese text is
-// the original review. Published at /<lang>/outliers/<full>/ and linked from the quick version in outliers.js.
-// cover: the reviewer's photo of the book; art.sections: drawings for sections by number; photos: the gallery.
+// the original review, with typos fixed with the reviewer's approval (2026-11-08). Published at
+// /<lang>/outliers/<full>/ and linked from the quick version in outliers.js.
+// cover: the front cover; art.sections: drawings for sections by number; photos: the gallery.
 export default {
   "slug": "outliers",
   "author": "Malcolm Gladwell",
   "genres": "Hiện thực, Giáo dục, Xã hội học, Kỹ năng sống",
-  "cover": "book.jpg",
+  "cover": "front-cover.jpg",
   "art": {
     "sections": {
       "1": [
@@ -41,7 +42,7 @@ export default {
     ],
     "intro": [
       "*Những kẻ xuất chúng* - một cuốn sách hiếm hoi mà có lẽ tên dịch còn hay hơn cả tên gốc tiếng Anh, nó thể hiện được sự vĩ đại nhưng cũng chút ngang tàng trong đó.",
-      "Bước vào nhà sách, nếu bạn bị cuốn hút đến cuốn sách này, cầm lên ngắm nghía, xem thử mục lục... nhiều khả năng bạn sẽ... đặt ngược nó trở lại. Vì chẳng biết đâu mà lần với những tựa đề và trích dẫn khó hiểu trong mục lục. Nhưng nếu bạn đã đủ bị cuốn hút để nhấc nó lên thì cứ tin tưởng mình và mua ngay chẳng cần phải đắn đo gì cả, *Outliers* là một trong những cuốn sách xuất sắc nhất mình từng được đọc, đầy cuốn hút qua từng mẫu chuyện nhỏ."
+      "Bước vào nhà sách, nếu bạn bị cuốn hút đến cuốn sách này, cầm lên ngắm nghía, xem thử mục lục... nhiều khả năng bạn sẽ... đặt ngược nó trở lại. Vì chẳng biết đâu mà lần với những tựa đề và trích dẫn khó hiểu trong mục lục. Nhưng nếu bạn đã đủ bị cuốn hút để nhấc nó lên thì cứ tin tưởng mình và mua ngay chẳng cần phải đắn đo gì cả, *Outliers* là một trong những cuốn sách xuất sắc nhất mình từng được đọc, đầy cuốn hút qua từng mẩu chuyện nhỏ."
     ],
     "sections": [
       {
@@ -53,7 +54,7 @@ export default {
       {
         "h": "10.000 giờ luyện tập",
         "body": [
-          "Quy tắc 10.000 giờ, tác giả sẽ dẫn dắt chúng ta tìm hiểu về nguồn gốc làm nên tài năng xuất chúng của Bill Joy, Bill Gates, The Beatles, hay những nghệ sĩ violin, piano bậc thầy. Đó là những câu chuyện vô cùng hấp dẫn về khoảng thời gian biểu diễn triền miên 8 tiếng 1 ngày và 7 ngày 1 tuần ở Hamburg của The Beatles đã truôi rèn một ban nhạc \"chẳng có gì xuất sắc\" thành huyền thoại, hay những cơ duyên đã mang đến cho Bill Joy, Bill Gates khoảng thời gian \"nghịch\" máy tính mà ít người nào thời đó có được, để sẵn sàng cho cuộc cách mạng công nghệ sắp tới.",
+          "Quy tắc 10.000 giờ, tác giả sẽ dẫn dắt chúng ta tìm hiểu về nguồn gốc làm nên tài năng xuất chúng của Bill Joy, Bill Gates, The Beatles, hay những nghệ sĩ violin, piano bậc thầy. Đó là những câu chuyện vô cùng hấp dẫn về khoảng thời gian biểu diễn triền miên 8 tiếng 1 ngày và 7 ngày 1 tuần ở Hamburg của The Beatles đã trui rèn một ban nhạc \"chẳng có gì xuất sắc\" thành huyền thoại, hay những cơ duyên đã mang đến cho Bill Joy, Bill Gates khoảng thời gian \"nghịch\" máy tính mà ít người nào thời đó có được, để sẵn sàng cho cuộc cách mạng công nghệ sắp tới.",
           {
             "quote": "10.000 giờ luyện tập là đòi hỏi bắt buộc để đạt được cấp độ tinh thông và khả năng trở thành một chuyên gia đẳng cấp thế giới - trong bất cứ lĩnh vực nào."
           }
@@ -62,7 +63,7 @@ export default {
       {
         "h": "IQ 195",
         "body": [
-          "Ở chương 3, bạn sẽ được gặp Christopher Langhan, một người với IQ 195, cao hơn nhiều thiên tài mà chúng ta biết, và có cả những nghiên cứu vũ trụ của riêng mình, nhưng lại chẳng mấy thành công trong cuộc sống. Chuyện gì đang xảy ra đây? Điều được tác giả giải mã là \"Ở mức độ nào đó, IQ chính là thứ thước đo năng lực thiên phú. Nhưng thái độ khôn ngoan trong ứng xử với xã hội lại là một loại kiến thức. Đó là một bộ kỹ năng buộc người ta phải học\". Và hoàn cảnh gia đình Chris đã không cho ông điều kiện được học những điều đó.",
+          "Ở chương 3, bạn sẽ được gặp Christopher Langan, một người với IQ 195, cao hơn nhiều thiên tài mà chúng ta biết, và có cả những nghiên cứu vũ trụ của riêng mình, nhưng lại chẳng mấy thành công trong cuộc sống. Chuyện gì đang xảy ra đây? Điều được tác giả giải mã là \"Ở mức độ nào đó, IQ chính là thứ thước đo năng lực thiên phú. Nhưng thái độ khôn ngoan trong ứng xử với xã hội lại là một loại kiến thức. Đó là một bộ kỹ năng buộc người ta phải học\". Và hoàn cảnh gia đình Chris đã không cho ông điều kiện được học những điều đó.",
           {
             "quote": "Khi người nào đó đã đạt mức IQ vào khoảng 120 điểm, thì có thêm vài điểm IQ phụ trội nữa dường như cũng chẳng chuyển hóa thành bất cứ ưu thế nào đo đếm được trong cuộc sống thực tế."
           }
@@ -71,7 +72,7 @@ export default {
       {
         "h": "Người Do Thái",
         "body": [
-          "Joe Flom là một chương tìm hiểu về sự thành công của người Do Thái, thật tuyệt vời khi mình nghĩ đã bị lạc hậu về vấn đế này với quá nhiều sách về Do Thái được xuất bản gần đây thì lại đọc được một chương ẩn ngay trong cuốn sách này (\"ẩn\" vì nhìn tên chương chẳng biết đâu là lần). Giải thích của Malcolm Gladwell cho vấn đề này quan trọng nhất không phải là nền văn hóa tri thức của họ mà chính sự gian khổ, tha hương, phải làm đủ loại ngành nghề đã biến họ thành những người chuyên nghiệp."
+          "Joe Flom là một chương tìm hiểu về sự thành công của người Do Thái, thật tuyệt vời khi mình nghĩ đã bị lạc hậu về vấn đề này với quá nhiều sách về Do Thái được xuất bản gần đây thì lại đọc được một chương ẩn ngay trong cuốn sách này (\"ẩn\" vì nhìn tên chương chẳng biết đâu là lần). Giải thích của Malcolm Gladwell cho vấn đề này quan trọng nhất không phải là nền văn hóa tri thức của họ mà chính sự gian khổ, tha hương, phải làm đủ loại ngành nghề đã biến họ thành những người chuyên nghiệp."
         ]
       },
       {
@@ -89,16 +90,16 @@ export default {
       {
         "h": "Văn hóa danh dự",
         "body": [
-          "*Outliers* tập hợp khá nhiều câu chuyện thú vị (càng thú vị hơn khi được tìm hiểu những lý giải đằng sau chúng). Mở đầu phần hai sách bạn sẽ được tìm hiều về \"nền văn hóa danh dự\", những vụ bạo lực đầy chất viễn Tây, và tất nhiên, lý giải đằng sau nó:",
+          "*Outliers* tập hợp khá nhiều câu chuyện thú vị (càng thú vị hơn khi được tìm hiểu những lý giải đằng sau chúng). Mở đầu phần hai sách bạn sẽ được tìm hiểu về \"nền văn hóa danh dự\", những vụ bạo lực đầy chất viễn Tây, và tất nhiên, lý giải đằng sau nó:",
           {
-            "quote": "Nếu bạn sinh sống trên một khu đồi núi lổn nhổn đá sỏi nào đó, thì ắt hẳn, bạn không thể trồng trọt. Bạn chắc chắn phải nuôi dê hoặc cừu, và thứ văn hóa nảy nở khi bạn là một anh chăn cừu sẽ rất khác với thứ văn hóa nảy sinh xung quanh việc cày cấy trồng trọt. Sự sống còn của một người nông dân tùy thuộc vào sự cộng tác của những người khác nhau trong cùng một cộng đồng. Nhưng một người chăn gia súc thì tự mình xoay xỏa. Người nông dân cũng không phải lo lắng rằng sinh kế của mình sẽ bị ăn cắp vào buổi đêm, bởi vì cây trồng không thể dễ dàng bị cuỗm mất, trừ phi, đương nhiên - có chuyện một tên trộm muốn chuốc phiền phức vào thân bằng việc tự mình gặt sạch cả thửa ruộng. Nhưng một người chăn gia súc thì có nhiều điều phải lo lắng. Anh luôn bị đặt dưới mối đe dọa tán gia bại sản triền miên do mất mát gia súc. Vậy nên anh ta phải quyết liệt: anh ta phải tỏ ra rành mạch, thông qua lời nói và hành động - rằng anh ta không yếu ớt. Anh sẽ phải bằng lòng chiến đấu để đáp trả với thách thức dù là nhỏ nhất đối với thanh danh của mình."
+            "quote": "Nếu bạn sinh sống trên một khu đồi núi lổn nhổn đá sỏi nào đó, thì ắt hẳn, bạn không thể trồng trọt. Bạn chắc chắn phải nuôi dê hoặc cừu, và thứ văn hóa nảy nở khi bạn là một anh chăn cừu sẽ rất khác với thứ văn hóa nảy sinh xung quanh việc cày cấy trồng trọt. Sự sống còn của một người nông dân tùy thuộc vào sự cộng tác của những người khác nhau trong cùng một cộng đồng. Nhưng một người chăn gia súc thì tự mình xoay xở. Người nông dân cũng không phải lo lắng rằng sinh kế của mình sẽ bị ăn cắp vào buổi đêm, bởi vì cây trồng không thể dễ dàng bị cuỗm mất, trừ phi, đương nhiên - có chuyện một tên trộm muốn chuốc phiền phức vào thân bằng việc tự mình gặt sạch cả thửa ruộng. Nhưng một người chăn gia súc thì có nhiều điều phải lo lắng. Anh luôn bị đặt dưới mối đe dọa tán gia bại sản triền miên do mất mát gia súc. Vậy nên anh ta phải quyết liệt: anh ta phải tỏ ra rành mạch, thông qua lời nói và hành động - rằng anh ta không yếu ớt. Anh sẽ phải bằng lòng chiến đấu để đáp trả với thách thức dù là nhỏ nhất đối với thanh danh của mình."
           }
         ]
       },
       {
         "h": "Khi chúng ta né tránh hiện thực, thì máy bay rơi",
         "body": [
-          "Tiếp ngay sau đó bạn lại được đưa lên không để nghiên cứu về \"Lý thuyết chủng tộc của các vụ máy bay rơi\". Những tình tiết đầy gây cấn của các vụ tai nạn trong lịch sử. \"Phần lớn các vụ nổ máy bay xảy ra là kết quả của sự tích tụ những trở ngại nho nhỏ và những sự cố có vẻ lặt vặt\", và những sự cố này phần lớn lại phát sinh từ vướng mắt trong làm việc nhóm và đối thoại, mà cụ thể được tác giả chỉ ra ở đây là nền văn hóa riêng của mỗi quốc gia, **Power Distance Index** - chỉ số khoảng cách quyền lực - việc cấp trên có \"gần dân\" không và bạn có thể thẳng thắn lên tiếng với người \"bề trên\" không.",
+          "Tiếp ngay sau đó bạn lại được đưa lên không để nghiên cứu về \"Lý thuyết chủng tộc của các vụ máy bay rơi\". Những tình tiết đầy gây cấn của các vụ tai nạn trong lịch sử. \"Phần lớn các vụ nổ máy bay xảy ra là kết quả của sự tích tụ những trở ngại nho nhỏ và những sự cố có vẻ lặt vặt\", và những sự cố này phần lớn lại phát sinh từ vướng mắc trong làm việc nhóm và đối thoại, mà cụ thể được tác giả chỉ ra ở đây là nền văn hóa riêng của mỗi quốc gia, **Power Distance Index** - chỉ số khoảng cách quyền lực - việc cấp trên có \"gần dân\" không và bạn có thể thẳng thắn lên tiếng với người \"bề trên\" không.",
           {
             "quote": "Trong lịch sử, các vụ rơi máy bay có nhiều khả năng xảy ra hơn khi cơ trưởng đang ngồi ở ghế lái... Máy bay an toàn hơn khi phi công ít kinh nghiệm nhất cầm lái, bởi điều đó đồng nghĩa với việc phi công thứ hai sẽ không e ngại gì khi phải lên tiếng."
           },
@@ -106,7 +107,7 @@ export default {
         ]
       }
     ],
-    "conclusion": "Quá nhiều thứ hay ho được gói gọn trong một cuốn sách nhỏ. Bạn sẽ còn được tìm hiểu về sự cần cù của con người thuộc nền văn hóa lúa nước, cách giáo dục hiệu quả nhưng cũng đầy tranh cãi của KIPP, hệ quả của kỳ nghỉ hè dài cho học sinh, hay câu chuyện của chính tác giả về phân biệt chủng tộc, may mắn, và những chuỗi sự kiện... 99.000đ (sách mình mua lâu rồi chưa kịp cập nhật giá hiện tại) - có lẽ không rẻ cho \"một cuốn sách nhỏ\", nhưng nó vẫn quá hời cho một cuốn sách tuyệt vời như 'Những kẻ xuất chúng' :D",
+    "conclusion": "Quá nhiều thứ hay ho được gói gọn trong một cuốn sách nhỏ. Bạn sẽ còn được tìm hiểu về sự cần cù của con người thuộc nền văn hóa lúa nước, cách giáo dục hiệu quả nhưng cũng đầy tranh cãi của KIPP, hệ quả của kỳ nghỉ hè dài cho học sinh, hay câu chuyện của chính tác giả về phân biệt chủng tộc, may mắn, và những chuỗi sự kiện... 99.000đ (sách mình mua lâu rồi chưa kịp cập nhật giá hiện tại) - có lẽ không rẻ cho \"một cuốn sách nhỏ\", nhưng nó vẫn quá hời cho một cuốn sách tuyệt vời như 'Những kẻ xuất chúng'.",
     "labels": {
       "months": [
         "T1",
@@ -161,11 +162,14 @@ export default {
       "pdi": "chỉ số khoảng cách quyền lực"
     },
     "captions": {
-      "book.jpg": "Bản tiếng Việt, NXB Thế Giới",
+      "front-cover.jpg": "Bìa trước, bản tiếng Việt (NXB Thế Giới)",
+      "back-cover.jpg": "Bìa sau",
+      "inside-flap.jpg": "Tai sách và trang tên sách",
+      "author-flap.jpg": "Tai sách giới thiệu Malcolm Gladwell",
       "contents.jpg": "Trang mục lục",
-      "hours.jpg": "Chương “Quy tắc 10.000 giờ”, với ghi chú “The Beatles”",
+      "hours.jpg": "Chương “Quy tắc 10.000 giờ”",
       "iq.jpg": "Chương “Mối phiền phức với thiên tài, phần II”",
-      "era.jpg": "Những năm 1930, 1955 và 1835 được khoanh tròn",
+      "era.jpg": "1930, 1955, 1835",
       "planes.jpg": "Chương “Lý thuyết chủng tộc của các vụ máy bay rơi”"
     }
   },
@@ -246,7 +250,7 @@ export default {
         ]
       }
     ],
-    "conclusion": "So many good things packed into one small book. You’ll also learn about the diligence of people from rice-farming cultures, KIPP’s effective but controversial approach to schooling, what long summer holidays do to students, and the author’s own story of racism, luck and chains of events... 99,000 VND (I bought it a long time ago and haven’t updated the current price) may not be cheap for “a small book”, but it’s still a bargain for a book as wonderful as *Outliers* :D",
+    "conclusion": "So many good things packed into one small book. You’ll also learn about the diligence of people from rice-farming cultures, KIPP’s effective but controversial approach to schooling, what long summer holidays do to students, and the author’s own story of racism, luck and chains of events... 99,000 VND (I bought it a long time ago and haven’t updated the current price) may not be cheap for “a small book”, but it’s still a bargain for a book as wonderful as *Outliers*.",
     "labels": {
       "months": [
         "J",
@@ -301,7 +305,10 @@ export default {
       "pdi": "power distance index"
     },
     "captions": {
-      "book.jpg": "The Vietnamese edition (NXB Thế Giới)",
+      "front-cover.jpg": "The front cover, Vietnamese edition (NXB Thế Giới)",
+      "back-cover.jpg": "The back cover",
+      "inside-flap.jpg": "The inside flap and the title page",
+      "author-flap.jpg": "The flap about Malcolm Gladwell",
       "contents.jpg": "The table of contents, Vietnamese edition",
       "hours.jpg": "“The 10,000-Hour Rule”, with a note: “The Beatles”",
       "iq.jpg": "“The Trouble with Geniuses, Part 2”",
@@ -310,7 +317,11 @@ export default {
     }
   },
   "source": "Sâu Sách",
+  "date": "2014-11-30",
   "photos": [
+    "back-cover.jpg",
+    "inside-flap.jpg",
+    "author-flap.jpg",
     "contents.jpg",
     "hours.jpg",
     "iq.jpg",
