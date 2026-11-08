@@ -5,7 +5,7 @@ export default {
 
   ui: {
     site: "Minideas",
-    lede: "Hiểu nhanh những khái niệm lớn qua từng hình vẽ đơn giản. Chọn một bộ thẻ rồi vuốt để xem.",
+    lede: "Khái niệm lớn, hình vẽ nhỏ. Chọn một bộ thẻ rồi vuốt để xem.",
     language: "Ngôn ngữ",
     themeDark: "Chuyển sang nền tối",
     themeLight: "Chuyển sang nền sáng",

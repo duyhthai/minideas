@@ -5,7 +5,7 @@ export default {
 
   ui: {
     site: "Minideas",
-    lede: "Big ideas, one simple picture at a time. Pick a card stack and swipe through.",
+    lede: "Big ideas, small pictures. Pick a card stack and swipe through.",
     language: "Language",
     themeDark: "Switch to dark mode",
     themeLight: "Switch to light mode",
