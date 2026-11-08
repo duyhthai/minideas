@@ -49,7 +49,7 @@ export default {
   collections: {
     "ai-fundamentals": {
       title: "Nền tảng AI",
-      lede: "Máy tính học như thế nào, chatbot viết ra sao, và dùng AI thế nào cho đúng.",
+      lede: "Máy tính học như thế nào, chatbot tạo câu trả lời ra sao, và dùng AI thế nào cho đúng.",
       chapters: { big: "AI là gì", learn: "Máy tính học như thế nào", work: "Đưa vào thực tế", gen: "AI tạo sinh", use: "Dùng AI đúng cách" },
       links: {
         coursera: "Khóa Machine Learning Specialization của Andrew Ng",
@@ -111,7 +111,7 @@ export default {
       ["Không ai đặt tên cho các ý ở giữa", "Ta không hề bảo mạng phải nghĩ về giá cả. Trong lúc huấn luyện, nó tự tìm ra những ý trung gian giúp đoán đúng. Sức mạnh của nó nằm ở đó."],
       ["Cách nó học: đoán, kiểm tra, chỉnh", "Vẫn là cách làm với đường thẳng giá nhà: mạng đưa ra dự đoán, đo xem lệch bao nhiêu, rồi chỉnh nhẹ mọi trọng số để lần sau đoán tốt hơn. Mạng lớn có hàng tỷ trọng số, nên việc huấn luyện cần rất nhiều dữ liệu và sức mạnh tính toán."],
     ]},
-    "next-word": { title: "Chatbot viết như thế nào", gist: "Nó đoán từ tiếp theo, thêm vào, rồi lại đoán tiếp.", panels: [
+    "next-word": { title: "Chatbot tạo ra câu trả lời thế nào", gist: "Nó đoán từ tiếp theo, thêm vào, rồi lại đoán tiếp.", panels: [
       ["Nó đoán từ tiếp theo", "Đưa cho nó một đoạn văn, nó sẽ chấm điểm mọi từ có thể đứng tiếp theo. Sau “Con mèo nằm trên”, “ghế” được điểm cao còn “mặt trăng” thì rất thấp. Điểm số đó đến từ những quy luật trong mọi thứ nó từng đọc."],
       ["Rồi lặp lại", "Nó thêm từ vừa chọn vào, rồi đoán từ tiếp theo, rồi từ tiếp nữa. Mọi câu trả lời, từ một email đến một bài thơ, đều được ghép từng mảnh một như vậy. (Nói chính xác thì mỗi mảnh thường là một phần của từ, gọi là token.)"],
       ["Mỗi lần chọn có chút may rủi", "Nó không phải lúc nào cũng chọn từ có điểm cao nhất. Một chút ngẫu nhiên giúp câu văn tự nhiên hơn, và đó là lý do cùng một câu hỏi có thể nhận câu trả lời khác nhau mỗi lần."],
