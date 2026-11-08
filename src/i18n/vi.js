@@ -25,7 +25,6 @@ export default {
     conclusion: "Kết luận",
     photos: "Ảnh chụp từ cuốn sách",
     fullReview: "Bài review đầy đủ",
-    fullSlug: "day-du",
     fullReviewNext: "Bài đầy đủ →",
     quickLink: n => `← Bản đọc nhanh: ${n} hình`,
     date: iso => iso.split("-").reverse().map(Number).join("/"),

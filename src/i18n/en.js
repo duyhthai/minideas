@@ -25,7 +25,6 @@ export default {
     conclusion: "Verdict",
     photos: "Photos from the book",
     fullReview: "Full review",
-    fullSlug: "full",
     fullReviewNext: "Full review →",
     quickLink: n => `← Quick version: ${n} panels`,
     date: iso => new Date(iso + "T00:00:00Z").toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" }),

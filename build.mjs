@@ -3,7 +3,8 @@
 //   <lang>/index.html                home: tiles for collections and standalone ideas, then book reviews
 //   <lang>/<collection>/index.html   a collection: one tile per idea
 //   <lang>/<slug>/index.html         one idea or one book review, as a swipeable card stack
-//   <lang>/<slug>/<full>/index.html  a book's full review as an article ("full" / "day-du")
+//   <lang>/<slug>/full/index.html    a book's full review as an article
+//   Paths are the same in every language; only the /<lang>/ prefix changes.
 //   og/<lang>/<name>.png             one link preview per page (home, collection, idea, book)
 //   photos/<book>/<file>             a book reviewer's own photos, copied from src/books/photos/
 //
@@ -188,12 +189,12 @@ function bookTileArt(t, b, rel) {
 const linker = depth => (...seg) => "../".repeat(depth) + (seg.length ? seg.join("/") + "/" + INDEX : INDEX || "./");
 
 // langs: the languages this page exists in (the switcher sends the others to their home page)
-// segs: the page's path below /<lang>/, or a function lang → path when it differs by language
+// segs: the page's path below /<lang>/ (the same in every language)
 function shell({ t, depth, segs, title, desc, body, og, langs = LANGS }) {
-  const to = linker(depth), segsOf = o => (typeof segs === "function" ? segs(o) : segs);
-  const alternates = SITE_URL ? langs.map(o => `<link rel="alternate" hreflang="${o.lang}" href="${SITE_URL}/${[o.lang, ...segsOf(o)].join("/")}/">`).join("\n") +
-    `\n<link rel="alternate" hreflang="x-default" href="${SITE_URL}/">\n<link rel="canonical" href="${SITE_URL}/${[t.lang, ...segsOf(t)].join("/")}/">` : "";
-  const switcher = LANGS.map(o => `<a href="${langs.includes(o) ? to(o.lang, ...segsOf(o)) : to(o.lang)}" hreflang="${o.lang}" lang="${o.lang}" aria-current="${o === t}"><span class="lang-long">${o.name}</span><span class="lang-short" aria-hidden="true">${o.lang.toUpperCase()}</span></a>`).join("");
+  const to = linker(depth);
+  const alternates = SITE_URL ? langs.map(o => `<link rel="alternate" hreflang="${o.lang}" href="${SITE_URL}/${[o.lang, ...segs].join("/")}/">`).join("\n") +
+    `\n<link rel="alternate" hreflang="x-default" href="${SITE_URL}/">\n<link rel="canonical" href="${SITE_URL}/${[t.lang, ...segs].join("/")}/">` : "";
+  const switcher = LANGS.map(o => `<a href="${langs.includes(o) ? to(o.lang, ...segs) : to(o.lang)}" hreflang="${o.lang}" lang="${o.lang}" aria-current="${o === t}"><span class="lang-long">${o.name}</span><span class="lang-short" aria-hidden="true">${o.lang.toUpperCase()}</span></a>`).join("");
   return `<!doctype html>
 <html lang="${t.lang}">
 <head>
@@ -205,7 +206,7 @@ function shell({ t, depth, segs, title, desc, body, og, langs = LANGS }) {
 <meta property="og:title" content="${E(title)}">
 <meta property="og:description" content="${E(desc)}">
 <meta property="og:locale" content="${t.locale}">
-${SITE_URL ? `<meta property="og:url" content="${SITE_URL}/${[t.lang, ...segsOf(t)].join("/")}/">
+${SITE_URL ? `<meta property="og:url" content="${SITE_URL}/${[t.lang, ...segs].join("/")}/">
 <meta property="og:image" content="${SITE_URL}/${og}">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -361,7 +362,7 @@ ${slides.map(({ art, h, p }, j) => `<section class="slide" aria-roledescription=
 // A book review as a card stack: one panel per idea from the review, ending with a link to the full review.
 function bookStackPage(t, b) {
   const bl = b[t.lang], to = linker(2), where = `${t.lang}/${b.slug}`, full = b.full?.[t.lang];
-  const fullUrl = full ? to(t.lang, b.slug, t.ui.fullSlug) : to(t.lang);
+  const fullUrl = full ? to(t.lang, b.slug, "full") : to(t.lang);
   const slides = b.panels.map((spec, j) => {
     const [h, p] = bl.panels[j];
     const art = spec[0] === "photo"
@@ -462,7 +463,7 @@ function bookPage(t, b, parent = null) {
     </div>
   </article>
 </main>`;
-  return shell({ t, depth, segs: parent ? o => [parent.slug, o.ui.fullSlug] : [b.slug], title: `${bl.title} · ${parent ? `${t.ui.fullReview} · ` : ""}${t.ui.site}`,
+  return shell({ t, depth, segs: parent ? [parent.slug, "full"] : [b.slug], title: `${bl.title} · ${parent ? `${t.ui.fullReview} · ` : ""}${t.ui.site}`,
     desc: bl.abstract.replace(/\*/g, ""), body, og: bookImage(t, b, parent ? `${parent.slug}-full` : b.slug), langs: LANGS.filter(o => b[o.lang]) });
 }
 
@@ -513,7 +514,7 @@ for (const t of LANGS) {
   }
   for (const b of booksIn(t)) {
     files[`${t.lang}/${b.slug}/index.html`] = b.panels ? bookStackPage(t, b) : bookPage(t, b);
-    if (b.panels && b.full?.[t.lang]) files[`${t.lang}/${b.slug}/${t.ui.fullSlug}/index.html`] = bookPage(t, b.full, b);
+    if (b.panels && b.full?.[t.lang]) files[`${t.lang}/${b.slug}/full/index.html`] = bookPage(t, b.full, b);
   }
 }
 if (problems.length) fail();
