@@ -128,9 +128,14 @@ figure.book-photo img { display: block; width: 100%; height: auto; border-radius
 .chapter-label + .tile-grid { margin-top: 0; }
 .tile { display: block; height: 100%; border-radius: 14px; overflow: hidden; background: var(--card); border: 1px solid var(--line); color: var(--ink); text-decoration: none; transition: border-color .15s, transform .15s; }
 .tile:hover { border-color: var(--ink); transform: translateY(-2px); }
-.tile img { display: block; width: 100%; height: auto; aspect-ratio: 1200 / 630; background: #edf0f6; }
-.tile-caption { display: block; padding: 12px 14px 14px; font-size: 14.5px; line-height: 1.45; color: var(--ink-2); }
-.tile-caption .count { display: block; margin: 0; font-family: var(--hand); font-size: 17px; color: var(--ink); }
+/* the picture sits in a fixed 2:1 band (drawings are 320×220, covers are portrait), centered on the drawing tint */
+.tile-art { display: flex; justify-content: center; align-items: center; aspect-ratio: 2 / 1; padding: 14px; background: var(--art); border-bottom: 1px solid var(--line); }
+.tile-art svg { display: block; height: 100%; width: auto; max-width: 100%; }
+.tile-art img { display: block; height: 100%; width: auto; max-width: 100%; object-fit: contain; border-radius: 4px; box-shadow: 0 1px 4px rgb(0 0 0 / .18); }
+.tile-body { display: block; padding: 12px 14px 14px; }
+.tile-title { margin: 0; font: 700 19px/1.2 var(--display); color: var(--ink); text-wrap: balance; }
+.tile-caption { display: block; margin-top: 6px; font-size: 14.5px; line-height: 1.45; color: var(--ink-2); }
+.tile-caption .count { display: block; margin: 0 0 2px; font-family: var(--hand); font-size: 17px; color: var(--ink); }
 
 /* idea page */
 .layout { display: grid; gap: 32px; margin-top: 12px; }

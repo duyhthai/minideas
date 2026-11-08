@@ -4,7 +4,7 @@
 //   <lang>/<collection>/index.html   a collection: one tile per idea
 //   <lang>/<slug>/index.html         one idea or one book review, as a swipeable card stack
 //   <lang>/<slug>/<full>/index.html  a book's full review as an article ("full" / "day-du")
-//   og/<lang>/<name>.png             one image per collection and per idea: its tile and its link preview
+//   og/<lang>/<name>.png             one link preview per page (home, collection, idea, book)
 //   photos/<book>/<file>             a book reviewer's own photos, copied from src/books/photos/
 //
 //   node build.mjs                    normal build (directory-style links)
@@ -166,8 +166,16 @@ function collectionImage(t, c) {
   images[path] ??= { title: t.collections[c.id].title, footer: `${t.ui.ideaCount(c.ideas.length)} · ${t.ui.site}`, drawing: art(t, c.ideas[0].panels[0], path) };
   return path;
 }
-const tile = (href, img, alt, hint, caption = "") =>
-  `<li><a class="tile" href="${href}" title="${E(hint)}"><img src="${img}" alt="${E(alt)}" width="1200" height="630" loading="lazy" decoding="async">${caption}</a></li>`;
+// A tile: a picture, the title as text, then a caption. The picture is a drawing inline (theme colors, so it suits
+// light and dark) or a book's cover photo; the title says what it is, so the picture is decorative.
+const tile = (href, pic, title, caption = "") =>
+  `<li><a class="tile" href="${href}"><span class="tile-art dw">${pic}</span><span class="tile-body"><h3 class="tile-title">${E(title)}</h3>${caption}</span></a></li>`;
+const tileDrawing = svg => `<svg viewBox="0 0 320 220" aria-hidden="true">${svg}</svg>`;
+function bookTileArt(t, b, rel) {
+  if (b.cover) { const { width, height } = sizeOf(photoSource(b, b.cover)); return `<img src="${rel}photos/${photoDir(b)}/${b.cover}" alt="" width="${width}" height="${height}" loading="lazy" decoding="async">`; }
+  const first = Object.keys(b.art?.sections || {}).sort((x, y) => x - y)[0];
+  return first ? tileDrawing(bookArt(t, b, b.art.sections[first], `${t.lang}/${b.slug} tile`)) : "";
+}
 
 /* ---------- links ---------- */
 // path segments ("en", "ai-family") → a link relative to the current page's depth
@@ -250,18 +258,20 @@ function readMinutes(t, bl) {
 function homePage(t) {
   // Ideas: one tile per shelf item (a collection's ideas are on its own page). Books: reviews in this language.
   const to = linker(1);
-  const caption = (count, text) => `<span class="tile-caption"><span class="count">${E(count)}</span>${E(text)}</span>`;
+  const caption = (count, html) => `<span class="tile-caption"><span class="count">${E(count)}</span>${html}</span>`;
   const ideaTiles = SHELF.map(item => {
+    const first = (item.ideas ? item.ideas[0] : item).panels[0];
+    const pic = tileDrawing(art(t, first, `${t.lang}/${item.id || item.slug} tile`));
     if (!item.ideas) {
       const it = t.ideas[item.slug];
-      return tile(to(t.lang, item.slug), `../${ideaImage(t, item)}`, it.title, it.gist, caption(t.ui.panelCount(item.panels.length), it.gist));
+      return tile(to(t.lang, item.slug), pic, it.title, caption(t.ui.panelCount(item.panels.length), E(it.gist)));
     }
     const ct = t.collections[item.id];
-    return tile(to(t.lang, item.id), `../${collectionImage(t, item)}`, ct.title, ct.lede, caption(t.ui.ideaCount(item.ideas.length), ct.lede));
+    return tile(to(t.lang, item.id), pic, ct.title, caption(t.ui.ideaCount(item.ideas.length), E(ct.lede)));
   }).join("");
   const books = booksIn(t);
-  const bookTiles = books.map(b => tile(to(t.lang, b.slug), `../${bookImage(t, b)}`, b[t.lang].title, b[t.lang].abstract,
-    caption(b.panels ? `${b.author} · ${t.ui.panelCount(b.panels.length)}` : b.author, b[t.lang].abstract))).join("");
+  const bookTiles = books.map(b => tile(to(t.lang, b.slug), bookTileArt(t, b, "../"), b[t.lang].title,
+    caption(b.panels ? `${b.author} · ${t.ui.panelCount(b.panels.length)}` : b.author, rich(b[t.lang].abstract)))).join("");
   const tiles = !books.length ? `<ul class="tile-grid shelf">${ideaTiles}</ul>` :
     `<h2 class="shelf-label">${SHELF_ICONS.tech}<span>${E(t.ui.shelfTech)}</span></h2><ul class="tile-grid">${ideaTiles}</ul>
 <h2 class="shelf-label">${SHELF_ICONS.books}<span>${E(t.ui.shelfBooks)}</span></h2><ul class="tile-grid">${bookTiles}</ul>`;
@@ -281,7 +291,8 @@ ${tiles}
 function collectionPage(t, c) {
   const ct = t.collections[c.id], to = linker(2);
   const grid = ideas => `<ol class="tile-grid">${ideas.map(idea =>
-    tile(to(t.lang, idea.slug), `../../${ideaImage(t, idea)}`, t.ideas[idea.slug].title, t.ideas[idea.slug].gist)).join("")}</ol>`;
+    tile(to(t.lang, idea.slug), tileDrawing(art(t, idea.panels[0], `${t.lang}/${idea.slug} tile`)), t.ideas[idea.slug].title,
+      `<span class="tile-caption">${E(t.ideas[idea.slug].gist)}</span>`)).join("")}</ol>`;
   const groups = c.chapters
     ? c.chapters.map(ch => `<h2 class="chapter-label">${E(ct.chapters[ch])}</h2>${grid(c.ideas.filter(idea => idea.chapter === ch))}`).join("\n")
     : grid(c.ideas);
