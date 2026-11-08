@@ -34,6 +34,7 @@ export default {
     readTime: n => `${n} min read`,
     wordsPerMinute: 230,
     share: "Share",
+    copyLink: "Copy link",
     copied: "Link copied",
     copyPrompt: "Copy this link:",
     allTopics: "All topics",

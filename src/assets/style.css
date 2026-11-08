@@ -172,6 +172,12 @@ figure.book-photo img { display: block; width: 100%; height: auto; border-radius
 .share-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; max-width: 540px; margin-top: 12px; }
 .share-row .hint { margin: 0; }
 .btn.share { min-height: 40px; padding: 0 14px; }
+.share-wrap { position: relative; }
+.share-menu { position: absolute; right: 0; top: calc(100% + 6px); z-index: 5; min-width: 190px; padding: 6px; background: var(--card); border: 1.5px solid var(--ink); border-radius: 14px; box-shadow: 0 8px 24px rgb(0 0 0 / .18); }
+.share-menu.from-left { right: auto; left: 0; }
+.share-menu.up { top: auto; bottom: calc(100% + 6px); }
+.share-menu a, .share-menu button { display: block; width: 100%; padding: 10px 12px; border: 0; border-radius: 8px; background: none; font: 600 14.5px/1.2 var(--body); color: var(--ink); text-align: left; text-decoration: none; cursor: pointer; }
+.share-menu a:hover, .share-menu button:hover { background: var(--f-tint); }
 .btn:disabled { opacity: .35; cursor: default; }
 .dots { display: flex; flex-wrap: wrap; justify-content: center; min-width: 0; }
 .dot { width: 16px; height: 28px; padding: 0; border: 0; background: none; display: grid; place-items: center; cursor: pointer; border-radius: 6px; }

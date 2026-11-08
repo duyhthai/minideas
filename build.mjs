@@ -228,6 +228,17 @@ ${body}
 `;
 }
 
+// Share: the share sheet on phones and tablets; on computers (whose share sheets only offer system apps) a menu
+// of Facebook, LinkedIn and copy link. Plain share links, no scripts from either site; site.js fills in the address.
+const shareButton = (t, text) => `<div class="share-wrap">
+      <button class="btn share" id="share" type="button" hidden aria-expanded="false" aria-controls="share-menu" data-text="${E(text)}" data-copied="${E(t.ui.copied)}" data-copy-prompt="${E(t.ui.copyPrompt)}">${SHARE_ICON}<span>${E(t.ui.share)}</span></button>
+      <div class="share-menu" id="share-menu" hidden>
+        <a data-to="https://www.facebook.com/sharer/sharer.php?u=" target="_blank" rel="noopener">Facebook</a>
+        <a data-to="https://www.linkedin.com/sharing/share-offsite/?url=" target="_blank" rel="noopener">LinkedIn</a>
+        <button type="button" data-copy>${E(t.ui.copyLink)}</button>
+      </div>
+    </div>`;
+
 // "Go deeper": resources come from stacks.js, their descriptions (and an optional source note) from i18n
 function deeper(t, resources, text) {
   return `<section class="deeper">
@@ -335,7 +346,7 @@ ${slides.map(({ art, h, p }, j) => `<section class="slide" aria-roledescription=
   </div>
   <div class="share-row">
     <p class="hint">${E(t.ui.hint)}</p>
-    <button class="btn share" id="share" type="button" hidden data-text="${E(gist)}" data-copied="${E(t.ui.copied)}" data-copy-prompt="${E(t.ui.copyPrompt)}">${SHARE_ICON}<span>${E(t.ui.share)}</span></button>
+    ${shareButton(t, gist)}
   </div>
   ${after}
 </main>`;
@@ -441,7 +452,7 @@ function bookPage(t, b, parent = null) {
     ${bl.note ? `<p class="note">${E(bl.note)}</p>` : ""}
     <div class="share-row">
       <span></span>
-      <button class="btn share" id="share" type="button" hidden data-text="${E(bl.abstract.replace(/\*/g, ""))}" data-copied="${E(t.ui.copied)}" data-copy-prompt="${E(t.ui.copyPrompt)}">${SHARE_ICON}<span>${E(t.ui.share)}</span></button>
+      ${shareButton(t, bl.abstract.replace(/\*/g, ""))}
     </div>
   </article>
 </main>`;

@@ -34,6 +34,7 @@ export default {
     readTime: n => `${n} phút đọc`,
     wordsPerMinute: 330, // a Vietnamese word is one syllable, so the same text has about 1.4× as many
     share: "Chia sẻ",
+    copyLink: "Sao chép liên kết",
     copied: "Đã sao chép liên kết",
     copyPrompt: "Sao chép liên kết này:",
     allTopics: "Tất cả chủ đề",
