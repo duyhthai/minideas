@@ -34,6 +34,15 @@ export const SHELF = [
     ],
   },
   {
+    slug: "clean-code",
+    panels: [["readMore"], ["goodNames"], ["oneJob"], ["sayOnce"], ["onlyNeed"], ["littleCleaner"]],
+    resources: [
+      { key: "guru", name: "Refactoring.Guru", url: "https://refactoring.guru/refactoring/what-is-refactoring" },
+      { key: "beck", name: "Martin Fowler", url: "https://martinfowler.com/bliki/BeckDesignRules.html" },
+      { key: "yagni", name: "Martin Fowler", url: "https://martinfowler.com/bliki/Yagni.html" },
+    ],
+  },
+  {
     slug: "refactoring",
     panels: [["sameResult"], ["stamina"], ["smells"], ["refSteps"], ["safetyNet"], ["renovate"]],
     resources: [

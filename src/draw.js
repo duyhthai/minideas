@@ -623,6 +623,76 @@ export const ART = {
     return s + T(60, 192, t.pdiLow, { a: "start", c: "sm", max: 110 }) + T(260, 192, t.pdiHigh, { a: "end", c: "sm", max: 110 }) + T(160, 212, t.pdi, { c: "sm mut", max: 300 });
   },
 
+  /* clean code */
+  readMore(lb) {
+    const t = lb.clean;
+    const card = (x, y) => R(x, y, 76, 92, "fk", "", 8) + [0, 1, 2, 3, 4, 5].map(i => L(x + 12, y + 16 + i * 12, x + 64 - (i % 3) * 12, y + 16 + i * 12, "thin")).join("");
+    const eye = (x, y) => EL(x, y, 12, 7, "fk", "thin") + C(x, y, 3.5, "fi");
+    let s = L(160, 16, 160, 206, "dash thin faint") + card(42, 40);
+    s += P("M112,40 L128,24 L136,32 L120,48 Z", "fy", "thin") + P("M112,40 L108,52 L120,48", "fk", "thin");
+    s += card(202, 64) + [[188, 44], [240, 34], [292, 44], [184, 92], [296, 92], [192, 168], [290, 168]].map(([x, y]) => eye(x, y)).join("");
+    return s + T(80, 162, t.once, { c: "b", max: 140 }) + T(80, 182, "×1", { c: "sm mut" }) +
+      T(240, 190, t.many, { c: "b blu", max: 150 }) + T(240, 208, t.later, { c: "sm mut", max: 150 });
+  },
+  goodNames(lb) {
+    const t = lb.clean;
+    const chip = (y, text, fill) => R(24, y - 18, 150, 36, fill, "thin", 6) + T(36, y + 5, text, { a: "start", max: 128 });
+    const tick = (x, y) => P(`M${x - 8},${y} L${x - 2},${y + 7} L${x + 9},${y - 8}`, "", "blue-s w3");
+    return chip(44, t.bad, "ft") + T(194, 51, "?", { c: "cor b", size: 24 }) + T(212, 49, t.guess, { a: "start", c: "b cor", max: 96 }) +
+      chip(108, t.good, "ft") + tick(194, 108) + T(212, 113, t.clear, { a: "start", c: "b blu", max: 96 }) +
+      R(24, 154, 276, 32, "", "dash thin", 6) + T(36, 175, t.comment, { a: "start", c: "mut", max: 252 }) + T(160, 208, t.why, { c: "sm b" });
+  },
+  oneJob(lb) {
+    const t = lb.clean;
+    let s = L(160, 12, 160, 208, "dash thin faint") + R(30, 18, 100, 150, "fk", "", 8);
+    for (let i = 0; i < 15; i++) s += L(42 + (i % 4) * 4, 30 + i * 9, 116 - (i * 7 % 30), 30 + i * 9, "thin");
+    s += T(80, 190, t.giant, { c: "b cor", max: 140 });
+    t.steps.forEach((step, i) => {
+      const y = 22 + i * 54;
+      s += R(176, y, 128, 36, ["fb", "fm", "fy"][i], "thin", 6) + T(240, y + 23, step, { c: "on b", size: 14, max: 116 });
+      if (i < 2) s += A(240, y + 38, 240, y + 52);
+    });
+    return s + T(240, 190, t.small, { c: "b blu", max: 150 });
+  },
+  sayOnce(lb) {
+    const t = lb.clean;
+    const block = (x, y, fill) => R(x, y, 40, 30, fill, "thin", 4) + L(x + 7, y + 10, x + 33, y + 10, "thin") + L(x + 7, y + 20, x + 26, y + 20, "thin");
+    const bug = (x, y) => EL(x, y, 6, 8, "fi") + L(x - 10, y - 4, x + 10, y - 4, "thin") + L(x - 10, y + 3, x + 10, y + 3, "thin") + L(x - 4, y - 8, x - 7, y - 13, "thin") + L(x + 4, y - 8, x + 7, y - 13, "thin");
+    const tick = (x, y) => P(`M${x - 7},${y} L${x - 2},${y + 6} L${x + 8},${y - 7}`, "", "blue-s w3");
+    let s = L(160, 12, 160, 208, "dash thin faint");
+    [["fm", tick], ["fc", bug], ["fc", bug]].forEach(([fill, mark], i) => s += block(50, 26 + i * 50, fill) + mark(112, 41 + i * 50));
+    s += block(220, 30, "fm") + tick(278, 45);
+    [190, 240, 290].forEach((x, i) => s += A(240, 64, x, 112, "thin") + R(x - 20, 116, 40, 26, "ft", "thin", 4) + T(x, 134, String.fromCharCode(65 + i), { c: "sm mut" }));
+    return s + T(80, 196, t.copied, { c: "b cor", max: 140 }) + T(80, 213, t.missed, { c: "sm mut", max: 150 }) +
+      T(240, 174, t.oneHome, { c: "b blu", max: 150 }) + T(240, 192, t.fixedAll, { c: "sm mut", max: 150 });
+  },
+  onlyNeed(lb) {
+    const t = lb.clean;
+    let s = L(160, 12, 160, 208, "dash thin faint") + R(26, 24, 108, 120, "fk", "", 10);
+    for (let r = 0; r < 4; r++) for (let c = 0; c < 4; c++) {
+      const x = 44 + c * 24, y = 44 + r * 26;
+      s += (r + c) % 2 ? C(x, y, 7, ["fb", "fy", "fc", "fm"][(r + c * 3) % 4], "thin") : R(x - 8, y - 5, 16, 10, ["fy", "fm", "fb", "fc"][(r * 3 + c) % 4], "thin", 5);
+    }
+    s += R(196, 54, 88, 70, "fk", "", 10) + C(240, 89, 16, "fm");
+    return s + T(80, 168, t.justInCase, { c: "b cor", max: 140 }) + T(80, 188, t.carry, { c: "sm mut", max: 150 }) +
+      T(240, 168, t.now, { c: "b blu", max: 150 }) + T(240, 188, t.later2, { c: "sm mut", max: 150 });
+  },
+  littleCleaner(lb) {
+    const t = lb.clean;
+    let s = "";
+    for (let i = 0; i < 4; i++) {
+      const x = 22 + i * 74;
+      s += R(x, 40, 60, 80, "fk", "", 6);
+      for (let j = 0; j < 5; j++) s += j < 4 - i
+        ? P(`M${x + 8},${52 + j * 14} q8,-8 14,0 t14,0 t14,0`, "", "thin coral-s")
+        : L(x + 10, 52 + j * 14, x + 50, 52 + j * 14, "thin blue-s");
+      s += T(x + 30, 140, t.visits[i], { c: "sm mut", max: 64 });
+      if (i < 3) s += A(x + 62, 80, x + 72, 80, "thin", 7);
+    }
+    return s + T(160, 26, t.habit, { c: "sm b", max: 290 }) + A(170, 176, 250, 176, "dash") + T(160, 182, t.stillMessy, { a: "end", c: "sm mut", max: 150 }) +
+      pill(270, 176, t.refactor, "fy", { on: true, size: 13 });
+  },
+
   /* refactoring */
   sameResult(lb) {
     const t = lb.refactor;
