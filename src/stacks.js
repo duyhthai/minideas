@@ -34,21 +34,13 @@ export const SHELF = [
     ],
   },
   {
-    slug: "clean-code",
-    panels: [["readMore"], ["goodNames"], ["oneJob"], ["sayOnce"], ["onlyNeed"], ["littleCleaner"]],
+    slug: "clean-code-refactoring",
+    panels: [["readMore"], ["stamina"], ["sameResult"], ["goodNames"], ["oneJob"], ["sayOnce"], ["onlyNeed"], ["safetyNet"], ["aiWrites"], ["littleCleaner"]],
     resources: [
       { key: "guru", name: "Refactoring.Guru", url: "https://refactoring.guru/refactoring/what-is-refactoring" },
-      { key: "beck", name: "Martin Fowler", url: "https://martinfowler.com/bliki/BeckDesignRules.html" },
-      { key: "yagni", name: "Martin Fowler", url: "https://martinfowler.com/bliki/Yagni.html" },
-    ],
-  },
-  {
-    slug: "refactoring",
-    panels: [["sameResult"], ["stamina"], ["smells"], ["refSteps"], ["safetyNet"], ["renovate"]],
-    resources: [
-      { key: "guru", name: "Refactoring.Guru", url: "https://refactoring.guru/refactoring" },
       { key: "catalog", name: "Refactoring catalog", url: "https://refactoring.com/catalog/" },
       { key: "stamina", name: "Martin Fowler", url: "https://martinfowler.com/bliki/DesignStaminaHypothesis.html" },
+      { key: "yagni", name: "Martin Fowler", url: "https://martinfowler.com/bliki/Yagni.html" },
     ],
   },
 ];

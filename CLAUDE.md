@@ -57,6 +57,8 @@ Write Vietnamese the way a Vietnamese tech writer would, not as a word-for-word 
   - học máy, học sâu, AI tạo sinh, mô hình nền tảng
   - huấn luyện, huấn luyện thêm (fine-tuning), trọng số, embedding (vector nhúng), token
   - định kiến (bias against people), độ chệch / phương sai (model bias / variance)
+  - code, not "mã" (which readers take as mã giảm giá, mã OTP): "code sạch", "viết code", "review code"; tái cấu trúc (refactoring)
+- **Introduce a term plainly**, without crediting a group: "Đó chính là tái cấu trúc (refactoring)", "theo nguyên tắc DRY (…)", "Nguyên tắc này có tên là YAGNI (…)". "Giới lập trình gọi đây là…", "Dân lập trình…" and "Lập trình viên hay nhắc nhau…" sound stiff or forced, especially when repeated within one idea.
 - **Check that short labels can't be misread.** "không có lý do để kiểm tra" was meant as "no reason anyone can check" but reads as "there's no reason to check". "Máy học như thế nào" collides with "máy học", a common name for machine learning, so use "Máy tính học…".
 - **Keep cross-references in step.** When an idea's title changes, search both i18n files for other text that quotes it.
 

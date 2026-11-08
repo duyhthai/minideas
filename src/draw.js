@@ -677,6 +677,15 @@ export const ART = {
     return s + T(80, 168, t.justInCase, { c: "b cor", max: 140 }) + T(80, 188, t.carry, { c: "sm mut", max: 150 }) +
       T(240, 168, t.now, { c: "b blu", max: 150 }) + T(240, 188, t.later2, { c: "sm mut", max: 150 });
   },
+  aiWrites(lb) {
+    const t = lb.clean;
+    const card = (x, y) => R(x, y, 64, 84, "fk", "", 6) + [0, 1, 2, 3, 4].map(i => L(x + 10, y + 14 + i * 13, x + 54 - (i % 3) * 10, y + 14 + i * 13, "thin")).join("");
+    let s = R(14, 20, 64, 40, "fb", "", 12) + P("M60,60 l14,14 l-2,-14", "fb") + T(46, 46, "AI", { c: "on b", size: 17 });
+    s += [100, 114, 128].map((y, i) => L(36 + i * 12, y, 100, y, "thin blue-s")).join("");
+    s += card(128, 60) + card(120, 52) + card(112, 44);
+    s += C(232, 104, 15, "ft") + L(243, 115, 267, 138, "w3") + fig(276, 170, "walk");
+    return s + T(110, 192, t.fast, { c: "b", max: 190 }) + T(252, 194, t.you, { c: "b blu", max: 136 });
+  },
   littleCleaner(lb) {
     const t = lb.clean;
     let s = "";
@@ -689,13 +698,11 @@ export const ART = {
       s += T(x + 30, 140, t.visits[i], { c: "sm mut", max: 64 });
       if (i < 3) s += A(x + 62, 80, x + 72, 80, "thin", 7);
     }
-    return s + T(160, 26, t.habit, { c: "sm b", max: 290 }) + A(170, 176, 250, 176, "dash") + T(160, 182, t.stillMessy, { a: "end", c: "sm mut", max: 150 }) +
-      pill(270, 176, t.refactor, "fy", { on: true, size: 13 });
+    return s + T(160, 26, t.habit, { c: "sm b", max: 290 }) + T(160, 180, t.noRewrite, { c: "b blu", max: 280 });
   },
 
-  /* refactoring */
   sameResult(lb) {
-    const t = lb.refactor;
+    const t = lb.clean;
     const tangle = P(crPath([[94, 40], [190, 52], [102, 72], [186, 88], [118, 36], [172, 78], [98, 90], [190, 38], [140, 60]]), "", "thin coral-s");
     const tidy = R(96, 138, 92, 14, "fb", "thin", 4) + R(96, 157, 92, 14, "fm", "thin", 4) + R(96, 176, 92, 14, "fy", "thin", 4);
     const row = (y, label, inner) => T(20, y - 8, t.input, { a: "start", c: "sm mut", max: 60 }) + A(20, y, 80, y) +
@@ -703,7 +710,7 @@ export const ART = {
     return row(66, t.before, tangle) + row(162, t.after, tidy) + T(276, 116, t.same, { c: "sm b blu" });
   },
   stamina(lb) {
-    const t = lb.refactor, x0 = 44, x1 = 296;
+    const t = lb.clean, x0 = 44, x1 = 296;
     const messy = u => 172 - 140 * Math.pow(u, 2.2), tidy = u => 152 - 30 * u;
     const path = fn => Array.from({ length: 41 }, (_, i) => `${i ? "L" : "M"}${f1(x0 + i / 40 * (x1 - x0))},${f1(fn(i / 40))}`).join(" ");
     let u = 0;
@@ -713,45 +720,12 @@ export const ART = {
       L(cx, cy, cx, 196, "dash thin") + P(path(messy), "", "coral-s w3") + P(path(tidy), "", "blue-s w3") + C(cx, cy, 5, "fy") +
       T(cx + 10, cy + 24, t.payoff, { a: "start", c: "sm b" }) + T(284, 30, t.messy, { a: "end", c: "sm b cor" }) + T(296, 112, t.tidy, { a: "end", c: "sm b blu" });
   },
-  smells(lb) {
-    const t = lb.refactor;
-    let s = L(160, 12, 160, 208, "dash thin faint") + L(12, 110, 308, 110, "dash thin faint");
-    s += R(62, 12, 36, 78, "fk", "", 4);
-    for (let i = 0; i < 9; i++) s += L(68, 20 + i * 7.5, 92 - (i % 3) * 6, 20 + i * 7.5, "thin");
-    const block = x => R(x, 24, 34, 50, "fk", "", 4) + L(x + 6, 36, x + 28, 36, "thin") + L(x + 6, 46, x + 22, 46, "thin") + L(x + 6, 56, x + 28, 56, "thin") + L(x + 6, 66, x + 18, 66, "thin");
-    s += block(198) + block(248) + T(240, 54, "=", { c: "cor b", size: 22 });
-    s += pill(56, 138, "x2", "ft", { size: 13 }) + pill(102, 134, "tmp", "ft", { size: 13 }) + pill(78, 170, "doStuff()", "ft", { size: 13 }) + T(130, 168, "?", { c: "cor b", size: 24 });
-    const boxes = [[214, 130], [266, 130], [214, 176], [266, 176], [240, 153]];
-    boxes.forEach((a, i) => boxes.slice(i + 1).forEach(b => s += L(a[0], a[1], b[0], b[1], "thin coral-s")));
-    boxes.forEach(([x, y]) => s += R(x - 10, y - 8, 20, 16, "fb", "thin", 3));
-    [[80, 102], [240, 102], [80, 204], [240, 204]].forEach(([x, y], i) => s += T(x, y, t.smells[i], { c: "sm", max: 144 }));
-    return s;
-  },
-  refSteps(lb) {
-    const t = lb.refactor;
-    let s = P("M30,200 L30,170 L96,170 L96,134 L162,134 L162,98 L228,98 L228,62 L294,62 L294,200 Z", "ft");
-    s += L(96, 170, 96, 200, "thin") + L(162, 134, 162, 200, "thin") + L(228, 98, 228, 200, "thin");
-    t.moves.forEach((m, i) => s += T(63 + i * 66, 170 - i * 36 + (m.includes("\n") ? 24 : 20), m, { c: "b", size: 13, max: 60 }));
-    s += P("M40,162 Q110,-6 276,46", "", "coral-s dash") + head(276, 46, Math.atan2(52, 166), "coral-s", 10);
-    return s + T(16, 40, t.leap, { a: "start", c: "sm cor b", max: 96 }) + T(160, 214, t.stepsCaption, { c: "sm mut" });
-  },
   safetyNet(lb) {
-    const t = lb.refactor;
+    const t = lb.clean;
     let s = pill(80, 40, t.change, "fb", { on: true, size: 14 }) + A(134, 40, 184, 40) + pill(244, 40, t.run, "fy", { on: true, size: 14 });
     for (let i = 0; i < 5; i++) s += C(212 + i * 16, 80, 6, "fm");
     s += A(262, 92, 262, 140, "blue-s") + T(270, 120, t.pass, { a: "start", c: "sm b blu" }) + pill(250, 162, t.save, "fm", { on: true, size: 14 });
     s += A(222, 92, 124, 146, "coral-s dash") + T(170, 108, t.fail, { c: "sm b cor" }) + pill(100, 162, t.undo, "fc", { on: true, size: 14 }) + A(84, 146, 84, 58, "coral-s dash");
     return s + T(160, 210, t.caption, { c: "sm mut" });
-  },
-  renovate(lb) {
-    const t = lb.refactor;
-    const house = (cx, base, cls, roof, win) =>
-      R(cx - 50, base - 70, 100, 70, cls ? "" : "fk", cls, 2) + P(`M${cx - 60},${base - 70} L${cx},${base - 112} L${cx + 60},${base - 70} Z`, cls ? "" : roof, cls) +
-      R(cx - 10, base - 30, 20, 30, cls ? "" : "ft", cls, 3) + R(cx - 38, base - 58, 22, 18, cls ? "" : win[0], cls, 3) + R(cx + 16, base - 58, 22, 18, cls ? "" : win[1], cls, 3);
-    return L(160, 20, 160, 206, "dash thin faint") + L(16, 170, 150, 170, "thin") + L(170, 170, 312, 170, "thin") +
-      house(80, 170, "dash faint") + L(40, 74, 120, 164, "coral-s w3") + L(120, 74, 40, 164, "coral-s w3") +
-      house(234, 170, "", "fc", ["ft", "fy"]) + fig(304, 170, "walk") +
-      T(80, 192, t.rewrite, { c: "b cor" }) + T(80, 210, t.rewriteSub, { c: "sm mut", max: 150 }) +
-      T(240, 192, t.refactor, { c: "b blu" }) + T(240, 210, t.refactorSub, { c: "sm mut", max: 150 });
   },
 };

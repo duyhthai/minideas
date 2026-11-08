@@ -24,11 +24,11 @@ const DRAWING_CSS = `
 .lbl.on{fill:${C.ink}}.lbl.mut{fill:${C.ink2}}.lbl.cor{fill:${C.coral}}.lbl.blu{fill:${C.blue}}
 .lbl.halo{paint-order:stroke;stroke:${C.art};stroke-width:5px;stroke-linejoin:round}`;
 
-// Greedy word wrap by estimated character width; the last line gets "…" if the text runs over.
+// Greedy word wrap by estimated character width; the last line gets "…" if the text runs over. Non-breaking spaces hold words together.
 function wrap(text, perLine, maxLines) {
   const lines = [];
   let line = "";
-  for (const word of String(text).split(/\s+/)) {
+  for (const word of String(text).split(/[ \t\n]+/)) {
     if (line && (line + " " + word).length > perLine) { lines.push(line); line = word; }
     else line = line ? line + " " + word : word;
   }
