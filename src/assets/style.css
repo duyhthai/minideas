@@ -124,13 +124,13 @@ figure.book-photo img { display: block; width: 100%; height: auto; border-radius
 .back { display: inline-block; margin: 4px 0 0; padding: 6px 0; font-weight: 700; font-size: 14.5px; color: var(--ink); text-decoration: none; }
 .back:hover { text-decoration: underline; }
 .chapter-label { font: 700 12.5px/1 var(--body); letter-spacing: .12em; text-transform: uppercase; color: var(--ink-2); margin: 36px 0 14px; }
-.tile-grid { list-style: none; padding: 0; margin: 24px 0 0; display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr)); }
+.tile-grid { list-style: none; padding: 0; margin: 24px 0 0; display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); }
 .chapter-label + .tile-grid { margin-top: 0; }
 .tile { display: block; height: 100%; border-radius: 14px; overflow: hidden; background: var(--card); border: 1px solid var(--line); color: var(--ink); text-decoration: none; transition: border-color .15s, transform .15s; }
 .tile:hover { border-color: var(--ink); transform: translateY(-2px); }
 .tile img { display: block; width: 100%; height: auto; aspect-ratio: 1200 / 630; background: #edf0f6; }
 .tile-caption { display: block; padding: 12px 14px 14px; font-size: 14.5px; line-height: 1.45; color: var(--ink-2); }
-.tile-caption .count { display: block; font-family: var(--hand); font-size: 17px; color: var(--ink); }
+.tile-caption .count { display: block; margin: 0; font-family: var(--hand); font-size: 17px; color: var(--ink); }
 
 /* idea page */
 .layout { display: grid; gap: 32px; margin-top: 12px; }

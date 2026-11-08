@@ -49,7 +49,7 @@ export default {
   collections: {
     "ai-fundamentals": {
       title: "AI Fundamentals",
-      lede: "How machines learn, how chatbots write, and how to use AI well, in fifteen short card stacks.",
+      lede: "How machines learn, how chatbots write, and how to use AI well.",
       chapters: { big: "What AI is", learn: "How machines learn", work: "Making it work", gen: "Generative AI", use: "Using AI well" },
       links: {
         coursera: "Machine Learning Specialization by Andrew Ng",

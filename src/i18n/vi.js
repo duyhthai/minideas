@@ -49,7 +49,7 @@ export default {
   collections: {
     "ai-fundamentals": {
       title: "Nền tảng AI",
-      lede: "Máy tính học như thế nào, chatbot viết ra sao, và dùng AI thế nào cho đúng, qua mười lăm bộ thẻ ngắn.",
+      lede: "Máy tính học như thế nào, chatbot viết ra sao, và dùng AI thế nào cho đúng.",
       chapters: { big: "AI là gì", learn: "Máy tính học như thế nào", work: "Đưa vào thực tế", gen: "AI tạo sinh", use: "Dùng AI đúng cách" },
       links: {
         coursera: "Khóa Machine Learning Specialization của Andrew Ng",
