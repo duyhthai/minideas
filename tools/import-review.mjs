@@ -59,7 +59,7 @@ for (const m of (r.content || "").matchAll(/<blockquote[^>]*>([\s\S]*?)<\/blockq
     continue;
   }
   const raw = m[2] ?? m[3], text = inline(raw);
-  if (!text) continue;
+  if (!text || /^\**$/.test(text)) continue; // e.g. an image wrapped in <strong>
   const size = +(raw.match(/font-size:\s*(\d+)px/i) || [])[1] || 0;
   const allBold = /^\*\*[^*]+\*\*$/.test(text);
   if (allBold && size >= 18) { current = { h: text.replace(/\*\*/g, ""), body: [] }; sections.push(current); }

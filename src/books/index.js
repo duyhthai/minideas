@@ -2,6 +2,7 @@
 // that may link to a full review (<slug>-full.js). A full review can also be listed here on its own.
 import outliers from "./outliers.js";
 import theHobbit from "./the-hobbit.js";
+import stealLikeAnArtist from "./steal-like-an-artist.js";
 
-export const BOOKS = [outliers, theHobbit];
+export const BOOKS = [outliers, theHobbit, stealLikeAnArtist];
 // Ready but not shown yet: the-second-world-war.js (add it to BOOKS to publish)
