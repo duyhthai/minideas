@@ -51,13 +51,14 @@ const inline = html => decode(html
 const intro = [], sections = [];
 let current = null;
 const add = block => (current ? current.body : intro).push(block);
-for (const m of (r.content || "").matchAll(/<blockquote[^>]*>([\s\S]*?)<\/blockquote>|<p[^>]*>([\s\S]*?)<\/p>/gi)) {
+// paragraphs are <p>, or sometimes a <div> with no blocks inside (review #6)
+for (const m of (r.content || "").matchAll(/<blockquote[^>]*>([\s\S]*?)<\/blockquote>|<p[^>]*>([\s\S]*?)<\/p>|<div[^>]*>((?:(?!<\/?(?:div|p|blockquote)\b)[\s\S])*?)<\/div>/gi)) {
   if (m[1] !== undefined) {
     const parts = [...m[1].matchAll(/<p[^>]*>([\s\S]*?)<\/p>/gi)].map(p => inline(p[1])).filter(Boolean);
     for (const q of parts.length ? parts : [inline(m[1])].filter(Boolean)) add({ quote: q });
     continue;
   }
-  const raw = m[2], text = inline(raw);
+  const raw = m[2] ?? m[3], text = inline(raw);
   if (!text) continue;
   const size = +(raw.match(/font-size:\s*(\d+)px/i) || [])[1] || 0;
   const allBold = /^\*\*[^*]+\*\*$/.test(text);

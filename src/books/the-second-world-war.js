@@ -1,0 +1,70 @@
+// The Second World War: the review as a swipeable card stack, one panel per idea, each condensed from the reviewer's
+// own text in the-second-world-war-full.js (no new opinions). The last panel leads to the full review.
+// panels: [drawing, ...args] from draw.js, or ["photo", file] for one of the reviewer's photos.
+import full from "./the-second-world-war-full.js";
+
+export default {
+  slug: "the-second-world-war",
+  author: full.author,
+  source: full.source,
+  date: full.date,
+  full,
+  cover: full.cover,
+  panels: [["wwMachines"], ["wwHuman"], ["photo", "moscow-counter-offensive.jpg"], ["wwPoland"], ["wwBombs"], ["wwStalin"], ["wwCellar"], ["wwQuestions"], ["wwNames"]],
+  vi: {
+    title: "Chiến tranh thế giới II",
+    abstract: "Bi kịch khủng khiếp nhất trong lịch sử loài người, nơi Đồng minh, phát xít hay cộng sản đều đã vấy máu.",
+    panels: [
+      ["Cuộc chiến xấu xí hơn bạn nghĩ", "Sách có rất nhiều thông tin thú vị, nhưng liệu “thú vị” có là từ thích hợp khi câu chuyện nó kể là bi kịch khủng khiếp nhất trong lịch sử loài người? Đồng minh, phát xít hay cộng sản đều đã vấy máu; đau khổ nhiều nhất có lẽ thuộc về những số phận mắc kẹt giữa các cỗ máy chuyên chế hùng mạnh."],
+      ["Bi kịch của từng người", "Không có giai đoạn nào khác trong lịch sử cho ta thấy nhiều hơn bi kịch của từng cá nhân lẫn của cộng đồng: suy đồi chính trị, đạo đức giả, sự tự cao của những kẻ chỉ huy, phản bội, ngoan cố, hy sinh, tàn ác lẫn trắc ẩn."],
+      ["Không, thủy, bộ", "Sách dẫn bạn qua cuộc chiến với những trận đánh lớn nhỏ, những quyết định chiến lược, những mặt trận khốc liệt trên không, trên biển, trên bộ: xe tăng khởi động, pháo binh khai hỏa, 40 chiếc Stuka dội bom, doanh trại bốc cháy… “a magnificent sight at daybreak”."],
+      ["Chia nhau Ba Lan", "Ngoài những điều ta đã biết như thương vong khủng khiếp, tội ác phát xít, thảm sát người Do Thái, thảm sát Nam Kinh, có lẽ bạn sẽ bất ngờ với khá nhiều điều chưa hề biết. Stalin thanh trừng nội bộ Hồng Quân; Đức và Xô Viết ngầm chia nhau Ba Lan như một chiếc bánh béo bở, trong khi lời hứa can thiệp của Pháp và Anh không hề được thực hiện."],
+      ["Bom đạn của chính đồng minh", "Biết bao thường dân Pháp chết vì chính bom đạn đồng minh trong trận Normandy. Anh ném bom “hỏa ngục” lên các khu dân cư của Đức để đáp trả, chứ không phải vào “vị trí chiến lược” nào đó, và có thể đến 2 triệu phụ nữ Đức đã bị Hồng Quân cưỡng hiếp."],
+      ["Stalin chưa muốn dừng", "Không mấy ai biết rằng sau khi đánh bại Hitler, Stalin đã có ý định tiếp tục đánh chiếm các nước châu Âu khác. Ý định ấy chỉ thay đổi khi Mỹ thử thành công bom nguyên tử."],
+      ["Co rúm dưới hầm", "Antony Beevor còn tả lại cảm xúc khủng khiếp mà từng người ở mọi chiến tuyến phải trải qua, từ người lính đến thường dân: những phút chờ đợi căng thẳng trước lúc lâm trận, những lá thư chiến trường, phi công lái máy bay qua làn đạn phòng không. Và cảm giác co rúm dưới hầm khi mọi thứ rung chuyển, màng nhĩ vỡ tung vì tiếng nổ, mất điện, oxy cạn dần."],
+      ["Còn nhiều câu trả lời khác", "Điều gì dẫn đến cuộc chiến? Hitler, Stalin là người như thế nào? Tại sao Mỹ quyết định dùng bom nguyên tử với Nhật? Tại sao phát xít Đức có thể dẫn dắt đất nước theo ý họ? Tiếc là bản đồ trong bản Kindle rất nhỏ nên khó xem."],
+      ["Không chỉ là những con số", "Nhà báo Vasily Grossman đã chỉ ra, và tác giả trích lại trong sách: trách nhiệm của những người được sống là nhìn nhận hàng triệu người đã ngã xuống như từng con người độc lập, chứ không chỉ là một số người vô danh. Vì sự tàn bạo đó chính là điều những kẻ gây ra cuộc chiến mong muốn đạt được."],
+    ],
+    labels: {
+      sides: ["Đồng minh", "phát xít", "cộng sản"], caught: "những số phận mắc kẹt giữa các cỗ máy chuyên chế",
+      traits: [[["suy đồi chính trị"], ["đạo đức giả"]], [["tự cao"], ["phản bội"], ["ngoan cố"]], [["hy sinh", true], ["tàn ác"], ["trắc ẩn", true]]],
+      tragedy: "bi kịch của từng cá nhân lẫn cộng đồng",
+      germany: "Đức", soviets: "Liên Xô", poland: "Ba Lan", promise: "lời hứa can thiệp\ncủa Pháp và Anh", unkept: "không hề được\nthực hiện",
+      cake: "chia nhau như một chiếc bánh béo bở",
+      alliedBombs: "bom đồng minh", french: "thường dân Pháp\n(Normandy)", german: "khu dân cư Đức", target: "“vị trí chiến lược”",
+      beatHitler: "đánh bại Hitler", redArmy: "Hồng Quân", goOn: "đánh tiếp\nchâu Âu?", bombTest: "Mỹ thử thành công\nbom nguyên tử",
+      powerOut: "mất điện", shaking: "rung\nchuyển", oxygen: "oxy\ncạn dần", cellar: "co rúm dưới hầm, bụi vữa rơi từ trần",
+      questions: ["Điều gì dẫn đến cuộc chiến", "Hitler, Stalin là người ra sao", "Sao Mỹ dùng bom nguyên tử", "Sao phát xít dẫn dắt được Đức"], tinyMaps: "bản đồ Kindle\nquá nhỏ",
+      numbers: "một số người\nvô danh", people: "từng con người", duty: "trách nhiệm của những người được sống",
+    },
+    captions: full.vi.captions,
+  },
+  en: {
+    title: "The Second World War",
+    abstract: "The most terrible tragedy in human history, in which Allies, fascists and communists all had blood on their hands.",
+    panels: [
+      ["A war uglier than you think", "The book is full of interesting information, but is “interesting” the right word when the story it tells is the most terrible tragedy in human history? Allies, fascists and communists all had blood on their hands; perhaps the greatest suffering belonged to the people caught between powerful totalitarian machines."],
+      ["Every person’s tragedy", "No other period in history shows us more of the tragedy of individuals and of whole communities: political decay, hypocrisy, the arrogance of commanders, betrayal, stubbornness, sacrifice, cruelty and compassion."],
+      ["Air, sea and land", "The book leads you through the war, its battles large and small, its strategic decisions, its ferocious fronts in the air, at sea and on land: the panzers start up, the artillery opens fire, 40 Stukas bomb the positions, the barracks catch fire… “a magnificent sight at daybreak”."],
+      ["Carving up Poland", "Beyond what we already know, the horrifying casualties, the fascists’ crimes, the massacres of the Jews, the Nanjing Massacre, you may be surprised by quite a few things you never knew. Stalin purged his own Red Army; Germany and the Soviets secretly split Poland like a juicy cake, while France and Britain’s promise to intervene was never kept."],
+      ["The Allies’ own bombs", "So many French civilians died under the Allies’ own bombs in the Battle of Normandy. Britain dropped “inferno” raids on German residential areas as retaliation, not on some “strategic target”, and perhaps as many as 2 million German women were raped by the Red Army."],
+      ["Stalin wasn’t done", "Few of us know that after defeating Hitler, Stalin meant to go on and conquer other European countries. That intention changed only when America successfully tested the atomic bomb."],
+      ["Cowering in the cellar", "Antony Beevor also describes the terrible feelings people on every side went through, from soldiers to civilians: the tense wait before battle, letters from the front, pilots flying through anti-aircraft fire. And what it is like to cower in a cellar while everything shakes, your eardrums burst, the power goes out and the oxygen runs low."],
+      ["Many more answers", "What led to the war? What were Hitler and Stalin like? Why did America decide to use the atomic bomb on Japan? How could the Nazis lead Germany wherever they wanted? Sadly, the maps in the Kindle edition are very small and hard to read."],
+      ["More than numbers", "As the journalist Vasily Grossman pointed out, quoted by the author: the duty of those who live is to see the millions who fell as individual human beings, not just as a number of nameless people. Because that brutality is exactly what those who started the war wanted to achieve."],
+    ],
+    labels: {
+      sides: ["Allies", "fascists", "communists"], caught: "people caught between totalitarian machines",
+      traits: [[["political decay"], ["hypocrisy"]], [["arrogance"], ["betrayal"], ["stubbornness"]], [["sacrifice", true], ["cruelty"], ["compassion", true]]],
+      tragedy: "the tragedy of individuals and communities",
+      germany: "Germany", soviets: "USSR", poland: "Poland", promise: "France and Britain’s\npromise to intervene", unkept: "never\nkept",
+      cake: "split between them like a juicy cake",
+      alliedBombs: "Allied bombs", french: "French civilians\n(Normandy)", german: "German homes", target: "“strategic target”",
+      beatHitler: "Hitler defeated", redArmy: "the Red Army", goOn: "on into\nEurope?", bombTest: "America’s successful\natomic bomb test",
+      powerOut: "power out", shaking: "shaking", oxygen: "oxygen\nrunning low", cellar: "cowering in a cellar, plaster falling from the ceiling",
+      questions: ["What led to the war", "What were Hitler, Stalin like", "Why the atomic bomb", "How the Nazis led Germany"], tinyMaps: "tiny Kindle\nmaps",
+      numbers: "nameless\nnumbers", people: "individual people", duty: "the duty of those who live",
+    },
+    captions: full.en.captions,
+  },
+};

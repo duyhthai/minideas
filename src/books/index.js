@@ -4,3 +4,4 @@ import outliers from "./outliers.js";
 import theHobbit from "./the-hobbit.js";
 
 export const BOOKS = [outliers, theHobbit];
+// Ready but not shown yet: the-second-world-war.js (add it to BOOKS to publish)
