@@ -115,8 +115,13 @@ for (const b of BOOK_PARTS) {
     for (const t of LANGS) if (b[t.lang] && !b[t.lang].captions?.[file]) problems.push(`book "${b.slug}" (${t.lang}): no caption for ${file}`);
   }
 }
-// every photo a book uses: cover, gallery and photo panels, all in src/books/photos/<slug>/ (photosFrom overrides)
-function bookPhotos(b) { return [b.cover, ...(b.photos || []), ...(b.panels || []).filter(p => p[0] === "photo").map(p => p[1])].filter(Boolean); }
+// every photo a book uses: cover, gallery, photo panels and section photos, all in src/books/photos/<slug>/ (photosFrom overrides)
+function bookPhotos(b) {
+  const photo = specs => specs.filter(p => p[0] === "photo").map(p => p[1]);
+  return [b.cover, ...(b.photos || []), ...photo(b.panels || []), ...photo(Object.values(b.art?.sections || {}))].filter(Boolean);
+}
+// the first section with a drawing (not a photo), for a book without a cover photo
+const firstDrawing = b => Object.keys(b.art?.sections || {}).filter(n => b.art.sections[n][0] !== "photo").sort((x, y) => x - y)[0];
 function photoDir(b) { return b.photosFrom || b.slug; }
 function photoSource(b, file) { return join(ROOT, "src/books/photos", photoDir(b), file); }
 // width × height from a JPEG's frame header, so the page reserves the right space before the photo loads
@@ -161,7 +166,7 @@ function bookArt(t, b, spec, where) {
 }
 // tile and share image: the title with the reviewer's photo of the book, else the first section drawing
 function bookImage(t, b, name = b.slug) {
-  const path = `og/${t.lang}/${name}.png`, first = Object.keys(b.art?.sections || {}).sort((x, y) => x - y)[0];
+  const path = `og/${t.lang}/${name}.png`, first = firstDrawing(b);
   images[path] ??= { title: b[t.lang].title, footer: `${b.author} · ${t.ui.site}`,
     ...(b.cover ? { photo: { file: photoSource(b, b.cover), ...sizeOf(photoSource(b, b.cover)) } }
       : { drawing: first ? bookArt(t, b, b.art.sections[first], path) : "" }) };
@@ -180,7 +185,7 @@ const tile = (href, pic, title, caption = "") =>
 const tileDrawing = svg => `<svg viewBox="0 0 320 220" aria-hidden="true">${svg}</svg>`;
 function bookTileArt(t, b, rel) {
   if (b.cover) { const { width, height } = sizeOf(photoSource(b, b.cover)); return `<img src="${rel}photos/${photoDir(b)}/${b.cover}" alt="" width="${width}" height="${height}" loading="lazy" decoding="async">`; }
-  const first = Object.keys(b.art?.sections || {}).sort((x, y) => x - y)[0];
+  const first = firstDrawing(b);
   return first ? tileDrawing(bookArt(t, b, b.art.sections[first], `${t.lang}/${b.slug} tile`)) : "";
 }
 
@@ -419,7 +424,7 @@ function bookPage(t, b, parent = null) {
   const block = x => typeof x === "string" ? `<p>${rich(x)}</p>`
     : x.link ? `<p class="watch"><a href="${E(x.link)}" target="_blank" rel="noopener">${rich(x.text)} ↗</a></p>`
     : `<blockquote><p>${rich(x.quote)}</p></blockquote>`;
-  // the reviewer's own photos, together in one gallery before the conclusion; each opens full size
+  // the reviewer's other photos, together in one gallery before the conclusion; each opens full size
   const gallery = !b.photos?.length ? "" : `<section class="gallery">
     <h2>${E(t.ui.photos)}</h2>
     <ul>${b.photos.map(file => {
@@ -427,7 +432,16 @@ function bookPage(t, b, parent = null) {
       return `<li><a href="${src}" target="_blank" rel="noopener"><img src="${src}" alt="${E(caption.replace(/\*/g, ""))}" width="${w}" height="${h}" loading="lazy" decoding="async"></a><span>${rich(caption)}</span></li>`;
     }).join("")}</ul>
   </section>`;
-  const figure = n => b.art.sections?.[n] ? `<figure><div class="art dw">${`<svg viewBox="0 0 320 220" role="img" aria-label="${E(bl.sections[n - 1].h)}">${bookArt(t, b, b.art.sections[n], `${where} §${n}`)}</svg>`}</div></figure>` : "";
+  // a section opens with a drawing, or with one of the reviewer's photos (["photo", file]) where the review had one
+  const figure = n => {
+    const spec = b.art.sections?.[n];
+    if (!spec) return "";
+    if (spec[0] === "photo") {
+      const [w, h] = jpegSize(photoSource(b, spec[1])), src = `${rel}photos/${photoDir(b)}/${spec[1]}`, caption = bl.captions[spec[1]];
+      return `<figure class="photo"><a href="${src}" target="_blank" rel="noopener"><img src="${src}" alt="${E(caption.replace(/\*/g, ""))}" width="${w}" height="${h}" loading="lazy" decoding="async"></a><figcaption>${rich(caption)}</figcaption></figure>`;
+    }
+    return `<figure><div class="art dw">${`<svg viewBox="0 0 320 220" role="img" aria-label="${E(bl.sections[n - 1].h)}">${bookArt(t, b, spec, `${where} §${n}`)}</svg>`}</div></figure>`;
+  };
   const sections = bl.sections.map((s, i) => `<section>
     <h2>${rich(s.h)}</h2>
     ${figure(i + 1)}

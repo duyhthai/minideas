@@ -1,8 +1,8 @@
 // The full Steal Like an Artist review, imported from Sâu Sách review #43 by tools/import-review.mjs. The Vietnamese
 // text is the original review. Published at /<lang>/steal-like-an-artist/full/ and linked from the quick version in
 // steal-like-an-artist.js.
-// cover: the front cover; art.sections: drawings for sections by number; photos: the gallery, every photo from the
-// review's folder plus the two the review showed inline (good-vs-bad-theft.jpg, digital-analog-desk.jpg).
+// cover: the front cover; art.sections: the two pictures the review showed inline, in their sections; photos: the
+// gallery, every other photo from the review's folder.
 export default {
   "slug": "steal-like-an-artist",
   "author": "Austin Kleon",
@@ -12,31 +12,13 @@ export default {
   "cover": "cover.jpg",
   "art": {
     "sections": {
-      "1": [
-        "slaMashup"
-      ],
-      "2": [
-        "slaDesks"
-      ],
-      "3": [
-        "slaHobbies"
-      ],
-      "4": [
-        "slaRoom"
-      ],
-      "5": [
-        "slaBoring"
-      ],
-      "6": [
-        "slaSubtract"
-      ]
+      "1": ["photo", "good-vs-bad-theft.jpg"],
+      "2": ["photo", "digital-analog-desk.jpg"]
     }
   },
   "photos": [
     "contents.jpg",
-    "good-vs-bad-theft.jpg",
     "school-yourself.jpg",
-    "digital-analog-desk.jpg",
     "dont-throw-yourself-away.jpg",
     "share-your-dots.jpg",
     "quit-picking-fights.jpg",
