@@ -115,10 +115,12 @@ for (const b of BOOK_PARTS) {
     for (const t of LANGS) if (b[t.lang] && !b[t.lang].captions?.[file]) problems.push(`book "${b.slug}" (${t.lang}): no caption for ${file}`);
   }
 }
-// every photo a book uses: cover, gallery, photo panels and section photos, all in src/books/photos/<slug>/ (photosFrom overrides)
+// every photo a book uses: cover, gallery, photo panels, section photos and photos in the text ({ photo: file } blocks),
+// all in src/books/photos/<slug>/ (photosFrom overrides)
 function bookPhotos(b) {
   const photo = specs => specs.filter(p => p[0] === "photo").map(p => p[1]);
-  return [b.cover, ...(b.photos || []), ...photo(b.panels || []), ...photo(Object.values(b.art?.sections || {}))].filter(Boolean);
+  const inText = [...(b.vi.intro || []), ...(b.vi.sections || []).flatMap(s => s.body)].map(x => x?.photo);
+  return [b.cover, ...(b.photos || []), ...photo(b.panels || []), ...photo(Object.values(b.art?.sections || {})), ...inText].filter(Boolean);
 }
 // the first section with a drawing (not a photo), for a book without a cover photo
 const firstDrawing = b => Object.keys(b.art?.sections || {}).filter(n => b.art.sections[n][0] !== "photo").sort((x, y) => x - y)[0];
@@ -273,7 +275,7 @@ function dateline(t, date, source, ...extra) {
 }
 // minutes to read an article, at the language's reading speed in words per minute
 function readMinutes(t, bl) {
-  const text = [...bl.intro, ...bl.sections.flatMap(s => [s.h, ...s.body]), bl.conclusion || ""].map(x => typeof x === "string" ? x : x.quote || x.text).join(" ");
+  const text = [...bl.intro, ...bl.sections.flatMap(s => [s.h, ...s.body]), bl.conclusion || ""].map(x => typeof x === "string" ? x : x.quote || x.text || "").join(" ");
   return Math.max(1, Math.round(text.split(/\s+/).filter(Boolean).length / t.ui.wordsPerMinute));
 }
 
@@ -421,7 +423,13 @@ ${c ? deeper(t, c.resources, ct) : idea.resources?.length ? deeper(t, idea.resou
 // quotes, and the conclusion. With parent, it is that card stack's full review, one level below it.
 function bookPage(t, b, parent = null) {
   const bl = b[t.lang], depth = parent ? 3 : 2, to = linker(depth), rel = "../".repeat(depth), where = `${t.lang}/${b.slug}${parent ? "/full" : ""}`;
+  // one of the reviewer's photos where the review put it in the text, with its caption; it opens full size
+  const photoFigure = file => {
+    const [w, h] = jpegSize(photoSource(b, file)), src = `${rel}photos/${photoDir(b)}/${file}`, caption = bl.captions[file];
+    return `<figure class="photo"><a href="${src}" target="_blank" rel="noopener"><img src="${src}" alt="${E(caption.replace(/\*/g, ""))}" width="${w}" height="${h}" loading="lazy" decoding="async"></a><figcaption>${rich(caption)}</figcaption></figure>`;
+  };
   const block = x => typeof x === "string" ? `<p>${rich(x)}</p>`
+    : x.photo ? photoFigure(x.photo)
     : x.link ? `<p class="watch"><a href="${E(x.link)}" target="_blank" rel="noopener">${rich(x.text)} ↗</a></p>`
     : `<blockquote><p>${rich(x.quote)}</p></blockquote>`;
   // the reviewer's other photos, together in one gallery before the conclusion; each opens full size
@@ -436,10 +444,7 @@ function bookPage(t, b, parent = null) {
   const figure = n => {
     const spec = b.art.sections?.[n];
     if (!spec) return "";
-    if (spec[0] === "photo") {
-      const [w, h] = jpegSize(photoSource(b, spec[1])), src = `${rel}photos/${photoDir(b)}/${spec[1]}`, caption = bl.captions[spec[1]];
-      return `<figure class="photo"><a href="${src}" target="_blank" rel="noopener"><img src="${src}" alt="${E(caption.replace(/\*/g, ""))}" width="${w}" height="${h}" loading="lazy" decoding="async"></a><figcaption>${rich(caption)}</figcaption></figure>`;
-    }
+    if (spec[0] === "photo") return photoFigure(spec[1]);
     return `<figure><div class="art dw">${`<svg viewBox="0 0 320 220" role="img" aria-label="${E(bl.sections[n - 1].h)}">${bookArt(t, b, spec, `${where} §${n}`)}</svg>`}</div></figure>`;
   };
   const sections = bl.sections.map((s, i) => `<section>

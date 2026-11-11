@@ -1,8 +1,8 @@
 // The full Hobbit review, imported from Sâu Sách review #29 by tools/import-review.mjs. The Vietnamese text is
 // the original review, with typos fixed with the reviewer's approval (2026-11-08), its two captions of the cover
-// painting moved to that photo (jacket-art.jpg), and the YouTube video it embedded as a link. Published at
-// /<lang>/the-hobbit/<full>/ and linked from the quick version in the-hobbit.js.
-// cover: the Enhanced Edition cover, from the review's folder; photos: the gallery, every photo from the review's folder.
+// painting moved to that photo (jacket-art.jpg, shown in the text where the review had it), and the YouTube video it
+// embedded as a link. Published at /<lang>/the-hobbit/<full>/ and linked from the quick version in the-hobbit.js.
+// cover: the Enhanced Edition cover, from the review's folder; photos: the gallery, every other photo from the review's folder.
 export default {
   "slug": "the-hobbit",
   "author": "J.R.R. Tolkien",
@@ -12,7 +12,6 @@ export default {
   "cover": "enhanced-cover.jpg",
   "art": {},
   "photos": [
-    "jacket-art.jpg",
     "manuscript-map.jpg",
     "elvenking-halls.jpg",
     "ink-landscape.jpg",
@@ -66,6 +65,9 @@ export default {
     "intro": [
       "*The Hobbit* và *The Lord of the Rings* đã được chuyển thể thành những bộ phim rất thành công, nhưng sẽ là khập khiễng nếu bạn đánh giá các tác phẩm này hay so sánh chúng với tác phẩm khác chỉ qua những điều được thể hiện lại qua màn ảnh, đặc biệt là với ngòi bút lão luyện của nhà văn, giáo sư, nhà ngôn ngữ học J.R.R Tolkien. Ông đã xây dựng và kết nối các tác phẩm để hình thành một thế giới *Middle Earth* vĩ đại với những câu văn, các đoạn hội thoại, cách dùng từ, cách đặt tên nhân vật... rất hay và \"đẹp\".",
       "Và nhìn những hình ảnh được vẽ rất ấn tượng và có phong cách riêng cho *The Hobbit* có thể bạn sẽ tự hỏi tại sao người ta không liệt kê luôn chức danh họa sĩ cho Tolkien trong phần tiểu sử...",
+      {
+        "photo": "jacket-art.jpg"
+      },
       "Với *Chúa tể những chiếc nhẫn* là một thiên anh hùng ca vĩ đại, hơi khó đọc, \"tăm tối\", và nghiêm túc hơn. *The Hobbit* có một khởi đầu phần nào khá \"nhí nhảnh\" (có thể vì ban đầu là sách cho trẻ em), và hài hước hơn (mặc dù sự dí dỏm của Tolkien cũng được thể hiện trong *Chúa nhẫn*).",
       {
         "quote": "He charged the ranks of the goblins of Mount Gram in the Battle of the Green Fields, and knocked their king Golfimbul's head clean off with a wooden club. It sailed a hundred yards through the air and went down a rabbit-hole, and in this way the battle was won and the game of Golf invented at the same moment."
@@ -142,6 +144,9 @@ export default {
     "intro": [
       "*The Hobbit* and *The Lord of the Rings* have been made into very successful films, but it would be unfair to judge these books, or compare them with others, only by what made it onto the screen, especially given the masterful pen of the writer, professor and linguist J.R.R Tolkien. He built his works and linked them into the vast world of *Middle Earth*, with sentences, dialogue, word choices and character names that are wonderful and \"beautiful\".",
       "And looking at the striking, distinctive pictures drawn for *The Hobbit*, you may wonder why his biography doesn't also list him as an artist...",
+      {
+        "photo": "jacket-art.jpg"
+      },
       "Where *The Lord of the Rings* is a grand epic, a little hard to read, \"darker\" and more serious, *The Hobbit* has a rather \"playful\" start (perhaps because it began as a children's book) and is funnier (though Tolkien's wit shows in *The Lord of the Rings* too).",
       {
         "quote": "He charged the ranks of the goblins of Mount Gram in the Battle of the Green Fields, and knocked their king Golfimbul's head clean off with a wooden club. It sailed a hundred yards through the air and went down a rabbit-hole, and in this way the battle was won and the game of Golf invented at the same moment."
