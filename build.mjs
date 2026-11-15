@@ -490,27 +490,30 @@ function bookPage(t, b, parent = null) {
     desc: bl.abstract.replace(/\*/g, ""), body, og: bookImage(t, b, parent ? `${parent.slug}-full` : b.slug), langs: LANGS.filter(o => b[o.lang]) });
 }
 
+// Vietnamese readers come first. A saved choice wins; then Vietnamese if it is anywhere in the browser's languages
+// or the clock is on Vietnam time (many Vietnamese phones are set to English); everyone else gets English.
 function rootPage() {
   const langs = LANGS.map(o => o.lang);
   return `<!doctype html>
-<html lang="en">
+<html lang="vi">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>${E(en.ui.site)}</title>
 <script>
 (function () {
-  var langs = ${JSON.stringify(langs)}, pick = null;
+  var langs = ${JSON.stringify(langs)}, pick = null, zone = "";
   try { pick = localStorage.getItem("lang"); } catch (e) {}
   if (langs.indexOf(pick) < 0) {
     var prefs = navigator.languages || [navigator.language || ""];
-    pick = "en";
-    for (var i = 0; i < prefs.length; i++) { var p = String(prefs[i]).slice(0, 2).toLowerCase(); if (langs.indexOf(p) >= 0) { pick = p; break; } }
+    try { zone = Intl.DateTimeFormat().resolvedOptions().timeZone || ""; } catch (e) {}
+    pick = /^Asia\\/(Ho_Chi_Minh|Saigon)$/.test(zone) ? "vi" : "en";
+    for (var i = 0; i < prefs.length; i++) if (String(prefs[i]).slice(0, 2).toLowerCase() === "vi") pick = "vi";
   }
   location.replace(pick + "/${INDEX}" + location.hash);
 })();
 </script>
-<noscript><meta http-equiv="refresh" content="0; url=en/${INDEX}"></noscript>
+<noscript><meta http-equiv="refresh" content="0; url=vi/${INDEX}"></noscript>
 ${FONTS}
 <script>(function () { var t = "light"; try { t = localStorage.getItem("theme") || "light"; } catch (e) {} document.documentElement.setAttribute("data-theme", t); })();</script>
 ${iconLinks("")}
