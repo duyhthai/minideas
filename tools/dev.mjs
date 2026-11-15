@@ -39,7 +39,8 @@ function build() {
 let timer;
 const changed = () => { clearTimeout(timer); timer = setTimeout(build, 150); };
 watch(join(ROOT, "src"), { recursive: true }, changed);
-watch(join(ROOT, "build.mjs"), changed);
+// watch the folder, not the file: editors save by replacing the file, and a file watch stays on the old copy
+watch(ROOT, (_, name) => { if (name === "build.mjs") changed(); });
 
 /* ---------- static server ---------- */
 createServer((req, res) => {
