@@ -341,10 +341,13 @@ ${deeper(t, c.resources, ct)}`;
 function cardStack({ t, slides, data, top, title, gist, meta = "", after = "" }) {
   const n = slides.length;
   return `<main class="viewer" id="viewer" ${Object.entries(data).map(([k, v]) => `data-${k}="${E(v)}"`).join(" ")}>
+  <div class="stack-head">
   ${top}
   <h1 class="stack-title">${E(title)}</h1>
   <p class="gist">${E(gist)}</p>
   ${meta}
+  </div>
+  <div class="stack-body">
   <div class="card"><div class="track" id="track" tabindex="0" aria-label="${E(t.ui.trackLabel)}">
 ${slides.map(({ art, h, p }, j) => `<section class="slide" aria-roledescription="slide" aria-label="${j + 1} / ${n}">
       <div class="art dw">${art}</div>
@@ -363,6 +366,7 @@ ${slides.map(({ art, h, p }, j) => `<section class="slide" aria-roledescription=
     ${shareButton(t, gist)}
   </div>
   ${after}
+  </div>
 </main>`;
 }
 

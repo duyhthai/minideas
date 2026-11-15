@@ -147,6 +147,20 @@ figure.book-photo img { display: block; width: 100%; height: auto; border-radius
   .layout { grid-template-columns: 250px minmax(0, 1fr); gap: 56px; align-items: start; }
   .layout.solo { grid-template-columns: minmax(0, 1fr); }
   .toc { order: -1; position: sticky; top: calc(env(safe-area-inset-top, 0px) + 16px); }
+  /* no contents rail (books, standalone ideas): title, sharing and the full review on the left; the card,
+     its buttons and the swipe hint on the right. Same page order as on phones, only placed differently. */
+  .layout.solo .viewer {
+    display: grid; grid-template-columns: minmax(240px, 1fr) minmax(0, 600px); grid-template-rows: auto auto auto 1fr; column-gap: 56px; align-items: start;
+    grid-template-areas: "head card" "share card" "pager card" ". card" ". controls" ". hint";
+  }
+  .layout.solo .stack-body, .layout.solo .share-row { display: contents; }
+  .layout.solo .stack-head { grid-area: head; }
+  .layout.solo .card { grid-area: card; margin-top: 0; max-width: none; }
+  .layout.solo .controls { grid-area: controls; max-width: none; }
+  .layout.solo .hint { grid-area: hint; margin-top: 12px; }
+  .layout.solo .share-wrap { grid-area: share; justify-self: start; margin-top: 18px; }
+  .layout.solo .pager { grid-area: pager; grid-template-columns: minmax(0, 1fr); max-width: 360px; margin-top: 28px; }
+  .layout.solo .pager a.next { text-align: left; grid-column: auto; }
 }
 .viewer { min-width: 0; }
 .eyebrow { font-size: 12.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); margin: 0; }
