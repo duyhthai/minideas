@@ -276,6 +276,10 @@ ${ROUGH}
   </div>
 </header>
 ${body}
+<footer class="site-foot">
+  <p>${E(t.ui.madeBy)}</p>
+  <p class="foot-links"><a href="${to(t.lang, "follow")}">${E(t.ui.followButton)}</a><a href="${to(t.lang, "suggest")}">${E(t.ui.suggestTitle)}</a><span>© ${new Date().getUTCFullYear()} ${E(t.ui.site)}</span></p>
+</footer>
 </div>
 </body>
 </html>
@@ -351,7 +355,7 @@ function homePage(t) {
   const body = `<main>
 <section class="hero">
   <h1 class="visually-hidden">${E(t.ui.site)}</h1>
-  <p class="lede">${E(t.ui.lede)}</p>
+  <p class="lede home-lede">${E(t.ui.lede)}</p>
 </section>
 ${tiles}
 <section class="home-more">

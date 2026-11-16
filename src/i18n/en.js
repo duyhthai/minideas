@@ -46,6 +46,7 @@ export default {
     new: "New",
     followTitle: "Follow Minideas",
     followButton: "Follow",
+    madeBy: "Made by Duy Thai.",
     suggestTitle: "Suggest a topic",
     suggestShort: "Which topic should be next? Tell us.",
     suggestLede: "Which idea would you like to see drawn as a card stack? Tell us.",

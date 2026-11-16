@@ -46,6 +46,7 @@ export default {
     new: "Mới",
     followTitle: "Theo dõi Minideas",
     followButton: "Theo dõi",
+    madeBy: "Do Duy Thai thực hiện.",
     suggestTitle: "Gợi ý chủ đề",
     suggestShort: "Muốn xem chủ đề nào? Cho Minideas biết.",
     suggestLede: "Bạn muốn xem chủ đề nào được vẽ thành bộ thẻ? Hãy cho Minideas biết.",
