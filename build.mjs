@@ -75,12 +75,12 @@ const SHARE_ICONS = {
   linkedin: `<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="#0A66C2" d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 1 1 0-4.125 2.062 2.062 0 0 1 0 4.125zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>`,
   copy: `<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>`,
 };
-// a bell for "follow" (the home page link), in the share icon's line style so it follows the theme
-const FOLLOW_ICON = `<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8.5a6 6 0 0 0-12 0c0 6.5-2.5 8.5-2.5 8.5h17S18 15 18 8.5"/><path d="M10.3 20.5a1.9 1.9 0 0 0 3.4 0"/></svg>`;
-// a light bulb for "suggest a topic", in the same line style
-const SUGGEST_ICON = `<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 18h5M10.5 21h3"/><path d="M12 3a6 6 0 0 0-3.6 10.8c.6.5 1 1.2 1 2v.2h5.2v-.2c0-.8.4-1.5 1-2A6 6 0 0 0 12 3z"/></svg>`;
+// a lit bulb, with short rays, for "suggest a topic", in the share icon's line style so it follows the theme
+const SUGGEST_ICON = `<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6.5a4.6 4.6 0 0 0-2.8 8.2c.5.4.8 1 .8 1.6v.2h4v-.2c0-.6.3-1.2.8-1.6A4.6 4.6 0 0 0 12 6.5z"/><path d="M10.4 19h3.2M10.9 21.6h2.2"/><path d="M12 1.8v1.7M5.2 4.6l1.2 1.2M18.8 4.6l-1.2 1.2M2.8 11.2h1.7M19.5 11.2h1.7"/></svg>`;
 // the usual feed icon, in its usual orange, so people who use RSS recognise it
 const RSS_ICON = `<svg class="rss" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><rect width="24" height="24" rx="5" fill="#f26f21"/><circle cx="6.8" cy="17.2" r="2" fill="#fff"/><path d="M5 10.6a8.4 8.4 0 0 1 8.4 8.4M5 5.4A13.6 13.6 0 0 1 18.6 19" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/></svg>`;
+// the feed icon's shape in the theme's ink instead of orange, for the footer's Follow link, where the orange stood out
+const FEED_ICON = `<svg class="feed" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><rect class="bg" width="24" height="24" rx="5"/><circle class="fg" cx="6.8" cy="17.2" r="2"/><path class="fg-line" d="M5 10.6a8.4 8.4 0 0 1 8.4 8.4M5 5.4A13.6 13.6 0 0 1 18.6 19"/></svg>`;
 const SHARE_ICON = `<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3M7 8l5-5 5 5M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></svg>`;
 
 /* ---------- checks ---------- */
@@ -238,8 +238,10 @@ const linker = depth => (...seg) => "../".repeat(depth) + (seg.length ? seg.join
 
 // langs: the languages this page exists in (the switcher sends the others to their home page)
 // segs: the page's path below /<lang>/ (the same in every language)
-// footLinks: false on the home page, whose Follow and Suggest cards sit just above the footer
-function shell({ t, depth, segs, title, desc, body, og, langs = LANGS, footLinks = true }) {
+// Every page ends with Suggest, a card with its one-line pitch, then the footer: Follow (the RSS feed, which few readers
+// use, so a small link until there's an email newsletter) and the small print. A page doesn't link to itself (segs[0]
+// is its own name).
+function shell({ t, depth, segs, title, desc, body, og, langs = LANGS }) {
   const to = linker(depth);
   const alternates = SITE_URL ? langs.map(o => `<link rel="alternate" hreflang="${o.lang}" href="${SITE_URL}/${[o.lang, ...segs].join("/")}/">`).join("\n") +
     `\n<link rel="alternate" hreflang="x-default" href="${SITE_URL}/">\n<link rel="canonical" href="${SITE_URL}/${[t.lang, ...segs].join("/")}/">` : "";
@@ -279,9 +281,12 @@ ${ROUGH}
   </div>
 </header>
 ${body}
+${segs[0] === "suggest" ? "" : `<aside class="more-band">
+  <a class="more-card" href="${to(t.lang, "suggest")}">${SUGGEST_ICON}<span><strong>${E(t.ui.suggestTitle)}</strong><small>${E(t.ui.suggestShort)}</small></span></a>
+</aside>`}
 <footer class="site-foot">
-  ${footLinks ? `<p class="foot-links"><a href="${to(t.lang, "follow")}">${FOLLOW_ICON}<span>${E(t.ui.followButton)}</span></a><a href="${to(t.lang, "suggest")}">${SUGGEST_ICON}<span>${E(t.ui.suggestTitle)}</span></a></p>` : ""}
-  <p class="foot-print">© ${new Date().getUTCFullYear()} ${E(t.ui.site)} · ${E(t.ui.madeBy)}</p>
+  ${segs[0] === "follow" ? "" : `<a class="foot-follow" href="${to(t.lang, "follow")}">${FEED_ICON}<span>${E(t.ui.followButton)}</span></a>`}
+  <p>© ${new Date().getUTCFullYear()} ${E(t.ui.site)} · ${E(t.ui.madeBy)}</p>
 </footer>
 </div>
 </body>
@@ -354,15 +359,11 @@ function homePage(t) {
   <p class="lede home-lede">${t.ui.lede.split(/(?<=,) /).map(part => `<span>${E(part)}</span>`).join(" ")}</p>
 </section>
 ${tiles}
-<section class="home-more">
-  <a class="more-card follow-card" href="${to(t.lang, "follow")}">${FOLLOW_ICON}<span><strong>${E(t.ui.followTitle)}</strong><small>${E(t.ui.followLede)}</small></span></a>
-  <a class="more-card suggest-card" href="${to(t.lang, "suggest")}">${SUGGEST_ICON}<span><strong>${E(t.ui.suggestTitle)}</strong><small>${E(t.ui.suggestShort)}</small></span></a>
-</section>
 </main>`;
   const og = `og/${t.lang}/home.png`, first = ALL_IDEAS[0];
   const titles = SHELF.map(item => item.ideas ? t.collections[item.id].title : t.ideas[item.slug].title);
   images[og] = { title: t.ui.site, text: t.ui.lede, footer: titles.join(" · "), drawing: art(t, first.panels[0], og) };
-  return shell({ t, depth: 1, segs: [], title: t.ui.site, desc: t.ui.lede, body, og, footLinks: false });
+  return shell({ t, depth: 1, segs: [], title: t.ui.site, desc: t.ui.lede, body, og });
 }
 
 function collectionPage(t, c) {
@@ -562,11 +563,6 @@ function followPage(t) {
     ${reader("Inoreader", `https://www.inoreader.com/?add_feed=${q}`)}
   </div>
 </section>
-<section class="follow-way">
-  <h2>${SUGGEST_ICON}<span>${E(t.ui.suggestTitle)}</span></h2>
-  <p>${E(t.ui.suggestLede)}</p>
-  <a class="btn" href="${to(t.lang, "suggest")}">${E(t.ui.suggestTitle)} →</a>
-</section>
 </main>`;
   return shell({ t, depth: 2, segs: ["follow"], title: `${t.ui.followTitle} · ${t.ui.site}`, desc: t.ui.followLede, body, og: `og/${t.lang}/home.png` });
 }
@@ -589,7 +585,8 @@ function suggestPage(t) {
   <input type="hidden" name="subject" value="${E(`Minideas: ${u.suggestTitle} (${t.lang})`)}">
   <input type="hidden" name="from_name" value="Minideas">
   <input type="checkbox" name="botcheck" class="botcheck" tabindex="-1" autocomplete="off">
-  ${field("topic", u.suggestTopic, `<input id="s-topic" name="topic" type="text" required maxlength="200" placeholder="${E(u.suggestTopicHint)}">`, false)}
+  ${field("topic", u.suggestTopic, `<input id="s-topic" name="topic" type="text" required maxlength="200">`, false)}
+  <div class="examples" hidden><p class="field-note">${E(u.suggestExamplesLabel)}</p>${u.suggestExamples.map(q => [].concat(q)).map(([label, start = label]) => `<button type="button" data-example="${E(start)}">${E(label)}</button>`).join("")}</div>
   ${field("details", u.suggestDetails, `<textarea id="s-details" name="details" rows="4" maxlength="2000"></textarea>`)}
   ${field("link", u.suggestLink, `<input id="s-link" name="link" type="url" maxlength="500" placeholder="https://">`)}
   ${field("email", u.suggestEmail, `<input id="s-email" name="email" type="email" maxlength="200" autocomplete="email">`, true, u.suggestEmailNote)}

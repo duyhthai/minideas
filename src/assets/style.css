@@ -59,15 +59,14 @@ a:focus-visible, button:focus-visible, .track:focus-visible { outline: 3px solid
 .brand .mark { flex: none; width: 56px; height: 56px; }
 @media (max-width: 479px) { .brand { gap: 10px; font-size: 17px; } .brand .mark { width: 46px; height: 46px; } }
 
-/* site footer: Follow and Suggest on the left (not on the home page, which has cards for them), small print on the right */
-.site-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 24px; margin-top: 56px; padding-top: 18px; border-top: 1px solid var(--line); font-size: 14px; color: var(--ink-2); }
-.site-foot p { margin: 0; }
-.site-foot .foot-print { margin-left: auto; }
-@media (max-width: 560px) { .site-foot .foot-print { margin-left: 0; } } /* on its own line under the links: line up with them */
-.foot-links { display: flex; flex-wrap: wrap; gap: 4px 18px; }
-.foot-links a { display: inline-flex; align-items: center; gap: 8px; color: var(--ink); font-weight: 600; text-decoration: none; }
-.foot-links svg { box-sizing: border-box; flex: none; width: 24px; height: 24px; padding: 4.5px; border-radius: 50%; background: var(--f-yellow); color: var(--on); } /* yellow badges like the home page cards', and the logo's bulb */
-.foot-links a:hover span { text-decoration: underline; }
+/* site footer: Follow on the left, small print on the right; on phones the small print goes under Follow, lined up with it */
+.site-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 24px; margin-top: 32px; padding-top: 18px; border-top: 1px solid var(--line); font-size: 14px; color: var(--ink-2); }
+.site-foot p { margin: 0 0 0 auto; }
+@media (max-width: 560px) { .site-foot p { margin-left: 0; } }
+.foot-follow { display: inline-flex; align-items: center; gap: 8px; color: var(--ink); font-weight: 600; text-decoration: none; }
+.foot-follow svg { flex: none; width: 20px; height: 20px; } /* the feed icon in ink: following is by RSS for now */
+.feed .bg { fill: var(--ink); } .feed .fg { fill: var(--paper); } .feed .fg-line { fill: none; stroke: var(--paper); stroke-width: 2.6; stroke-linecap: round; }
+.foot-follow:hover span { text-decoration: underline; }
 .top-tools { display: flex; align-items: center; gap: 10px; }
 .theme-toggle { display: grid; place-items: center; width: 38px; height: 38px; padding: 0; border: 1.5px solid var(--ink); border-radius: 50%; background: var(--card); color: var(--ink); cursor: pointer; }
 .theme-toggle .sun { display: none; }
@@ -154,15 +153,16 @@ figure.book-photo img { display: block; width: 100%; height: auto; border-radius
 .tile-art img { display: block; height: 100%; width: auto; max-width: 100%; object-fit: contain; border-radius: 4px; box-shadow: 0 1px 4px rgb(0 0 0 / .18); }
 /* beside the title, so it never covers the picture */
 .new-mark { float: right; margin: 2px 0 4px 10px; padding: 1px 10px; border-radius: 999px; border: 1.5px solid var(--ink); background: var(--f-yellow); color: var(--on); font: 700 12px/1.5 var(--body); letter-spacing: .06em; text-transform: uppercase; }
-/* home page, after the shelves: follow and suggest, half the row each, on the tint behind tile pictures (so they read
-   as actions, not as more tiles), yellow badges like the logo's bulb, and a plain arrow */
-.home-more { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); margin-top: 40px; }
+/* the end of every page, above the footer: Suggest, across the row, on the tint behind tile pictures (so it reads as
+   an action, not as another tile), with a yellow badge like the logo's bulb and a plain arrow. A grid, so Follow can
+   join it as a second card once there's an email newsletter */
+.more-band { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); margin-top: 56px; }
 .more-card { display: flex; align-items: center; gap: 14px; padding: 16px 18px; border-radius: 14px; background: var(--card); border: 1px solid var(--line); color: var(--ink); text-decoration: none; }
 .more-card:hover { border-color: var(--ink); }
-.home-more .more-card { position: relative; padding-right: 58px; background: var(--art); }
-.home-more .more-card:hover { border-color: var(--ink); box-shadow: 0 6px 18px -8px rgb(0 0 0 / .45); transform: translateY(-1px); }
-.home-more .more-card > svg, .home-more .more-card:hover > svg { background: var(--f-yellow); color: var(--on); }
-.home-more .more-card::after {
+.more-band .more-card { position: relative; padding-right: 58px; background: var(--art); }
+.more-band .more-card:hover { border-color: var(--ink); box-shadow: 0 6px 18px -8px rgb(0 0 0 / .45); transform: translateY(-1px); }
+.more-band .more-card > svg, .more-band .more-card:hover > svg { background: var(--f-yellow); color: var(--on); }
+.more-band .more-card::after {
   content: "→"; position: absolute; top: 50%; right: 16px; translate: 0 -50%; width: 30px; height: 30px; display: grid; place-items: center;
   border-radius: 50%; color: var(--ink); font: 700 18px/1 var(--body);
 }
@@ -267,7 +267,7 @@ figure.book-photo img { display: block; width: 100%; height: auto; border-radius
   box-sizing: border-box; width: 30px; height: 30px; padding: 6px; flex: none;
   border-radius: 50%; background: var(--chip); color: var(--blue);
 }
-.more-card > svg { width: 40px; height: 40px; padding: 9px; }
+.more-card > svg { width: 40px; height: 40px; padding: 6.5px; } /* the bulb has rays, so it needs most of the circle */
 .more-card:hover > svg { background: var(--blue); color: var(--card); }
 
 /* contents rail */
@@ -309,6 +309,11 @@ figure.book-photo img { display: block; width: 100%; height: auto; border-radius
 .suggest-form .botcheck { display: none; }
 .suggest-form .btn.primary { margin-top: 22px; }
 .field-note { margin: 6px 0 0; font-size: 13px; color: var(--ink-2); }
+/* example questions under the topic field: word chips, like the labels in the drawings */
+.examples { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+.examples .field-note { flex-basis: 100%; }
+.examples button { padding: 6px 12px; border: 1px solid var(--line); border-radius: 999px; background: var(--card); font: 400 13.5px/1.3 var(--body); color: var(--ink); text-align: left; cursor: pointer; }
+.examples button:hover { border-color: var(--ink); }
 .form-status { margin: 10px 0 0; font-weight: 600; color: var(--coral); }
 .form-status:empty { display: none; }
 .suggest-thanks { max-width: 560px; margin-top: 24px; padding: 18px 20px; border-radius: 14px; background: var(--card); border: 1px solid var(--line); }
@@ -352,5 +357,5 @@ figure.book-photo img { display: block; width: 100%; height: auto; border-radius
 
 @media (prefers-reduced-motion: reduce) {
   .dot::before, .tile { transition: none; }
-  .tile:hover, .home-more .more-card:hover { transform: none; }
+  .tile:hover, .more-band .more-card:hover { transform: none; }
 }

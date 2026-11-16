@@ -93,6 +93,17 @@
       send.disabled = false; send.textContent = label;
     });
     document.getElementById("suggest-again").addEventListener("click", () => { thanks.hidden = true; form.hidden = false; form.querySelector("input[name=topic]").focus(); });
+    // example questions: a tap puts one in the topic field (or the start of one, like "Book: ", for the reader to finish),
+    // which keeps the focus, with the cursor at the end, so the reader sees it filled in
+    const examples = form.querySelector(".examples"), topic = form.querySelector("input[name=topic]");
+    examples.hidden = false;
+    examples.addEventListener("click", e => {
+      const b = e.target.closest("[data-example]");
+      if (!b) return;
+      topic.value = b.dataset.example;
+      topic.focus();
+      topic.setSelectionRange(topic.value.length, topic.value.length);
+    });
   }
 
   // "New" marks show until their date (the build sets it), so a page built weeks ago doesn't keep calling old things new.
