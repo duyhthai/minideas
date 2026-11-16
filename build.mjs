@@ -40,7 +40,7 @@ const INDEX = process.argv.includes("--explicit-index") ? "index.html" : "";
 const SITE_URL = (process.env.SITE_URL || "https://minideas.com").replace(/\/$/, "");
 // The "Suggest a topic" form posts to Web3Forms (web3forms.com), which emails each suggestion to the owner. Its
 // access key is meant to be public. Until it's set the form can't send, and the build says so.
-const SUGGEST_KEY = "";
+const SUGGEST_KEY = "5981853d-1fdd-4f7f-9c1b-21ab1c13822a";
 
 const FONTS = `<link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
