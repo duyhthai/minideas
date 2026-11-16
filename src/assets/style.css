@@ -60,7 +60,7 @@ a:focus-visible, button:focus-visible, .track:focus-visible { outline: 3px solid
 .brand .mark { flex: none; width: 56px; height: 56px; }
 @media (max-width: 479px) { .brand { gap: 10px; font-size: 17px; } .brand .mark { width: 46px; height: 46px; } }
 
-/* site footer: who makes it, the two things a reader can do, the year */
+/* site footer, small print: the two things a reader can do, then the year and who makes it */
 .site-foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 24px; margin-top: 56px; padding-top: 18px; border-top: 1px solid var(--line); font-size: 14px; color: var(--ink-2); }
 .site-foot p { margin: 0; }
 .foot-links { display: flex; flex-wrap: wrap; gap: 4px 18px; }
