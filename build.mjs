@@ -208,6 +208,8 @@ function collectionImage(t, c) {
 // light and dark) or a book's cover photo; the title says what it is, so the picture is decorative.
 const tile = (href, pic, title, caption = "", mark = "") =>
   `<li><a class="tile" href="${href}"><span class="tile-art dw">${pic}</span><span class="tile-body">${mark}<h3 class="tile-title">${E(title)}</h3>${caption}</span></a></li>`;
+// in a collection's count: a fan of cards like the logo's, so a series of stacks reads apart from a single stack
+const SERIES_ICON = `<svg class="series-icon" viewBox="0 0 18 18" aria-hidden="true"><rect x="5" y="3.5" width="8" height="11" rx="1.6" transform="rotate(-24 9 16)"/><rect x="5" y="3.5" width="8" height="11" rx="1.6" transform="rotate(-12 9 16)"/><rect class="front" x="6" y="3" width="8" height="11" rx="1.6"/></svg>`;
 // "New" for NEW_DAYS after something is added; site.js shows it only until then, so an old build doesn't keep saying it
 const addDays = (iso, n) => new Date(Date.parse(`${iso}T00:00:00Z`) + n * 864e5).toISOString().slice(0, 10);
 const newMark = (t, item) => siteDate(item) > LAUNCH ? `<span class="new-mark" data-until="${addDays(siteDate(item), NEW_DAYS)}" hidden>${E(t.ui.new)}</span>` : "";
@@ -334,7 +336,7 @@ function readMinutes(t, bl) {
 function homePage(t) {
   // Ideas: one tile per shelf item (a collection's ideas are on its own page). Books: reviews in this language.
   const to = linker(1);
-  const caption = (count, html) => `<span class="tile-caption"><span class="count">${E(count)}</span>${html}</span>`;
+  const caption = (count, html, icon = "") => `<span class="tile-caption"><span class="count">${icon}${E(count)}</span>${html}</span>`;
   const ideaTiles = SHELF.map(item => {
     const first = (item.ideas ? item.ideas[0] : item).panels[0];
     const pic = tileDrawing(art(t, first, `${t.lang}/${item.id || item.slug} tile`));
@@ -343,7 +345,7 @@ function homePage(t) {
       return tile(to(t.lang, item.slug), pic, it.title, caption(t.ui.panelCount(item.panels.length), E(it.gist)), newMark(t, item));
     }
     const ct = t.collections[item.id];
-    return tile(to(t.lang, item.id), pic, ct.title, caption(t.ui.ideaCount(item.ideas.length), E(ct.lede)), newMark(t, item));
+    return tile(to(t.lang, item.id), pic, ct.title, caption(t.ui.ideaCount(item.ideas.length), E(ct.lede), SERIES_ICON), newMark(t, item));
   }).join("");
   const books = booksIn(t);
   const bookTiles = books.map(b => tile(to(t.lang, b.slug), bookTileArt(t, b, "../"), b[t.lang].title,

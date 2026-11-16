@@ -168,6 +168,8 @@ figure.book-photo img { display: block; width: 100%; height: auto; border-radius
 .tile-title { margin: 0; font: 700 19px/1.2 var(--display); color: var(--ink); text-wrap: balance; }
 .tile-caption { display: block; margin-top: 6px; font-size: 14.5px; line-height: 1.45; color: var(--ink-2); }
 .tile-caption .count { display: block; margin: 0 0 2px; font-family: var(--hand); font-size: 17px; color: var(--ink); }
+.series-icon { width: 18px; height: 18px; margin-right: 6px; vertical-align: -3px; fill: var(--chip); stroke: var(--blue); stroke-width: 1.4; stroke-linejoin: round; }
+.series-icon .front { fill: var(--card); }
 
 /* idea page */
 .layout { display: grid; gap: 32px; margin-top: 12px; }

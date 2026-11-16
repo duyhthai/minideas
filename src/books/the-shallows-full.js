@@ -29,7 +29,7 @@ export default {
     "long-term-memory.jpg"
   ],
   "vi": {
-    "title": "Trí Tuệ Giả Tạo - Internet đã làm gì chúng ta",
+    "title": "Trí tuệ giả tạo: Internet đã làm gì chúng ta?",
     "originalTitle": "The Shallows: What the Internet Is Doing to Our Brains",
     "abstract": "Nếu chỉ nhìn vào tựa đề có lẽ ai cũng nghĩ mình biết cuốn sách này nói về gì: những mặt trái của công nghệ, mạng Internet, email, tin nhắn tức thời, mạng xã hội... những thứ tiện dụng hỗ trợ chúng ta mỗi ngày đi kèm với cái giá của nó nếu không biết sử dụng một cách hợp lý.",
     "edition": "NXB Trẻ · Hà Quang Hùng, Linh Giang dịch",
