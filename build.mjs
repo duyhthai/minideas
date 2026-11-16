@@ -286,6 +286,10 @@ const shareButton = (t, text) => `<div class="share-wrap">
       </div>
     </div>`;
 
+// "Follow Minideas", where a reader has just finished something: the end of a standalone idea, a book (card stack
+// or full review) and a collection's last idea
+const followBox = (t, to) => `<aside class="follow-box">${FOLLOW_ICON}<p>${E(t.ui.followPrompt)}</p><a class="btn" href="${to(t.lang, "follow")}">${E(t.ui.followTitle)}</a></aside>`;
+
 // "Go deeper": resources come from stacks.js, their descriptions (and an optional source note) from i18n
 function deeper(t, resources, text) {
   return `<section class="deeper">
@@ -420,7 +424,7 @@ function bookStackPage(t, b) {
   const top = `<a class="back" href="${to(t.lang)}">← ${E(t.ui.allTopics)}</a>
   <p class="eyebrow">${E(t.ui.bookReview)} · ${E(b.author)}</p>`;
   const pager = (full ? `<a class="next" href="${fullUrl}"><small>${E(t.ui.fullReview)}</small><strong>${E(full.title)}</strong></a>` : "") + relatedCard(t, b, to);
-  const after = pager ? `<nav class="pager">${pager}</nav>` : "";
+  const after = (pager ? `<nav class="pager">${pager}</nav>` : "") + followBox(t, to);
   const body = `<div class="layout solo">
 ${cardStack({ t, slides, data, top, title: bl.title, gist: bl.abstract.replace(/\*/g, ""), meta: dateline(t, b.date, b.source), after })}
 </div>`;
@@ -452,7 +456,7 @@ function ideaPage(t, idea, c = null, i = 0) {
   const eyebrow = !c ? "" : total > 1 ? [t.ui.ideaOf(i + 1, total), ...(c.chapters ? [ct.chapters[idea.chapter]] : [])].map(E).join(" · ") : E(ct.title);
   const top = c ? `<p class="eyebrow">${eyebrow}</p>` : `<a class="back" href="${to(t.lang)}">← ${E(t.ui.allTopics)}</a>`;
   const body = `<div class="layout${c ? "" : " solo"}">
-${cardStack({ t, slides, data, top, title: it.title, gist: it.gist, meta: c ? "" : dateline(t, idea.date), after: pager ? `<nav class="pager">${pager}</nav>` : "" })}
+${cardStack({ t, slides, data, top, title: it.title, gist: it.gist, meta: c ? "" : dateline(t, idea.date), after: (pager ? `<nav class="pager">${pager}</nav>` : "") + (after ? "" : followBox(t, to)) })}
 ${toc}
 </div>
 ${c ? deeper(t, c.resources, ct) : idea.resources?.length ? deeper(t, idea.resources, it) : ""}`;
@@ -520,6 +524,7 @@ function bookPage(t, b, parent = null) {
       <span></span>
       ${shareButton(t, bl.abstract.replace(/\*/g, ""))}
     </div>
+    ${followBox(t, to)}
   </article>
 </main>`;
   return shell({ t, depth, segs: parent ? [parent.slug, "full"] : [b.slug], title: `${bl.title} · ${parent ? `${t.ui.fullReview} · ` : ""}${t.ui.site}`,
