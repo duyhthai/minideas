@@ -17,8 +17,6 @@
   --f-mint: #86dcc1;
   --f-coral: #ffa595;
   --f-tint: #e1e7f6;
-  --tint-mint: #ddf5ec; /* the home page's follow and suggest cards */
-  --mint-line: #a6dcc8; /* their border */
   --chip: #e3e9f8; /* pale blue behind link arrows and action icons, which are the site's blue */
   --display: "Bricolage Grotesque", "Avenir Next", system-ui, sans-serif;
   --body: "Lexend", "Segoe UI", system-ui, sans-serif;
@@ -29,14 +27,14 @@
   :root:not([data-theme="light"]) {
     --paper: #0f121a; --card: #191e2b; --art: #141927; --ink: #e7eaf3; --ink-2: #a3abc0; --line: #2a3145;
     --blue: #8ba5ff; --coral: #ff8d77; --on: #141927; --fk: #20263a;
-    --f-blue: #8ea5f7; --f-yellow: #f0c75a; --f-mint: #6cd1b1; --f-coral: #f59a87; --f-tint: #283150; --chip: #252e4a; --tint-mint: #1b2e29; --mint-line: #2c5547;
+    --f-blue: #8ea5f7; --f-yellow: #f0c75a; --f-mint: #6cd1b1; --f-coral: #f59a87; --f-tint: #283150; --chip: #252e4a;
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
   --paper: #0f121a; --card: #191e2b; --art: #141927; --ink: #e7eaf3; --ink-2: #a3abc0; --line: #2a3145;
   --blue: #8ba5ff; --coral: #ff8d77; --on: #141927; --fk: #20263a;
-  --f-blue: #8ea5f7; --f-yellow: #f0c75a; --f-mint: #6cd1b1; --f-coral: #f59a87; --f-tint: #283150; --chip: #252e4a; --tint-mint: #1b2e29; --mint-line: #2c5547;
+  --f-blue: #8ea5f7; --f-yellow: #f0c75a; --f-mint: #6cd1b1; --f-coral: #f59a87; --f-tint: #283150; --chip: #252e4a;
   color-scheme: dark;
 }
 
@@ -61,9 +59,15 @@ a:focus-visible, button:focus-visible, .track:focus-visible { outline: 3px solid
 .brand .mark { flex: none; width: 56px; height: 56px; }
 @media (max-width: 479px) { .brand { gap: 10px; font-size: 17px; } .brand .mark { width: 46px; height: 46px; } }
 
-/* site footer, small print on the right: the year and who makes it */
-.site-foot { margin-top: 56px; padding-top: 18px; border-top: 1px solid var(--line); font-size: 14px; color: var(--ink-2); text-align: right; }
+/* site footer: Follow and Suggest on the left (not on the home page, which has cards for them), small print on the right */
+.site-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 24px; margin-top: 56px; padding-top: 18px; border-top: 1px solid var(--line); font-size: 14px; color: var(--ink-2); }
 .site-foot p { margin: 0; }
+.site-foot .foot-print { margin-left: auto; }
+@media (max-width: 560px) { .site-foot .foot-print { margin-left: 0; } } /* on its own line under the links: line up with them */
+.foot-links { display: flex; flex-wrap: wrap; gap: 4px 18px; }
+.foot-links a { display: inline-flex; align-items: center; gap: 8px; color: var(--ink); font-weight: 600; text-decoration: none; }
+.foot-links svg { box-sizing: border-box; flex: none; width: 24px; height: 24px; padding: 4.5px; border-radius: 50%; background: var(--f-yellow); color: var(--on); } /* yellow badges like the home page cards', and the logo's bulb */
+.foot-links a:hover span { text-decoration: underline; }
 .top-tools { display: flex; align-items: center; gap: 10px; }
 .theme-toggle { display: grid; place-items: center; width: 38px; height: 38px; padding: 0; border: 1.5px solid var(--ink); border-radius: 50%; background: var(--card); color: var(--ink); cursor: pointer; }
 .theme-toggle .sun { display: none; }
@@ -126,7 +130,7 @@ figure.book-photo img { display: block; width: 100%; height: auto; border-radius
 .verdict { margin-top: 2.4em; padding: 22px 24px 8px; background: var(--card); border: 1px solid var(--line); border-radius: 18px; }
 .verdict h2 { margin-top: 0; }
 .review .note { font-size: 13.5px; line-height: 1.5; color: var(--ink-2); margin-top: 1.4em; }
-.review .act-box { max-width: none; margin-top: 24px; }
+.review .share-solo { margin-top: 24px; }
 .review .source { margin: 0; }
 .quick-link { display: inline-block; margin-top: 10px; font-weight: 700; font-size: 14.5px; color: var(--blue); text-decoration: none; }
 .quick-link:hover { text-decoration: underline; }
@@ -150,17 +154,17 @@ figure.book-photo img { display: block; width: 100%; height: auto; border-radius
 .tile-art img { display: block; height: 100%; width: auto; max-width: 100%; object-fit: contain; border-radius: 4px; box-shadow: 0 1px 4px rgb(0 0 0 / .18); }
 /* beside the title, so it never covers the picture */
 .new-mark { float: right; margin: 2px 0 4px 10px; padding: 1px 10px; border-radius: 999px; border: 1.5px solid var(--ink); background: var(--f-yellow); color: var(--on); font: 700 12px/1.5 var(--body); letter-spacing: .06em; text-transform: uppercase; }
-/* home page, after the shelves: follow and suggest, half the row each, on a soft mint wash with a mint border, mint
-   badges and a round arrow like the pager's; green is a color neither shelf uses, so they read as actions, not content */
+/* home page, after the shelves: follow and suggest, half the row each, on the tint behind tile pictures (so they read
+   as actions, not as more tiles), yellow badges like the logo's bulb, and a plain arrow */
 .home-more { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); margin-top: 40px; }
 .more-card { display: flex; align-items: center; gap: 14px; padding: 16px 18px; border-radius: 14px; background: var(--card); border: 1px solid var(--line); color: var(--ink); text-decoration: none; }
 .more-card:hover { border-color: var(--ink); }
-.home-more .more-card { position: relative; padding-right: 58px; background: var(--tint-mint); border-color: var(--mint-line); }
+.home-more .more-card { position: relative; padding-right: 58px; background: var(--art); }
 .home-more .more-card:hover { border-color: var(--ink); box-shadow: 0 6px 18px -8px rgb(0 0 0 / .45); transform: translateY(-1px); }
-.home-more .more-card > svg, .home-more .more-card:hover > svg { background: var(--f-mint); color: var(--on); }
+.home-more .more-card > svg, .home-more .more-card:hover > svg { background: var(--f-yellow); color: var(--on); }
 .home-more .more-card::after {
   content: "→"; position: absolute; top: 50%; right: 16px; translate: 0 -50%; width: 30px; height: 30px; display: grid; place-items: center;
-  border-radius: 50%; background: var(--f-mint); color: var(--on); font: 700 16px/1 var(--body);
+  border-radius: 50%; color: var(--ink); font: 700 18px/1 var(--body);
 }
 .more-card strong { display: block; font: 700 17px/1.25 var(--display); }
 .more-card small { display: block; margin-top: 3px; font-size: 14px; line-height: 1.4; color: var(--ink-2); }
@@ -191,7 +195,7 @@ figure.book-photo img { display: block; width: 100%; height: auto; border-radius
   .layout.solo .stack-next { display: contents; }
   .layout.solo .card { margin-top: 0; }
   .layout.solo .pager { grid-area: pager; grid-template-columns: minmax(0, 1fr); max-width: 360px; margin-top: 28px; }
-  .layout.solo .act-box { grid-area: act; margin-top: 24px; }
+  .layout.solo .share-solo { grid-area: act; margin-top: 24px; }
   .layout.solo .pager a.next { text-align: left; grid-column: auto; }
 }
 .viewer { min-width: 0; }
@@ -258,13 +262,13 @@ figure.book-photo img { display: block; width: 100%; height: auto; border-radius
 }
 .pager a.prev::before { content: "←"; right: auto; left: 14px; }
 .pager a:hover::after, .pager a:hover::before { background: var(--blue); color: var(--card); }
-/* the same round badge for the share and follow icons */
-.act > svg, .more-card > svg {
+/* a round badge for the follow and suggest icons */
+.more-card > svg {
   box-sizing: border-box; width: 30px; height: 30px; padding: 6px; flex: none;
   border-radius: 50%; background: var(--chip); color: var(--blue);
 }
 .more-card > svg { width: 40px; height: 40px; padding: 9px; }
-.act:hover > svg, .more-card:hover > svg { background: var(--blue); color: var(--card); }
+.more-card:hover > svg { background: var(--blue); color: var(--card); }
 
 /* contents rail */
 .toc .home { display: inline-block; font-weight: 700; font-size: 14.5px; color: var(--ink); text-decoration: none; padding: 8px 10px; border-radius: 10px; }
@@ -290,15 +294,10 @@ figure.book-photo img { display: block; width: 100%; height: auto; border-radius
 .links span { display: block; color: var(--ink-2); font-size: 14px; margin-top: 4px; line-height: 1.45; }
 .source { font-size: 13px; color: var(--ink-2); margin-top: 22px; }
 
-/* "Thấy hay?": share and follow in one box, each a badge and its word */
-/* one row: the question on the left, the two actions on the right; wraps on narrow screens */
-.act-box { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0 16px; max-width: 540px; margin-top: 16px; padding: 6px 16px; border-radius: 14px; background: var(--card); border: 1px solid var(--line); color: var(--ink); }
-.act-box p { margin: 0; padding: 8px 0; font-size: 14.5px; color: var(--ink-2); }
-.acts { display: flex; flex-wrap: wrap; align-items: center; gap: 0 24px; }
-.act { display: inline-flex; align-items: center; gap: 10px; min-height: 44px; padding: 0; border: 0; background: none; font: 700 15px/1 var(--body); color: var(--ink); text-decoration: none; cursor: pointer; }
-.act[hidden] { display: none; }
-.act-box .share-menu { right: auto; left: 0; } /* Share comes first in the box, so its menu opens under it to the right */
-.act:hover span, .act[aria-expanded="true"] span { text-decoration: underline; text-underline-offset: 3px; }
+/* Share on its own: a button like Previous under the cards; its menu opens under it to the right */
+.share-solo { width: fit-content; margin-top: 16px; }
+.share-solo .share-menu { right: auto; left: 0; }
+.btn.share:hover, .btn.share[aria-expanded="true"] { background: var(--ink); color: var(--card); }
 
 /* suggest page */
 .suggest-form { max-width: 560px; margin-top: 24px; }
@@ -353,5 +352,5 @@ figure.book-photo img { display: block; width: 100%; height: auto; border-radius
 
 @media (prefers-reduced-motion: reduce) {
   .dot::before, .tile { transition: none; }
-  .tile:hover { transform: none; }
+  .tile:hover, .home-more .more-card:hover { transform: none; }
 }

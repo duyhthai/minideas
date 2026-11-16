@@ -63,7 +63,6 @@ export default {
     suggestAgain: "Gửi thêm gợi ý",
     suggestError: "Chưa gửi được. Bạn thử lại sau nhé.",
     suggestVia: "Gợi ý được gửi đến email của Minideas qua dịch vụ Web3Forms.",
-    actPrompt: "Thấy hay?",
     followLede: "Nhận bài mới ngay khi đăng.",
     rssTitle: "Qua ứng dụng đọc tin (RSS)",
     rssText: "Ứng dụng đọc tin RSS gom bài mới từ các trang bạn theo dõi về một chỗ. Sao chép địa chỉ dưới đây vào ứng dụng của bạn, hoặc thêm bằng một chạm:",

@@ -63,7 +63,6 @@ export default {
     suggestAgain: "Suggest another",
     suggestError: "Couldn’t send it. Please try again later.",
     suggestVia: "Suggestions reach Minideas by email, through the Web3Forms service.",
-    actPrompt: "Enjoyed this?",
     followLede: "Get new card stacks as they come out.",
     rssTitle: "In a feed reader (RSS)",
     rssText: "A feed reader app collects new posts from the sites you follow in one place. Copy this address into yours, or add it in one tap:",

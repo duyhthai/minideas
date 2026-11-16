@@ -238,7 +238,8 @@ const linker = depth => (...seg) => "../".repeat(depth) + (seg.length ? seg.join
 
 // langs: the languages this page exists in (the switcher sends the others to their home page)
 // segs: the page's path below /<lang>/ (the same in every language)
-function shell({ t, depth, segs, title, desc, body, og, langs = LANGS }) {
+// footLinks: false on the home page, whose Follow and Suggest cards sit just above the footer
+function shell({ t, depth, segs, title, desc, body, og, langs = LANGS, footLinks = true }) {
   const to = linker(depth);
   const alternates = SITE_URL ? langs.map(o => `<link rel="alternate" hreflang="${o.lang}" href="${SITE_URL}/${[o.lang, ...segs].join("/")}/">`).join("\n") +
     `\n<link rel="alternate" hreflang="x-default" href="${SITE_URL}/">\n<link rel="canonical" href="${SITE_URL}/${[t.lang, ...segs].join("/")}/">` : "";
@@ -279,7 +280,8 @@ ${ROUGH}
 </header>
 ${body}
 <footer class="site-foot">
-  <p>© ${new Date().getUTCFullYear()} ${E(t.ui.site)} · ${E(t.ui.madeBy)}</p>
+  ${footLinks ? `<p class="foot-links"><a href="${to(t.lang, "follow")}">${FOLLOW_ICON}<span>${E(t.ui.followButton)}</span></a><a href="${to(t.lang, "suggest")}">${SUGGEST_ICON}<span>${E(t.ui.suggestTitle)}</span></a></p>` : ""}
+  <p class="foot-print">© ${new Date().getUTCFullYear()} ${E(t.ui.site)} · ${E(t.ui.madeBy)}</p>
 </footer>
 </div>
 </body>
@@ -287,24 +289,17 @@ ${body}
 `;
 }
 
-// "Thấy hay?": one box with the two things a reader can do once they like something, share and follow.
-// Share: the share sheet on phones and tablets; on computers (whose share sheets only offer system apps) a menu
-// of Facebook, LinkedIn and copy link. Plain share links, no scripts from either site; site.js fills in the address
-// and shows the button (it does nothing without the script). Follow opens the Follow page.
-const actBox = (t, text, to) => `<aside class="act-box">
-  <p>${E(t.ui.actPrompt)}</p>
-  <div class="acts">
-    <div class="share-wrap">
-      <button class="act share" id="share" type="button" hidden aria-expanded="false" aria-controls="share-menu" data-text="${E(text)}" data-copied="${E(t.ui.copied)}" data-copy-prompt="${E(t.ui.copyPrompt)}">${SHARE_ICON}<span>${E(t.ui.share)}</span></button>
-      <div class="share-menu" id="share-menu" hidden>
-        <a data-to="https://www.facebook.com/sharer/sharer.php?u=" target="_blank" rel="noopener">${SHARE_ICONS.facebook}Facebook</a>
-        <a data-to="https://www.linkedin.com/sharing/share-offsite/?url=" target="_blank" rel="noopener">${SHARE_ICONS.linkedin}LinkedIn</a>
-        <button type="button" data-copy>${SHARE_ICONS.copy}${E(t.ui.copyLink)}</button>
-      </div>
-    </div>
-    <a class="act follow-act" href="${to(t.lang, "follow")}">${FOLLOW_ICON}<span>${E(t.ui.followButton)}</span></a>
+// Share, on its own under a stack or a full review: the share sheet on phones and tablets; on computers (whose share
+// sheets only offer system apps) a menu of Facebook, LinkedIn and copy link. Plain share links, no scripts from either
+// site; site.js fills in the address and shows the button (without the script there is nothing to show).
+const shareButton = (t, text) => `<div class="share-wrap share-solo">
+  <button class="btn share" id="share" type="button" hidden aria-expanded="false" aria-controls="share-menu" data-text="${E(text)}" data-copied="${E(t.ui.copied)}" data-copy-prompt="${E(t.ui.copyPrompt)}">${SHARE_ICON}<span>${E(t.ui.share)}</span></button>
+  <div class="share-menu" id="share-menu" hidden>
+    <a data-to="https://www.facebook.com/sharer/sharer.php?u=" target="_blank" rel="noopener">${SHARE_ICONS.facebook}Facebook</a>
+    <a data-to="https://www.linkedin.com/sharing/share-offsite/?url=" target="_blank" rel="noopener">${SHARE_ICONS.linkedin}LinkedIn</a>
+    <button type="button" data-copy>${SHARE_ICONS.copy}${E(t.ui.copyLink)}</button>
   </div>
-</aside>`;
+</div>`;
 
 // "Go deeper": resources come from stacks.js, their descriptions (and an optional source note) from i18n
 function deeper(t, resources, text) {
@@ -367,7 +362,7 @@ ${tiles}
   const og = `og/${t.lang}/home.png`, first = ALL_IDEAS[0];
   const titles = SHELF.map(item => item.ideas ? t.collections[item.id].title : t.ideas[item.slug].title);
   images[og] = { title: t.ui.site, text: t.ui.lede, footer: titles.join(" · "), drawing: art(t, first.panels[0], og) };
-  return shell({ t, depth: 1, segs: [], title: t.ui.site, desc: t.ui.lede, body, og });
+  return shell({ t, depth: 1, segs: [], title: t.ui.site, desc: t.ui.lede, body, og, footLinks: false });
 }
 
 function collectionPage(t, c) {
@@ -423,7 +418,7 @@ ${slides.map(({ art, h, p }, j) => `<section class="slide" aria-roledescription=
   </div>
   <div class="stack-next">
   ${pager}
-  ${actBox(t, gist, linker(2))}
+  ${shareButton(t, gist)}
   </div>
 </main>`;
 }
@@ -540,7 +535,7 @@ function bookPage(t, b, parent = null) {
     ${gallery}
     ${bl.conclusion ? `<aside class="verdict"><h2>${E(t.ui.conclusion)}</h2><p>${rich(bl.conclusion)}</p></aside>` : ""}
     ${bl.note ? `<p class="note">${E(bl.note)}</p>` : ""}
-    ${actBox(t, bl.abstract.replace(/\*/g, ""), to)}
+    ${shareButton(t, bl.abstract.replace(/\*/g, ""))}
   </article>
 </main>`;
   return shell({ t, depth, segs: parent ? [parent.slug, "full"] : [b.slug], title: `${bl.title} · ${parent ? `${t.ui.fullReview} · ` : ""}${t.ui.site}`,
