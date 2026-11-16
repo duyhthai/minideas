@@ -74,7 +74,7 @@ const SHARE_ICONS = {
 // a bell for "follow" (the home page link), in the share icon's line style so it follows the theme
 const FOLLOW_ICON = `<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8.5a6 6 0 0 0-12 0c0 6.5-2.5 8.5-2.5 8.5h17S18 15 18 8.5"/><path d="M10.3 20.5a1.9 1.9 0 0 0 3.4 0"/></svg>`;
 // the usual feed icon, in its usual orange, so people who use RSS recognise it
-const RSS_ICON = `<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><rect width="24" height="24" rx="5" fill="#f26f21"/><circle cx="6.8" cy="17.2" r="2" fill="#fff"/><path d="M5 10.6a8.4 8.4 0 0 1 8.4 8.4M5 5.4A13.6 13.6 0 0 1 18.6 19" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/></svg>`;
+const RSS_ICON = `<svg class="rss" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><rect width="24" height="24" rx="5" fill="#f26f21"/><circle cx="6.8" cy="17.2" r="2" fill="#fff"/><path d="M5 10.6a8.4 8.4 0 0 1 8.4 8.4M5 5.4A13.6 13.6 0 0 1 18.6 19" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/></svg>`;
 const SHARE_ICON = `<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3M7 8l5-5 5 5M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></svg>`;
 
 /* ---------- checks ---------- */
@@ -275,20 +275,24 @@ ${body}
 `;
 }
 
+// "Thấy hay?": one box with the two things a reader can do once they like something, share and follow.
 // Share: the share sheet on phones and tablets; on computers (whose share sheets only offer system apps) a menu
-// of Facebook, LinkedIn and copy link. Plain share links, no scripts from either site; site.js fills in the address.
-const shareButton = (t, text) => `<div class="share-wrap">
-      <button class="btn share" id="share" type="button" hidden aria-expanded="false" aria-controls="share-menu" data-text="${E(text)}" data-copied="${E(t.ui.copied)}" data-copy-prompt="${E(t.ui.copyPrompt)}">${SHARE_ICON}<span>${E(t.ui.share)}</span></button>
+// of Facebook, LinkedIn and copy link. Plain share links, no scripts from either site; site.js fills in the address
+// and shows the button (it does nothing without the script). Follow opens the Follow page.
+const actBox = (t, text, to) => `<aside class="act-box">
+  <p>${E(t.ui.actPrompt)}</p>
+  <div class="acts">
+    <div class="share-wrap">
+      <button class="act share" id="share" type="button" hidden aria-expanded="false" aria-controls="share-menu" data-text="${E(text)}" data-copied="${E(t.ui.copied)}" data-copy-prompt="${E(t.ui.copyPrompt)}">${SHARE_ICON}<span>${E(t.ui.share)}</span></button>
       <div class="share-menu" id="share-menu" hidden>
         <a data-to="https://www.facebook.com/sharer/sharer.php?u=" target="_blank" rel="noopener">${SHARE_ICONS.facebook}Facebook</a>
         <a data-to="https://www.linkedin.com/sharing/share-offsite/?url=" target="_blank" rel="noopener">${SHARE_ICONS.linkedin}LinkedIn</a>
         <button type="button" data-copy>${SHARE_ICONS.copy}${E(t.ui.copyLink)}</button>
       </div>
-    </div>`;
-
-// "Follow Minideas", where a reader has just finished something: the end of a standalone idea, a book (card stack
-// or full review) and a collection's last idea
-const followBox = (t, to) => `<aside class="follow-box">${FOLLOW_ICON}<p>${E(t.ui.followPrompt)}</p><a class="btn" href="${to(t.lang, "follow")}">${E(t.ui.followTitle)}</a></aside>`;
+    </div>
+    <a class="act follow-act" href="${to(t.lang, "follow")}">${FOLLOW_ICON}<span>${E(t.ui.followButton)}</span></a>
+  </div>
+</aside>`;
 
 // "Go deeper": resources come from stacks.js, their descriptions (and an optional source note) from i18n
 function deeper(t, resources, text) {
@@ -375,8 +379,9 @@ ${deeper(t, c.resources, ct)}`;
 
 // The swipeable card stack shared by ideas and quick-read reviews. slides: [{ art, h, p }], where art is the
 // markup inside the picture box; data: URLs and button labels for site.js; top: what goes above the title;
-// meta: the line under the gist.
-function cardStack({ t, slides, data, top, title, gist, meta = "", after = "" }) {
+// meta: the line under the gist. Three blocks: the title, the stack itself (card, buttons, hint), and what next
+// (pager: where to go, then share and follow).
+function cardStack({ t, slides, data, top, title, gist, meta = "", pager = "" }) {
   const n = slides.length;
   return `<main class="viewer" id="viewer" ${Object.entries(data).map(([k, v]) => `data-${k}="${E(v)}"`).join(" ")}>
   <div class="stack-head">
@@ -385,7 +390,7 @@ function cardStack({ t, slides, data, top, title, gist, meta = "", after = "" })
   <p class="gist">${E(gist)}</p>
   ${meta}
   </div>
-  <div class="stack-body">
+  <div class="stack-main">
   <div class="card"><div class="track" id="track" tabindex="0" aria-label="${E(t.ui.trackLabel)}">
 ${slides.map(({ art, h, p }, j) => `<section class="slide" aria-roledescription="slide" aria-label="${j + 1} / ${n}">
       <div class="art dw">${art}</div>
@@ -399,11 +404,11 @@ ${slides.map(({ art, h, p }, j) => `<section class="slide" aria-roledescription=
     <div class="dots" role="group" aria-label="${E(t.ui.dotsLabel)}">${slides.map((_, j) => `<button class="dot" type="button" aria-label="${E(t.ui.panelN(j + 1))}"></button>`).join("")}</div>
     <button class="btn primary" id="next" type="button">${E(t.ui.next)}</button>
   </div>
-  <div class="share-row">
-    <p class="hint">${E(t.ui.hint)}</p>
-    ${shareButton(t, gist)}
+  <p class="hint">${E(t.ui.hint)}</p>
   </div>
-  ${after}
+  <div class="stack-next">
+  ${pager}
+  ${actBox(t, gist, linker(2))}
   </div>
 </main>`;
 }
@@ -424,9 +429,9 @@ function bookStackPage(t, b) {
   const top = `<a class="back" href="${to(t.lang)}">← ${E(t.ui.allTopics)}</a>
   <p class="eyebrow">${E(t.ui.bookReview)} · ${E(b.author)}</p>`;
   const pager = (full ? `<a class="next" href="${fullUrl}"><small>${E(t.ui.fullReview)}</small><strong>${E(full.title)}</strong></a>` : "") + relatedCard(t, b, to);
-  const after = (pager ? `<nav class="pager">${pager}</nav>` : "") + followBox(t, to);
+
   const body = `<div class="layout solo">
-${cardStack({ t, slides, data, top, title: bl.title, gist: bl.abstract.replace(/\*/g, ""), meta: dateline(t, b.date, b.source), after })}
+${cardStack({ t, slides, data, top, title: bl.title, gist: bl.abstract.replace(/\*/g, ""), meta: dateline(t, b.date, b.source), pager: pager && `<nav class="pager">${pager}</nav>` })}
 </div>`;
   return shell({ t, depth: 2, segs: [b.slug], title: `${bl.title} · ${t.ui.site}`, desc: bl.abstract.replace(/\*/g, ""), body, og: bookImage(t, b), langs: LANGS.filter(o => b[o.lang]) });
 }
@@ -456,7 +461,7 @@ function ideaPage(t, idea, c = null, i = 0) {
   const eyebrow = !c ? "" : total > 1 ? [t.ui.ideaOf(i + 1, total), ...(c.chapters ? [ct.chapters[idea.chapter]] : [])].map(E).join(" · ") : E(ct.title);
   const top = c ? `<p class="eyebrow">${eyebrow}</p>` : `<a class="back" href="${to(t.lang)}">← ${E(t.ui.allTopics)}</a>`;
   const body = `<div class="layout${c ? "" : " solo"}">
-${cardStack({ t, slides, data, top, title: it.title, gist: it.gist, meta: c ? "" : dateline(t, idea.date), after: (pager ? `<nav class="pager">${pager}</nav>` : "") + (after ? "" : followBox(t, to)) })}
+${cardStack({ t, slides, data, top, title: it.title, gist: it.gist, meta: c ? "" : dateline(t, idea.date), pager: pager && `<nav class="pager">${pager}</nav>` })}
 ${toc}
 </div>
 ${c ? deeper(t, c.resources, ct) : idea.resources?.length ? deeper(t, idea.resources, it) : ""}`;
@@ -520,11 +525,7 @@ function bookPage(t, b, parent = null) {
     ${gallery}
     ${bl.conclusion ? `<aside class="verdict"><h2>${E(t.ui.conclusion)}</h2><p>${rich(bl.conclusion)}</p></aside>` : ""}
     ${bl.note ? `<p class="note">${E(bl.note)}</p>` : ""}
-    <div class="share-row">
-      <span></span>
-      ${shareButton(t, bl.abstract.replace(/\*/g, ""))}
-    </div>
-    ${followBox(t, to)}
+    ${actBox(t, bl.abstract.replace(/\*/g, ""), to)}
   </article>
 </main>`;
   return shell({ t, depth, segs: parent ? [parent.slug, "full"] : [b.slug], title: `${bl.title} · ${parent ? `${t.ui.fullReview} · ` : ""}${t.ui.site}`,

@@ -114,7 +114,7 @@ figure.book-photo img { display: block; width: 100%; height: auto; border-radius
 .verdict { margin-top: 2.4em; padding: 22px 24px 8px; background: var(--card); border: 1px solid var(--line); border-radius: 18px; }
 .verdict h2 { margin-top: 0; }
 .review .note { font-size: 13.5px; line-height: 1.5; color: var(--ink-2); margin-top: 1.4em; }
-.review .share-row { max-width: none; margin-top: 18px; }
+.review .act-box { max-width: none; margin-top: 24px; }
 .review .source { margin: 0; }
 .quick-link { display: inline-block; margin-top: 10px; font-weight: 700; font-size: 14.5px; color: var(--blue); text-decoration: none; }
 .quick-link:hover { text-decoration: underline; }
@@ -153,22 +153,20 @@ figure.book-photo img { display: block; width: 100%; height: auto; border-radius
   .layout.solo { grid-template-columns: minmax(0, 1fr); }
   .toc { order: -1; position: sticky; top: calc(env(safe-area-inset-top, 0px) + 16px); }
   /* beside a rail, the card and its rows fill the column up to the page's right edge */
-  .layout .stack-body > * { max-width: none; }
-  /* no contents rail (books, standalone ideas): title, sharing and the full review on the left; the card,
-     its buttons and the swipe hint on the right. Same page order as on phones, only placed differently. */
+  .layout .stack-main > *, .layout .stack-next > * { max-width: none; }
+  /* no contents rail (books, standalone ideas): the title, then what next (full review, related, share, follow)
+     on the left; the card, its buttons and the swipe hint on the right, as one block so a tall left column never
+     pulls the buttons away from the card. Same order as on phones, only placed differently. */
   .layout.solo .viewer {
-    display: grid; grid-template-columns: minmax(240px, 1fr) minmax(0, 600px); grid-template-rows: auto auto auto 1fr; column-gap: 56px; align-items: start;
-    grid-template-areas: "head card" "share card" "pager card" ". card" ". controls" ". hint" ". follow";
+    display: grid; grid-template-columns: minmax(240px, 1fr) minmax(0, 600px); grid-template-rows: auto 1fr; column-gap: 56px; align-items: start;
+    grid-template-areas: "head main" "next main";
   }
-  .layout.solo .stack-body, .layout.solo .share-row { display: contents; }
   .layout.solo .stack-head { grid-area: head; }
-  .layout.solo .card { grid-area: card; margin-top: 0; }
-  .layout.solo .controls { grid-area: controls; }
-  .layout.solo .hint { grid-area: hint; margin-top: 12px; }
-  .layout.solo .share-wrap { grid-area: share; justify-self: start; margin-top: 18px; }
-  .layout.solo .pager { grid-area: pager; grid-template-columns: minmax(0, 1fr); max-width: 360px; margin-top: 28px; }
+  .layout.solo .stack-main { grid-area: main; }
+  .layout.solo .stack-next { grid-area: next; max-width: 360px; }
+  .layout.solo .card { margin-top: 0; }
+  .layout.solo .pager { grid-template-columns: minmax(0, 1fr); margin-top: 28px; }
   .layout.solo .pager a.next { text-align: left; grid-column: auto; }
-  .layout.solo .follow-box { grid-area: follow; margin-top: 24px; }
 }
 .viewer { min-width: 0; }
 .eyebrow { font-size: 12.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); margin: 0; }
@@ -195,9 +193,6 @@ figure.book-photo img { display: block; width: 100%; height: auto; border-radius
 }
 .btn.primary { background: var(--ink); color: var(--card); }
 .btn { display: inline-flex; align-items: center; gap: 7px; }
-.share-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; max-width: 540px; margin-top: 12px; }
-.share-row .hint { margin: 0; }
-.btn.share { min-height: 40px; padding: 0 14px; }
 .share-wrap { position: relative; }
 .share-menu { position: absolute; right: 0; top: calc(100% + 6px); z-index: 5; min-width: 190px; padding: 6px; background: var(--card); border: 1.5px solid var(--ink); border-radius: 14px; box-shadow: 0 8px 24px rgb(0 0 0 / .18); }
 .share-menu.from-left { right: auto; left: 0; }
@@ -222,8 +217,28 @@ figure.book-photo img { display: block; width: 100%; height: auto; border-radius
 .pager a:hover { border-color: var(--ink); }
 .pager a.next { text-align: right; grid-column: -2; }
 .pager a.next + a.related { grid-column: 1 / -1; } /* a book: the full review, then a related stack on its own row */
+@media (max-width: 479px) { .pager a.next { text-align: left; } } /* one card per row: line up with the others */
 .pager small { display: block; font-size: 12.5px; color: var(--ink-2); font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
 .pager strong { display: block; font-family: var(--display); font-size: 17px; line-height: 1.25; margin-top: 4px; }
+/* where to go next: white cards like the rest, each with a small round arrow in the drawings' style (ink outline,
+   pastel fill) so it reads as a link without pulling the eye from the pictures. The main next step (full review,
+   up next) is yellow, a related stack mint, going back plain. */
+.pager a { position: relative; }
+.pager a.next, .pager a.related { padding-right: 58px; }
+.pager a.prev { padding-left: 58px; }
+.pager a.next::after, .pager a.related::after, .pager a.prev::before {
+  content: "→"; position: absolute; top: 50%; right: 14px; translate: 0 -50%; width: 30px; height: 30px; display: grid; place-items: center;
+  border: 1.5px solid var(--ink); border-radius: 50%; background: var(--f-yellow); color: var(--on); font: 700 16px/1 var(--body);
+}
+.pager a.related::after { background: var(--f-mint); }
+.pager a.prev::before { content: "←"; right: auto; left: 14px; background: var(--card); color: var(--ink); }
+/* the same round badge for the share and follow icons: blue for share, coral for follow */
+.act > svg, .follow a > svg:not(.rss) {
+  box-sizing: border-box; width: 30px; height: 30px; padding: 6px; flex: none;
+  border: 1.5px solid var(--ink); border-radius: 50%; background: var(--f-blue); color: var(--on);
+}
+.follow a > svg:not(.rss) { width: 26px; height: 26px; padding: 5px; }
+.act.follow-act > svg, .follow a > svg:not(.rss) { background: var(--f-coral); }
 
 /* contents rail */
 .toc .home { display: inline-block; font-weight: 700; font-size: 14.5px; color: var(--ink); text-decoration: none; padding: 8px 10px; border-radius: 10px; }
@@ -249,11 +264,13 @@ figure.book-photo img { display: block; width: 100%; height: auto; border-radius
 .links span { display: block; color: var(--ink-2); font-size: 14px; margin-top: 4px; line-height: 1.45; }
 .source { font-size: 13px; color: var(--ink-2); margin-top: 22px; }
 
-/* "Follow Minideas" at the end of a stack or review */
-.follow-box { display: flex; align-items: center; flex-wrap: wrap; gap: 10px 12px; max-width: 540px; margin-top: 16px; padding: 14px 16px; border-radius: 14px; background: var(--f-tint); color: var(--ink); }
-.follow-box svg { flex: none; }
-.follow-box p { flex: 1 1 180px; margin: 0; font-size: 14.5px; line-height: 1.45; }
-.follow-box .btn { min-height: 40px; text-decoration: none; }
+/* "Thấy hay?": share and follow in one box, each a badge and its word */
+.act-box { max-width: 540px; margin-top: 16px; padding: 12px 16px 8px; border-radius: 14px; background: var(--f-tint); color: var(--ink); }
+.act-box p { margin: 0; font-size: 14.5px; color: var(--ink-2); }
+.acts { display: flex; flex-wrap: wrap; align-items: center; gap: 0 24px; }
+.act { display: inline-flex; align-items: center; gap: 10px; min-height: 44px; padding: 0; border: 0; background: none; font: 700 15px/1 var(--body); color: var(--ink); text-decoration: none; cursor: pointer; }
+.act[hidden] { display: none; }
+.act:hover span, .act[aria-expanded="true"] span { text-decoration: underline; text-underline-offset: 3px; }
 
 /* follow page */
 .follow-way { margin-top: 28px; max-width: 640px; }
