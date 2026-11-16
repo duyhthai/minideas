@@ -23,7 +23,7 @@ import { createHash } from "node:crypto";
 import { dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { ART, E } from "./src/draw.js";
-import { renderOg } from "./src/og.js";
+import { renderOg, drawingViewBox } from "./src/og.js";
 import { Resvg } from "@resvg/resvg-js";
 import { SHELF } from "./src/stacks.js";
 import { BOOKS } from "./src/books/index.js";
@@ -207,11 +207,12 @@ function collectionImage(t, c) {
 // A tile: a picture, the title as text, then a caption. The picture is a drawing inline (theme colors, so it suits
 // light and dark) or a book's cover photo; the title says what it is, so the picture is decorative.
 const tile = (href, pic, title, caption = "", mark = "") =>
-  `<li><a class="tile" href="${href}"><span class="tile-art dw">${pic}${mark}</span><span class="tile-body"><h3 class="tile-title">${E(title)}</h3>${caption}</span></a></li>`;
+  `<li><a class="tile" href="${href}"><span class="tile-art dw">${pic}</span><span class="tile-body">${mark}<h3 class="tile-title">${E(title)}</h3>${caption}</span></a></li>`;
 // "New" for NEW_DAYS after something is added; site.js shows it only until then, so an old build doesn't keep saying it
 const addDays = (iso, n) => new Date(Date.parse(`${iso}T00:00:00Z`) + n * 864e5).toISOString().slice(0, 10);
 const newMark = (t, item) => siteDate(item) > LAUNCH ? `<span class="new-mark" data-until="${addDays(siteDate(item), NEW_DAYS)}" hidden>${E(t.ui.new)}</span>` : "";
-const tileDrawing = svg => `<svg viewBox="0 0 320 220" aria-hidden="true">${svg}</svg>`;
+// cropped to what is drawn, so the drawing shows as large as the tile allows
+const tileDrawing = svg => `<svg viewBox="${drawingViewBox(svg)}" aria-hidden="true">${svg}</svg>`;
 function bookTileArt(t, b, rel) {
   if (b.cover) { const { width, height } = sizeOf(photoSource(b, b.cover)); return `<img src="${rel}photos/${photoDir(b)}/${b.cover}" alt="" width="${width}" height="${height}" loading="lazy" decoding="async">`; }
   const first = firstDrawing(b);

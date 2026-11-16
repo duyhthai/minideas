@@ -44,6 +44,26 @@ function wrap(text, perLine, maxLines) {
 // when one character is missing (browsers fall back per character). Draw arrows as ASCII here.
 const withArrows = svg => svg.replace(/→/g, "->").replace(/←/g, "&lt;-");
 
+const ROUGH = `<filter id="rough" filterUnits="userSpaceOnUse" x="-20" y="-20" width="360" height="260">
+    <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="4"/>
+    <feDisplacementMap in="SourceGraphic" scale="1.8"/>
+  </filter>`;
+
+// The part of a 320 × 220 drawing that has something on it, as a viewBox, so a tile can show the drawing larger.
+// A margin covers strokes, and a sparse drawing keeps at least 220 × 150 so it isn't blown up.
+export function drawingViewBox(drawing, pad = 8, minW = 220, minH = 150) {
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="320" height="220" viewBox="0 0 320 220"><defs>${ROUGH}<style>${DRAWING_CSS}</style></defs>${withArrows(drawing)}</svg>`;
+  const b = new Resvg(svg, { font: { fontFiles: FONTS.slice(0, 1), loadSystemFonts: false, defaultFontFamily: "Patrick Hand" } }).getBBox();
+  if (!b) return "0 0 320 220";
+  // grow [lo, hi] to at least min around its centre, then slide it back inside [0, max]
+  const span = (lo, hi, min, max) => {
+    const w = Math.min(max, Math.max(hi - lo, min)), a = Math.min(Math.max(0, (lo + hi - w) / 2), max - w);
+    return [Math.round(a), Math.round(w)];
+  };
+  const [x, w] = span(b.x - pad, b.x + b.width + pad, minW, 320), [y, h] = span(b.y - pad, b.y + b.height + pad, minH, 220);
+  return `${x} ${y} ${w} ${h}`;
+}
+
 // A photo, uncropped and right-aligned, scaled to fit a 544 × 470 box, with rounded corners.
 function photoPanel({ file, width, height }) {
   const k = Math.min(544 / width, 470 / height), w = Math.round(width * k), h = Math.round(height * k);
@@ -82,10 +102,7 @@ export function renderOg({ title, text, footer, drawing, photo }) {
 
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
 <defs>
-  <filter id="rough" filterUnits="userSpaceOnUse" x="-20" y="-20" width="360" height="260">
-    <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="4"/>
-    <feDisplacementMap in="SourceGraphic" scale="1.8"/>
-  </filter>
+  ${ROUGH}
   <style>${DRAWING_CSS}</style>
 </defs>
 <rect width="1200" height="630" fill="${C.paper}"/>
