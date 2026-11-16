@@ -67,6 +67,10 @@
     document.addEventListener("keydown", e => { if (e.key === "Escape" && !menu.hidden) { open(false); share.focus(); } });
   }
 
+  // "New" marks show until their date (the build sets it), so a page built weeks ago doesn't keep calling old things new.
+  const today = new Date().toISOString().slice(0, 10);
+  document.querySelectorAll(".new-mark").forEach(m => { m.hidden = today > m.dataset.until; });
+
   const viewer = document.getElementById("viewer");
   if (!viewer) return;
   const d = viewer.dataset;

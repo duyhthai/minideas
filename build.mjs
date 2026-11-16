@@ -7,6 +7,8 @@
 //   Paths are the same in every language; only the /<lang>/ prefix changes.
 //   og/<lang>/<name>.png             one link preview per page (home, collection, idea, book)
 //   photos/<book>/<file>             a book reviewer's own photos, copied from src/books/photos/
+//   <lang>/feed.xml                  RSS: everything on the shelves, newest first
+//   sitemap.xml, robots.txt          every page's address, for search engines
 //
 //   node build.mjs                    normal build (directory-style links)
 //   node build.mjs --explicit-index   links end in index.html (for file hosts without directory indexes)
@@ -15,7 +17,7 @@
 import { mkdir, rm, writeFile, copyFile, rename, readFile } from "node:fs/promises";
 import { readFileSync, existsSync, statSync } from "node:fs";
 import { createHash } from "node:crypto";
-import { dirname, join } from "node:path";
+import { dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { ART, E } from "./src/draw.js";
 import { renderOg } from "./src/og.js";
@@ -27,8 +29,9 @@ import vi from "./src/i18n/vi.js";
 
 const LANGS = [en, vi];
 const ROOT = dirname(fileURLToPath(import.meta.url));
-const OUT = join(ROOT, "dist");
-const TMP = join(ROOT, "dist-tmp"); // built here first, then swapped in, so a running preview never sees a half-built site
+// OUT_DIR=<folder> builds somewhere else, e.g. to check a change while the dev server owns dist/
+const OUT = process.env.OUT_DIR ? resolve(process.env.OUT_DIR) : join(ROOT, "dist");
+const TMP = `${OUT}-tmp`; // built here first, then swapped in, so a running preview never sees a half-built site
 const CACHE = join(ROOT, "node_modules/.cache/og"); // preview images keyed by their inputs; most rebuilds render none
 const INDEX = process.argv.includes("--explicit-index") ? "index.html" : "";
 const SITE_URL = (process.env.SITE_URL || "https://minideas.com").replace(/\/$/, "");
@@ -138,6 +141,15 @@ function jpegSize(file) {
   return [0, 0];
 }
 const booksIn = t => BOOKS.filter(b => b[t.lang]);
+// When something went on the site: a collection's or standalone idea's `date`, a book's `added` (a book's `date` is
+// when the review first appeared on Sâu Sách). Things added after launch day (the earliest of these) are marked "New".
+for (const b of BOOKS) if (!ISO_DATE.test(b.added || "")) problems.push(`book "${b.slug}": no added date (YYYY-MM-DD) for when it went on the site`);
+const siteDate = item => item.added || item.date;
+const LAUNCH = [...SHELF, ...BOOKS].map(siteDate).sort()[0];
+const NEW_DAYS = 14;
+// `related`: one stack worth reading next (an idea, a collection or a book, on either shelf), shown at the end of a
+// standalone idea or a book, and after a collection's last idea
+for (const item of [...SHELF, ...BOOKS]) if (item.related && !seen.has(item.related)) problems.push(`"${item.id || item.slug}": related "${item.related}" isn't a collection, idea or book`);
 if (problems.length) fail();
 
 function fail() {
@@ -182,8 +194,11 @@ function collectionImage(t, c) {
 }
 // A tile: a picture, the title as text, then a caption. The picture is a drawing inline (theme colors, so it suits
 // light and dark) or a book's cover photo; the title says what it is, so the picture is decorative.
-const tile = (href, pic, title, caption = "") =>
-  `<li><a class="tile" href="${href}"><span class="tile-art dw">${pic}</span><span class="tile-body"><h3 class="tile-title">${E(title)}</h3>${caption}</span></a></li>`;
+const tile = (href, pic, title, caption = "", mark = "") =>
+  `<li><a class="tile" href="${href}"><span class="tile-art dw">${pic}${mark}</span><span class="tile-body"><h3 class="tile-title">${E(title)}</h3>${caption}</span></a></li>`;
+// "New" for NEW_DAYS after something is added; site.js shows it only until then, so an old build doesn't keep saying it
+const addDays = (iso, n) => new Date(Date.parse(`${iso}T00:00:00Z`) + n * 864e5).toISOString().slice(0, 10);
+const newMark = (t, item) => siteDate(item) > LAUNCH ? `<span class="new-mark" data-until="${addDays(siteDate(item), NEW_DAYS)}" hidden>${E(t.ui.new)}</span>` : "";
 const tileDrawing = svg => `<svg viewBox="0 0 320 220" aria-hidden="true">${svg}</svg>`;
 function bookTileArt(t, b, rel) {
   if (b.cover) { const { width, height } = sizeOf(photoSource(b, b.cover)); return `<img src="${rel}photos/${photoDir(b)}/${b.cover}" alt="" width="${width}" height="${height}" loading="lazy" decoding="async">`; }
@@ -192,6 +207,17 @@ function bookTileArt(t, b, rel) {
 }
 
 /* ---------- links ---------- */
+// the title of a collection, idea or book in this language (a book may not have one)
+function titleOf(t, name) {
+  if (COLLECTIONS.some(c => c.id === name)) return t.collections[name].title;
+  return t.ideas[name]?.title || BOOKS.find(b => b.slug === name)?.[t.lang]?.title;
+}
+// a card for item.related; extra classes place it in the pager
+function relatedCard(t, item, to, cls = "related") {
+  const title = item.related && titleOf(t, item.related);
+  return title ? `<a class="${cls}" href="${to(t.lang, item.related)}"><small>${E(t.ui.related)}</small><strong>${E(title)}</strong></a>` : "";
+}
+
 // path segments ("en", "ai-family") → a link relative to the current page's depth
 const linker = depth => (...seg) => "../".repeat(depth) + (seg.length ? seg.join("/") + "/" + INDEX : INDEX || "./");
 
@@ -223,6 +249,7 @@ ${FONTS}
 <script>(function () { var t = "light"; try { t = localStorage.getItem("theme") || "light"; } catch (e) {} document.documentElement.setAttribute("data-theme", t); })();</script>
 ${iconLinks("../".repeat(depth))}
 <link rel="stylesheet" href="${"../".repeat(depth)}assets/style.css">
+<link rel="alternate" type="application/rss+xml" title="${E(t.ui.site)}" href="${"../".repeat(depth)}${t.lang}/feed.xml">
 <script src="${"../".repeat(depth)}assets/site.js" defer></script>
 </head>
 <body>
@@ -289,14 +316,14 @@ function homePage(t) {
     const pic = tileDrawing(art(t, first, `${t.lang}/${item.id || item.slug} tile`));
     if (!item.ideas) {
       const it = t.ideas[item.slug];
-      return tile(to(t.lang, item.slug), pic, it.title, caption(t.ui.panelCount(item.panels.length), E(it.gist)));
+      return tile(to(t.lang, item.slug), pic, it.title, caption(t.ui.panelCount(item.panels.length), E(it.gist)), newMark(t, item));
     }
     const ct = t.collections[item.id];
-    return tile(to(t.lang, item.id), pic, ct.title, caption(t.ui.ideaCount(item.ideas.length), E(ct.lede)));
+    return tile(to(t.lang, item.id), pic, ct.title, caption(t.ui.ideaCount(item.ideas.length), E(ct.lede)), newMark(t, item));
   }).join("");
   const books = booksIn(t);
   const bookTiles = books.map(b => tile(to(t.lang, b.slug), bookTileArt(t, b, "../"), b[t.lang].title,
-    caption(b.panels ? `${b.author} · ${t.ui.panelCount(b.panels.length)}` : b.author, rich(b[t.lang].abstract)))).join("");
+    caption(b.panels ? `${b.author} · ${t.ui.panelCount(b.panels.length)}` : b.author, rich(b[t.lang].abstract)), newMark(t, b))).join("");
   const tiles = !books.length ? `<ul class="tile-grid shelf">${ideaTiles}</ul>` :
     `<h2 class="shelf-label">${SHELF_ICONS.tech}<span>${E(t.ui.shelfTech)}</span></h2><ul class="tile-grid">${ideaTiles}</ul>
 <h2 class="shelf-label">${SHELF_ICONS.books}<span>${E(t.ui.shelfBooks)}</span></h2><ul class="tile-grid">${bookTiles}</ul>`;
@@ -306,6 +333,7 @@ function homePage(t) {
   <p class="lede">${E(t.ui.lede)}</p>
 </section>
 ${tiles}
+<p class="follow"><a href="feed.xml">${E(t.ui.follow)}</a></p>
 </main>`;
   const og = `og/${t.lang}/home.png`, first = ALL_IDEAS[0];
   const titles = SHELF.map(item => item.ideas ? t.collections[item.id].title : t.ideas[item.slug].title);
@@ -385,7 +413,8 @@ function bookStackPage(t, b) {
     "t-next-idea": full ? t.ui.fullReviewNext : t.ui.done, "t-done": t.ui.done };
   const top = `<a class="back" href="${to(t.lang)}">← ${E(t.ui.allTopics)}</a>
   <p class="eyebrow">${E(t.ui.bookReview)} · ${E(b.author)}</p>`;
-  const after = full ? `<nav class="pager"><a class="next" href="${fullUrl}"><small>${E(t.ui.fullReview)}</small><strong>${E(full.title)}</strong></a></nav>` : "";
+  const pager = (full ? `<a class="next" href="${fullUrl}"><small>${E(t.ui.fullReview)}</small><strong>${E(full.title)}</strong></a>` : "") + relatedCard(t, b, to);
+  const after = pager ? `<nav class="pager">${pager}</nav>` : "";
   const body = `<div class="layout solo">
 ${cardStack({ t, slides, data, top, title: bl.title, gist: bl.abstract.replace(/\*/g, ""), meta: dateline(t, b.date, b.source), after })}
 </div>`;
@@ -406,7 +435,8 @@ function ideaPage(t, idea, c = null, i = 0) {
 </nav>`;
   const pager = [
     before ? `<a class="prev" href="${to(t.lang, before.slug)}"><small>${E(t.ui.pagerPrev)}</small><strong>${E(t.ideas[before.slug].title)}</strong></a>` : "",
-    after ? `<a class="next" href="${to(t.lang, after.slug)}"><small>${E(t.ui.pagerNext)}</small><strong>${E(t.ideas[after.slug].title)}</strong></a>` : "",
+    after ? `<a class="next" href="${to(t.lang, after.slug)}"><small>${E(t.ui.pagerNext)}</small><strong>${E(t.ideas[after.slug].title)}</strong></a>`
+      : c ? relatedCard(t, c, to, "next related") : relatedCard(t, idea, to),
   ].join("");
   const data = {
     "prev-url": before ? `${to(t.lang, before.slug)}#p${before.panels.length}` : "",
@@ -543,6 +573,43 @@ for (const t of LANGS) {
     if (b.panels && b.full?.[t.lang]) files[`${t.lang}/${b.slug}/full/index.html`] = bookPage(t, b.full, b);
   }
 }
+// RSS, one feed per language: collections, standalone ideas and books, newest first, each with its preview image
+function feed(t) {
+  const items = [
+    ...SHELF.map(item => item.ideas
+      ? { name: item.id, date: item.date, title: t.collections[item.id].title, text: t.collections[item.id].lede, og: collectionImage(t, item) }
+      : { name: item.slug, date: item.date, title: t.ideas[item.slug].title, text: t.ideas[item.slug].gist, og: ideaImage(t, item) }),
+    ...booksIn(t).map(b => ({ name: b.slug, date: b.added, title: b[t.lang].title, text: b[t.lang].abstract.replace(/\*/g, ""), og: bookImage(t, b) })),
+  ].sort((a, b) => b.date.localeCompare(a.date));
+  const home = `${SITE_URL}/${t.lang}/`;
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<channel>
+<title>${E(t.ui.site)}</title>
+<link>${home}</link>
+<description>${E(t.ui.lede)}</description>
+<language>${t.lang}</language>
+<atom:link href="${home}feed.xml" rel="self" type="application/rss+xml"/>
+${items.map(x => `<item>
+  <title>${E(x.title)}</title>
+  <link>${home}${x.name}/</link>
+  <guid isPermaLink="true">${home}${x.name}/</guid>
+  <pubDate>${new Date(`${x.date}T00:00:00Z`).toUTCString()}</pubDate>
+  <description>${E(`<p><img src="${SITE_URL}/${x.og}" alt="" width="1200" height="630"></p><p>${E(x.text)}</p>`)}</description>
+</item>`).join("\n")}
+</channel>
+</rss>
+`;
+}
+for (const t of LANGS) files[`${t.lang}/feed.xml`] = feed(t);
+// every page (the root only picks a language), at the same addresses as the canonical links
+const pageUrls = Object.keys(files).filter(p => p.endsWith("index.html") && p !== "index.html").map(p => `${SITE_URL}/${p.replace(/index\.html$/, "")}`);
+files["sitemap.xml"] = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${pageUrls.map(u => `<url><loc>${E(u)}</loc></url>`).join("\n")}
+</urlset>
+`;
+files["robots.txt"] = `User-agent: *\nAllow: /\n\nSitemap: ${SITE_URL}/sitemap.xml\n`;
 if (problems.length) fail();
 
 await rm(TMP, { recursive: true, force: true });
@@ -585,5 +652,5 @@ for (const [path, o] of Object.entries(images)) {
 await rm(OUT, { recursive: true, force: true });
 await rename(TMP, OUT);
 
-console.log(`Built ${Object.keys(files).length} pages and ${Object.keys(images).length} preview images, ${rendered} re-rendered (${ALL_IDEAS.length} ideas, ${COLLECTIONS.length} collection${COLLECTIONS.length === 1 ? "" : "s"}, ${BOOKS.length} book${BOOKS.length === 1 ? "" : "s"}) for ${LANGS.map(t => t.lang).join(", ")} into dist/`);
+console.log(`Built ${Object.keys(files).filter(p => p.endsWith(".html")).length} pages and ${Object.keys(images).length} preview images, ${rendered} re-rendered (${ALL_IDEAS.length} ideas, ${COLLECTIONS.length} collection${COLLECTIONS.length === 1 ? "" : "s"}, ${BOOKS.length} book${BOOKS.length === 1 ? "" : "s"}) for ${LANGS.map(t => t.lang).join(", ")} into ${OUT.startsWith(ROOT) ? relative(ROOT, OUT) : OUT}/`);
 if (!SITE_URL) console.log("Note: SITE_URL is not set, so pages don't point to their preview images yet. Set it when you deploy.");

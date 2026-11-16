@@ -8,6 +8,8 @@ export default {
   author: full.author,
   source: full.source,
   date: full.date,
+  added: "2026-11-08", // went on Minideas (date is when the review appeared on Sâu Sách)
+  related: "outliers",
   full,
   cover: full.cover,
   panels: [["slaMashup"], ["photo", "good-vs-bad-theft.jpg"], ["slaDesks"], ["slaHobbies"], ["slaRoom"], ["slaBoring"], ["slaSubtract"]],

@@ -133,9 +133,13 @@ figure.book-photo img { display: block; width: 100%; height: auto; border-radius
 .tile { display: block; height: 100%; border-radius: 14px; overflow: hidden; background: var(--card); border: 1px solid var(--line); color: var(--ink); text-decoration: none; transition: border-color .15s, transform .15s; }
 .tile:hover { border-color: var(--ink); transform: translateY(-2px); }
 /* the picture sits in a fixed 2:1 band (drawings are 320×220, covers are portrait), centered on the drawing tint */
-.tile-art { display: flex; justify-content: center; align-items: center; aspect-ratio: 2 / 1; padding: 14px; background: var(--art); border-bottom: 1px solid var(--line); }
+.tile-art { position: relative; display: flex; justify-content: center; align-items: center; aspect-ratio: 2 / 1; padding: 14px; background: var(--art); border-bottom: 1px solid var(--line); }
 .tile-art svg { display: block; height: 100%; width: auto; max-width: 100%; }
 .tile-art img { display: block; height: 100%; width: auto; max-width: 100%; object-fit: contain; border-radius: 4px; box-shadow: 0 1px 4px rgb(0 0 0 / .18); }
+.new-mark { position: absolute; top: 10px; left: 10px; padding: 1px 10px; border-radius: 999px; border: 1.5px solid var(--ink); background: var(--f-yellow); color: var(--on); font: 700 12px/1.5 var(--body); letter-spacing: .06em; text-transform: uppercase; }
+.follow { margin: 36px 0 0; font-size: 14.5px; }
+.follow a { color: var(--ink-2); font-weight: 600; }
+.follow a:hover { color: var(--ink); }
 .tile-body { display: block; padding: 12px 14px 14px; }
 .tile-title { margin: 0; font: 700 19px/1.2 var(--display); color: var(--ink); text-wrap: balance; }
 .tile-caption { display: block; margin-top: 6px; font-size: 14.5px; line-height: 1.45; color: var(--ink-2); }
@@ -215,6 +219,7 @@ figure.book-photo img { display: block; width: 100%; height: auto; border-radius
 .pager a { display: block; min-width: 0; padding: 14px 16px; border-radius: 14px; background: var(--card); border: 1px solid var(--line); color: var(--ink); text-decoration: none; }
 .pager a:hover { border-color: var(--ink); }
 .pager a.next { text-align: right; grid-column: -2; }
+.pager a.next + a.related { grid-column: 1 / -1; } /* a book: the full review, then a related stack on its own row */
 .pager small { display: block; font-size: 12.5px; color: var(--ink-2); font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
 .pager strong { display: block; font-family: var(--display); font-size: 17px; line-height: 1.25; margin-top: 4px; }
 

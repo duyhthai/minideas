@@ -8,6 +8,8 @@ export default {
   author: full.author,
   source: full.source,
   date: full.date,
+  added: "2026-11-08", // went on Minideas (date is when the review appeared on Sâu Sách)
+  related: "steal-like-an-artist",
   full,
   cover: full.cover,
   panels: [["outContents"], ["outBirthMonths"], ["outHours"], ["outIQ"], ["outTrades"], ["outEra"], ["outHonor"], ["outPlanes"], ["outMore"]],

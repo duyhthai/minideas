@@ -6,11 +6,13 @@
 // Words live in src/i18n/<lang>.js: ideas[slug] has one entry per panel (plus `links` for a
 // standalone idea), collections[id] has the collection's title, chapter names and link descriptions.
 // date (YYYY-MM-DD): when it was published on the site, shown on the collection's page or the standalone idea.
+// related (optional): the slug of one stack to read next, on either shelf (shown at the end; for a collection, after its last idea).
 
 export const SHELF = [
   {
     id: "ai-fundamentals",
     date: "2026-11-08",
+    related: "the-shallows",
     chapters: ["big", "learn", "work", "gen", "use"],
     resources: [
       { key: "coursera", name: "Coursera", url: "https://www.coursera.org/specializations/machine-learning-introduction" },
@@ -38,6 +40,7 @@ export const SHELF = [
   {
     slug: "clean-code-refactoring",
     date: "2026-11-08",
+    related: "graph-databases",
     panels: [["readMore"], ["stamina"], ["sameResult"], ["goodNames"], ["oneJob"], ["sayOnce"], ["onlyNeed"], ["safetyNet"], ["aiWrites"], ["littleCleaner"]],
     resources: [
       { key: "guru", name: "Refactoring.Guru", url: "https://refactoring.guru/refactoring/what-is-refactoring" },
@@ -49,6 +52,7 @@ export const SHELF = [
   {
     slug: "graph-databases",
     date: "2026-11-09",
+    related: "clean-code-refactoring",
     panels: [["graphIntro"], ["graphLabels"], ["graphRel"], ["graphProps"], ["graphTables"], ["graphPattern"], ["graphHops"], ["graphPath"], ["graphRecommend"], ["graphMerge"], ["graphIndex"], ["graphWhen"]],
     resources: [
       { key: "intro", name: "Neo4j", url: "https://neo4j.com/docs/getting-started/graph-database/" },

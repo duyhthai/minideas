@@ -5,7 +5,7 @@ export default {
 
   ui: {
     site: "Minideas",
-    lede: "Khái niệm lớn, hình vẽ nhỏ. Chọn một bộ thẻ rồi vuốt để xem.",
+    lede: "Ý tưởng lớn từ công nghệ và sách, gói gọn trong vài bức hình.",
     language: "Ngôn ngữ",
     themeDark: "Chuyển sang nền tối",
     themeLight: "Chuyển sang nền sáng",
@@ -42,6 +42,9 @@ export default {
     panelN: n => `Hình ${n}`,
     pagerPrev: "Trước đó",
     pagerNext: "Tiếp theo",
+    related: "Liên quan",
+    new: "Mới",
+    follow: "Theo dõi bài mới qua RSS",
     deeperTitle: "Tìm hiểu sâu hơn",
     deeperIntro: "Mỗi bộ thẻ cho bạn ý chính. Các nguồn mở dưới đây đi vào chi tiết.",
   },

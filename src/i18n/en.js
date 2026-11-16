@@ -5,7 +5,7 @@ export default {
 
   ui: {
     site: "Minideas",
-    lede: "Big ideas, small pictures. Pick a card stack and swipe through.",
+    lede: "Big ideas from tech and from books, each in a few pictures.",
     language: "Language",
     themeDark: "Switch to dark mode",
     themeLight: "Switch to light mode",
@@ -42,6 +42,9 @@ export default {
     panelN: n => `Panel ${n}`,
     pagerPrev: "Previous",
     pagerNext: "Up next",
+    related: "Related",
+    new: "New",
+    follow: "Follow new card stacks by RSS",
     deeperTitle: "Go deeper",
     deeperIntro: "Each card stack gives you the idea. These open resources go into the detail.",
   },
