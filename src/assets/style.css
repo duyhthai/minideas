@@ -84,8 +84,10 @@ a:focus-visible, button:focus-visible, .track:focus-visible { outline: 3px solid
 .hero h1 { font-family: var(--display); font-weight: 800; font-size: clamp(36px, 7vw, 60px); line-height: 1.02; letter-spacing: -.02em; margin: 0 0 12px; text-wrap: balance; }
 .lede { color: var(--ink-2); max-width: 54ch; font-size: 17.5px; margin: 0; }
 .hero .eyebrow { margin-bottom: 10px; }
-/* the home page's only words about the site, so they read as a statement, not a caption */
-.home-lede { color: var(--ink); max-width: 36ch; font-size: clamp(20px, 2.6vw, 24px); line-height: 1.4; text-wrap: balance; }
+/* the home page's only words about the site: larger than a caption, still grey. One line on wide screens; on
+   narrow ones each comma-separated part keeps together, so a phrase never splits */
+.home-lede { max-width: none; font-size: clamp(18px, 2.2vw + 10px, 22px); line-height: 1.4; }
+.home-lede span { display: inline-block; }
 .shelf { margin-top: 32px; }
 .shelf-label { display: flex; align-items: center; gap: 12px; font-family: var(--display); font-weight: 800; font-size: 28px; margin: 44px 0 0; }
 .shelf-label .shelf-icon { flex: none; }

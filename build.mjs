@@ -354,7 +354,7 @@ function homePage(t) {
   const body = `<main>
 <section class="hero">
   <h1 class="visually-hidden">${E(t.ui.site)}</h1>
-  <p class="lede home-lede">${E(t.ui.lede)}</p>
+  <p class="lede home-lede">${t.ui.lede.split(/(?<=,) /).map(part => `<span>${E(part)}</span>`).join(" ")}</p>
 </section>
 ${tiles}
 <section class="home-more">
