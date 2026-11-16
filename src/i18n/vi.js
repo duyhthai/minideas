@@ -200,7 +200,7 @@ export default {
       stamina: "Giả thuyết “sức bền thiết kế”: vì sao code gọn gàng có lợi về lâu dài (tiếng Anh)",
       yagni: "YAGNI: vì sao làm sẵn tính năng chưa cần lại tốn kém hơn ta tưởng (tiếng Anh)",
     }},
-    "graph-databases": { title: "Cơ\u00a0sở\u00a0dữ\u00a0liệu đồ\u00a0thị", gist: "Cơ sở dữ liệu đồ thị (graph database) lưu mỗi đối tượng thành một chấm, mỗi mối liên hệ thành một đường nối, rồi tìm câu trả lời bằng cách lần theo đường nối.", panels: [
+    "graph-databases": { title: "Cơ\u00a0sở\u00a0dữ\u00a0liệu đồ\u00a0thị", gist: "Lưu mỗi đối tượng thành một chấm, mỗi mối liên hệ thành một đường nối, rồi tìm câu trả lời bằng cách lần theo các đường nối.", panels: [
       ["Cơ sở dữ liệu của những mối liên hệ", "Nhiều cơ sở dữ liệu lưu thông tin thành bảng, giống một bảng tính. Cơ sở dữ liệu đồ thị (graph database) thì lưu mỗi đối tượng thành một chấm và mối liên hệ giữa chúng thành một đường nối, nên chuyện ai liên quan tới ai nằm sẵn trong dữ liệu. “Đồ thị” ở đây là một mạng lưới, không phải biểu đồ. Neo4j là một ví dụ nổi tiếng."],
       ["Mỗi chấm là một nút", "Mỗi chấm là một nút (node): một đối tượng, chẳng hạn Tom Hanks hay bộ phim Toy Story. Nhãn (label) cho biết đối tượng đó thuộc loại gì, như Person (người) hay Movie (phim). Một nút có thể mang nhiều nhãn: Tom Hanks vừa là Person vừa là Actor (diễn viên)."],
       ["Đường nối là quan hệ", "Quan hệ (relationship) nối hai nút với nhau. Mỗi quan hệ có một kiểu, viết in hoa, và chỉ theo một chiều, nên đọc lên như một câu: Tom Hanks ACTED_IN (đóng trong) Toy Story. Bạn vẫn có thể đi ngược lại, từ bộ phim tìm ra dàn diễn viên."],

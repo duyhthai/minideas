@@ -15,7 +15,7 @@ export default {
   panels: [["slaMashup"], ["photo", "good-vs-bad-theft.jpg"], ["slaDesks"], ["slaHobbies"], ["slaRoom"], ["slaBoring"], ["slaSubtract"]],
   vi: {
     title: full.vi.title,
-    abstract: "Một cuốn sách ngắn, tiêu đề viết tay, hình vẽ ngộ nghĩnh, với nhiều điều hay để áp dụng vào công việc, học tập và cuộc sống.",
+    abstract: "Chẳng có gì là nguyên gốc: mọi ý tưởng đều pha trộn từ những ý tưởng trước đó. Thế nào là “good steal”, vì sao nên có hai bàn làm việc analog và digital, và vì sao nên nhàm chán một cách chủ động.",
     panels: [
       ["Chẳng có gì là nguyên gốc", "Tại sao lại “steal”, sao không tự nghĩ ra mà lại “ăn cắp” ý tưởng của người khác? Câu trả lời ở ngay mở đầu sách: chẳng có gì là nguyên gốc, mọi ý tưởng đều là sự pha trộn hay chế biến lại từ những ý tưởng trước đó. Bạn là tổng hòa những ảnh hưởng mà bạn chọn đưa vào cuộc sống của mình."],
       ["Good steal là lấy cảm hứng", "Nếu thấy khó chấp nhận từ “steal” thì gọi là “lấy cảm hứng” sẽ hoa mỹ và dễ chịu hơn. Bảng so sánh của tác giả giải thích rõ hơn, nhưng tất nhiên chỉ “good steal” mới nên gọi là “lấy cảm hứng”."],
@@ -30,7 +30,7 @@ export default {
   },
   en: {
     title: full.en.title,
-    abstract: "A short book with handwritten headings and quirky drawings, full of good things to apply to your work, your studies and your life.",
+    abstract: "Nothing is original: every idea is a mix of earlier ones. What a “good steal” is, why to keep an analog desk and a digital desk, and why to be boring on purpose.",
     panels: [
       ["Nothing is original", "Why “steal”? Why take other people’s ideas instead of coming up with your own? The answer is right at the start of the book: nothing is original, every idea is a mix or a reworking of earlier ideas. You are the sum of the influences you choose to let into your life."],
       ["A good steal is inspiration", "If the word “steal” is hard to accept, calling it “taking inspiration” sounds nicer and more comfortable. The author’s comparison chart explains it better, but of course only a “good steal” deserves to be called “taking inspiration”."],

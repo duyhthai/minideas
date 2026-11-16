@@ -15,7 +15,7 @@ export default {
   panels: [["outContents"], ["outBirthMonths"], ["outHours"], ["outIQ"], ["outTrades"], ["outEra"], ["outHonor"], ["outPlanes"], ["outMore"]],
   vi: {
     title: full.vi.title,
-    abstract: "Thành công không chỉ nhờ tài năng: thời điểm sinh ra, gia đình, văn hóa và 10.000 giờ khổ luyện. Một trong những cuốn sách xuất sắc nhất mình từng đọc.",
+    abstract: "Thành công không chỉ nhờ tài năng: thời điểm sinh ra, gia đình, văn hóa và 10.000 giờ khổ luyện. Vì sao tuyển thủ khúc côn cầu thường sinh đầu năm, và vì sao IQ 195 vẫn chưa đủ.",
     panels: [
       ["Đừng để mục lục đánh lừa", "Lật mục lục, bạn dễ đặt cuốn sách xuống vì những tựa đề khó hiểu. Đừng! Đây là một trong những cuốn sách xuất sắc nhất mình từng đọc, cuốn hút qua từng mẩu chuyện nhỏ."],
       ["Ai đã có, sẽ được cho thêm", "Tuyển thủ khúc côn cầu chuyên nghiệp thường sinh đầu năm. Lớn hơn bạn bè vài tháng, các em được chú ý và phát triển hơn, và lợi thế nhỏ ấy cứ thế lớn dần."],
@@ -37,7 +37,7 @@ export default {
   },
   en: {
     title: full.en.title,
-    abstract: "Success isn’t only talent: when you were born, your family, your culture, and 10,000 hours of practice. One of the best books I’ve ever read.",
+    abstract: "Success isn’t only talent: when you were born, your family, your culture, and 10,000 hours of practice. Why pro hockey players are mostly born early in the year, and why an IQ of 195 isn’t enough.",
     panels: [
       ["Don’t let the contents fool you", "Flip to the table of contents and the cryptic titles might make you put this book down. Don’t! It’s one of the best books I’ve ever read, gripping in every little story."],
       ["To those who have, more is given", "Professional hockey players tend to be born early in the year. A few months older than their peers, they get noticed and developed more, and that small edge keeps growing."],
