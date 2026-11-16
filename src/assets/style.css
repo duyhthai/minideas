@@ -18,6 +18,7 @@
   --f-coral: #ffa595;
   --f-tint: #e1e7f6;
   --tint-mint: #ddf5ec; /* the home page's follow and suggest cards */
+  --mint-line: #a6dcc8; /* their border */
   --chip: #e3e9f8; /* pale blue behind link arrows and action icons, which are the site's blue */
   --display: "Bricolage Grotesque", "Avenir Next", system-ui, sans-serif;
   --body: "Lexend", "Segoe UI", system-ui, sans-serif;
@@ -28,14 +29,14 @@
   :root:not([data-theme="light"]) {
     --paper: #0f121a; --card: #191e2b; --art: #141927; --ink: #e7eaf3; --ink-2: #a3abc0; --line: #2a3145;
     --blue: #8ba5ff; --coral: #ff8d77; --on: #141927; --fk: #20263a;
-    --f-blue: #8ea5f7; --f-yellow: #f0c75a; --f-mint: #6cd1b1; --f-coral: #f59a87; --f-tint: #283150; --chip: #252e4a; --tint-mint: #1b2e29;
+    --f-blue: #8ea5f7; --f-yellow: #f0c75a; --f-mint: #6cd1b1; --f-coral: #f59a87; --f-tint: #283150; --chip: #252e4a; --tint-mint: #1b2e29; --mint-line: #2c5547;
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
   --paper: #0f121a; --card: #191e2b; --art: #141927; --ink: #e7eaf3; --ink-2: #a3abc0; --line: #2a3145;
   --blue: #8ba5ff; --coral: #ff8d77; --on: #141927; --fk: #20263a;
-  --f-blue: #8ea5f7; --f-yellow: #f0c75a; --f-mint: #6cd1b1; --f-coral: #f59a87; --f-tint: #283150; --chip: #252e4a; --tint-mint: #1b2e29;
+  --f-blue: #8ea5f7; --f-yellow: #f0c75a; --f-mint: #6cd1b1; --f-coral: #f59a87; --f-tint: #283150; --chip: #252e4a; --tint-mint: #1b2e29; --mint-line: #2c5547;
   color-scheme: dark;
 }
 
@@ -60,12 +61,9 @@ a:focus-visible, button:focus-visible, .track:focus-visible { outline: 3px solid
 .brand .mark { flex: none; width: 56px; height: 56px; }
 @media (max-width: 479px) { .brand { gap: 10px; font-size: 17px; } .brand .mark { width: 46px; height: 46px; } }
 
-/* site footer, small print: the two things a reader can do, then the year and who makes it */
-.site-foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 24px; margin-top: 56px; padding-top: 18px; border-top: 1px solid var(--line); font-size: 14px; color: var(--ink-2); }
+/* site footer, small print on the right: the year and who makes it */
+.site-foot { margin-top: 56px; padding-top: 18px; border-top: 1px solid var(--line); font-size: 14px; color: var(--ink-2); text-align: right; }
 .site-foot p { margin: 0; }
-.foot-links { display: flex; flex-wrap: wrap; gap: 4px 18px; }
-.foot-links a { color: var(--ink); font-weight: 600; text-decoration: none; }
-.foot-links a:hover { text-decoration: underline; }
 .top-tools { display: flex; align-items: center; gap: 10px; }
 .theme-toggle { display: grid; place-items: center; width: 38px; height: 38px; padding: 0; border: 1.5px solid var(--ink); border-radius: 50%; background: var(--card); color: var(--ink); cursor: pointer; }
 .theme-toggle .sun { display: none; }
@@ -150,16 +148,18 @@ figure.book-photo img { display: block; width: 100%; height: auto; border-radius
 .tile-art img { display: block; height: 100%; width: auto; max-width: 100%; object-fit: contain; border-radius: 4px; box-shadow: 0 1px 4px rgb(0 0 0 / .18); }
 /* beside the title, so it never covers the picture */
 .new-mark { float: right; margin: 2px 0 4px 10px; padding: 1px 10px; border-radius: 999px; border: 1.5px solid var(--ink); background: var(--f-yellow); color: var(--on); font: 700 12px/1.5 var(--body); letter-spacing: .06em; text-transform: uppercase; }
-/* home page, after the shelves: follow and suggest, half the row each, drawn like the drawings' shapes (a soft mint
-   wash, an ink outline), with mint badges; green is a color neither shelf uses */
+/* home page, after the shelves: follow and suggest, half the row each, on a soft mint wash with a mint border, mint
+   badges and a round arrow like the pager's; green is a color neither shelf uses, so they read as actions, not content */
 .home-more { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); margin-top: 40px; }
 .more-card { display: flex; align-items: center; gap: 14px; padding: 16px 18px; border-radius: 14px; background: var(--card); border: 1px solid var(--line); color: var(--ink); text-decoration: none; }
 .more-card:hover { border-color: var(--ink); }
-.home-more .more-card { background: var(--tint-mint); border: 1.5px solid var(--ink); }
-.home-more .more-card:hover { box-shadow: 0 6px 18px -8px rgb(0 0 0 / .45); transform: translateY(-1px); }
-.home-more .more-card > svg { border: 1.5px solid var(--ink); color: var(--on); }
-.home-more .more-card > svg { background: var(--f-mint); }
-.home-more .more-card:hover > svg { color: var(--on); }
+.home-more .more-card { position: relative; padding-right: 58px; background: var(--tint-mint); border-color: var(--mint-line); }
+.home-more .more-card:hover { border-color: var(--ink); box-shadow: 0 6px 18px -8px rgb(0 0 0 / .45); transform: translateY(-1px); }
+.home-more .more-card > svg, .home-more .more-card:hover > svg { background: var(--f-mint); color: var(--on); }
+.home-more .more-card::after {
+  content: "→"; position: absolute; top: 50%; right: 16px; translate: 0 -50%; width: 30px; height: 30px; display: grid; place-items: center;
+  border-radius: 50%; background: var(--f-mint); color: var(--on); font: 700 16px/1 var(--body);
+}
 .more-card strong { display: block; font: 700 17px/1.25 var(--display); }
 .more-card small { display: block; margin-top: 3px; font-size: 14px; line-height: 1.4; color: var(--ink-2); }
 .tile-body { display: block; padding: 12px 14px 14px; }

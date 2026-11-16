@@ -277,7 +277,6 @@ ${ROUGH}
 </header>
 ${body}
 <footer class="site-foot">
-  <p class="foot-links"><a href="${to(t.lang, "follow")}">${E(t.ui.followButton)}</a><a href="${to(t.lang, "suggest")}">${E(t.ui.suggestTitle)}</a></p>
   <p>© ${new Date().getUTCFullYear()} ${E(t.ui.site)} · ${E(t.ui.madeBy)}</p>
 </footer>
 </div>
