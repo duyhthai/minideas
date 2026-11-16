@@ -17,6 +17,7 @@
   --f-mint: #86dcc1;
   --f-coral: #ffa595;
   --f-tint: #e1e7f6;
+  --tint-mint: #ddf5ec; /* the home page's follow and suggest cards */
   --chip: #e3e9f8; /* pale blue behind link arrows and action icons, which are the site's blue */
   --display: "Bricolage Grotesque", "Avenir Next", system-ui, sans-serif;
   --body: "Lexend", "Segoe UI", system-ui, sans-serif;
@@ -27,14 +28,14 @@
   :root:not([data-theme="light"]) {
     --paper: #0f121a; --card: #191e2b; --art: #141927; --ink: #e7eaf3; --ink-2: #a3abc0; --line: #2a3145;
     --blue: #8ba5ff; --coral: #ff8d77; --on: #141927; --fk: #20263a;
-    --f-blue: #8ea5f7; --f-yellow: #f0c75a; --f-mint: #6cd1b1; --f-coral: #f59a87; --f-tint: #283150; --chip: #252e4a;
+    --f-blue: #8ea5f7; --f-yellow: #f0c75a; --f-mint: #6cd1b1; --f-coral: #f59a87; --f-tint: #283150; --chip: #252e4a; --tint-mint: #1b2e29;
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
   --paper: #0f121a; --card: #191e2b; --art: #141927; --ink: #e7eaf3; --ink-2: #a3abc0; --line: #2a3145;
   --blue: #8ba5ff; --coral: #ff8d77; --on: #141927; --fk: #20263a;
-  --f-blue: #8ea5f7; --f-yellow: #f0c75a; --f-mint: #6cd1b1; --f-coral: #f59a87; --f-tint: #283150; --chip: #252e4a;
+  --f-blue: #8ea5f7; --f-yellow: #f0c75a; --f-mint: #6cd1b1; --f-coral: #f59a87; --f-tint: #283150; --chip: #252e4a; --tint-mint: #1b2e29;
   color-scheme: dark;
 }
 
@@ -138,10 +139,18 @@ figure.book-photo img { display: block; width: 100%; height: auto; border-radius
 .tile-art svg { display: block; height: 100%; width: auto; max-width: 100%; }
 .tile-art img { display: block; height: 100%; width: auto; max-width: 100%; object-fit: contain; border-radius: 4px; box-shadow: 0 1px 4px rgb(0 0 0 / .18); }
 .new-mark { position: absolute; top: 10px; left: 10px; padding: 1px 10px; border-radius: 999px; border: 1.5px solid var(--ink); background: var(--f-yellow); color: var(--on); font: 700 12px/1.5 var(--body); letter-spacing: .06em; text-transform: uppercase; }
-.follow { margin: 36px 0 0; font-size: 14.5px; }
-.follow a { display: inline-flex; align-items: center; gap: 8px; color: var(--ink-2); font-weight: 600; }
-.follow svg { flex: none; }
-.follow a:hover { color: var(--ink); }
+/* home page, after the shelves: follow and suggest, half the row each, drawn like the drawings' shapes (a soft mint
+   wash, an ink outline), with mint badges; green is a color neither shelf uses */
+.home-more { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); margin-top: 40px; }
+.more-card { display: flex; align-items: center; gap: 14px; padding: 16px 18px; border-radius: 14px; background: var(--card); border: 1px solid var(--line); color: var(--ink); text-decoration: none; }
+.more-card:hover { border-color: var(--ink); }
+.home-more .more-card { background: var(--tint-mint); border: 1.5px solid var(--ink); }
+.home-more .more-card:hover { box-shadow: 0 6px 18px -8px rgb(0 0 0 / .45); transform: translateY(-1px); }
+.home-more .more-card > svg { border: 1.5px solid var(--ink); color: var(--on); }
+.home-more .more-card > svg { background: var(--f-mint); }
+.home-more .more-card:hover > svg { color: var(--on); }
+.more-card strong { display: block; font: 700 17px/1.25 var(--display); }
+.more-card small { display: block; margin-top: 3px; font-size: 14px; line-height: 1.4; color: var(--ink-2); }
 .tile-body { display: block; padding: 12px 14px 14px; }
 .tile-title { margin: 0; font: 700 19px/1.2 var(--display); color: var(--ink); text-wrap: balance; }
 .tile-caption { display: block; margin-top: 6px; font-size: 14.5px; line-height: 1.45; color: var(--ink-2); }
@@ -235,12 +244,12 @@ figure.book-photo img { display: block; width: 100%; height: auto; border-radius
 .pager a.prev::before { content: "←"; right: auto; left: 14px; }
 .pager a:hover::after, .pager a:hover::before { background: var(--blue); color: var(--card); }
 /* the same round badge for the share and follow icons */
-.act > svg, .follow a > svg:not(.rss) {
+.act > svg, .more-card > svg {
   box-sizing: border-box; width: 30px; height: 30px; padding: 6px; flex: none;
   border-radius: 50%; background: var(--chip); color: var(--blue);
 }
-.follow a > svg:not(.rss) { width: 26px; height: 26px; padding: 5px; }
-.act:hover > svg, .follow a:hover > svg:not(.rss) { background: var(--blue); color: var(--card); }
+.more-card > svg { width: 40px; height: 40px; padding: 9px; }
+.act:hover > svg, .more-card:hover > svg { background: var(--blue); color: var(--card); }
 
 /* contents rail */
 .toc .home { display: inline-block; font-weight: 700; font-size: 14.5px; color: var(--ink); text-decoration: none; padding: 8px 10px; border-radius: 10px; }
@@ -275,6 +284,22 @@ figure.book-photo img { display: block; width: 100%; height: auto; border-radius
 .act[hidden] { display: none; }
 .act-box .share-menu { right: auto; left: 0; } /* Share comes first in the box, so its menu opens under it to the right */
 .act:hover span, .act[aria-expanded="true"] span { text-decoration: underline; text-underline-offset: 3px; }
+
+/* suggest page */
+.suggest-form { max-width: 560px; margin-top: 24px; }
+.suggest-form label { display: block; margin: 18px 0 6px; font-weight: 700; font-size: 15px; }
+.suggest-form .opt { font-weight: 400; color: var(--ink-2); }
+.suggest-form input, .suggest-form textarea { display: block; width: 100%; padding: 11px 14px; border-radius: 12px; border: 1px solid var(--line); background: var(--card); color: var(--ink); font: 16px/1.4 var(--body); }
+.suggest-form textarea { resize: vertical; }
+.suggest-form input:focus, .suggest-form textarea:focus { outline: 2px solid var(--blue); outline-offset: 1px; border-color: transparent; }
+.suggest-form .botcheck { display: none; }
+.suggest-form .btn.primary { margin-top: 22px; }
+.field-note { margin: 6px 0 0; font-size: 13px; color: var(--ink-2); }
+.form-status { margin: 10px 0 0; font-weight: 600; color: var(--coral); }
+.form-status:empty { display: none; }
+.suggest-thanks { max-width: 560px; margin-top: 24px; padding: 18px 20px; border-radius: 14px; background: var(--card); border: 1px solid var(--line); }
+.suggest-thanks p { margin: 0 0 14px; font-weight: 700; }
+.suggest-thanks[hidden], .suggest-form[hidden] { display: none; }
 
 /* follow page */
 .follow-way { margin-top: 28px; max-width: 640px; }

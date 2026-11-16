@@ -75,6 +75,26 @@
     setTimeout(() => { b.textContent = label; }, 2000);
   }));
 
+  // Suggest a topic: send the form in the background and say thanks on the page (without this, the browser posts it
+  // and Web3Forms shows its own page). data-ready is "no" until the build has a Web3Forms key.
+  const form = document.getElementById("suggest-form");
+  if (form) {
+    const status = form.querySelector(".form-status"), send = form.querySelector("button[type=submit]"), thanks = document.getElementById("suggest-thanks");
+    form.addEventListener("submit", async e => {
+      e.preventDefault();
+      if (form.dataset.ready !== "yes") { status.textContent = form.dataset.error; return; }
+      const label = send.textContent;
+      send.disabled = true; send.textContent = form.dataset.sending; status.textContent = "";
+      try {
+        const res = await fetch(form.action, { method: "POST", body: new FormData(form), headers: { Accept: "application/json" } });
+        if (!(await res.json()).success) throw new Error();
+        form.reset(); form.hidden = true; thanks.hidden = false;
+      } catch (err) { status.textContent = form.dataset.error; }
+      send.disabled = false; send.textContent = label;
+    });
+    document.getElementById("suggest-again").addEventListener("click", () => { thanks.hidden = true; form.hidden = false; form.querySelector("input[name=topic]").focus(); });
+  }
+
   // "New" marks show until their date (the build sets it), so a page built weeks ago doesn't keep calling old things new.
   const today = new Date().toISOString().slice(0, 10);
   document.querySelectorAll(".new-mark").forEach(m => { m.hidden = today > m.dataset.until; });

@@ -8,6 +8,7 @@
 //   og/<lang>/<name>.png             one link preview per page (home, collection, idea, book)
 //   photos/<book>/<file>             a book reviewer's own photos, copied from src/books/photos/
 //   <lang>/follow/index.html         how to follow new card stacks (the home page links here, not to the raw feed)
+//   <lang>/suggest/index.html        a form for suggesting topics (sent by Web3Forms to the owner's email)
 //   <lang>/feed.xml                  RSS: everything on the shelves, newest first
 //   404.html                         for addresses that don't exist (hosts serve it at any depth)
 //   sitemap.xml, robots.txt          every page's address, for search engines
@@ -37,6 +38,9 @@ const TMP = `${OUT}-tmp`; // built here first, then swapped in, so a running pre
 const CACHE = join(ROOT, "node_modules/.cache/og"); // preview images keyed by their inputs; most rebuilds render none
 const INDEX = process.argv.includes("--explicit-index") ? "index.html" : "";
 const SITE_URL = (process.env.SITE_URL || "https://minideas.com").replace(/\/$/, "");
+// The "Suggest a topic" form posts to Web3Forms (web3forms.com), which emails each suggestion to the owner. Its
+// access key is meant to be public. Until it's set the form can't send, and the build says so.
+const SUGGEST_KEY = "";
 
 const FONTS = `<link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -73,6 +77,8 @@ const SHARE_ICONS = {
 };
 // a bell for "follow" (the home page link), in the share icon's line style so it follows the theme
 const FOLLOW_ICON = `<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8.5a6 6 0 0 0-12 0c0 6.5-2.5 8.5-2.5 8.5h17S18 15 18 8.5"/><path d="M10.3 20.5a1.9 1.9 0 0 0 3.4 0"/></svg>`;
+// a light bulb for "suggest a topic", in the same line style
+const SUGGEST_ICON = `<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 18h5M10.5 21h3"/><path d="M12 3a6 6 0 0 0-3.6 10.8c.6.5 1 1.2 1 2v.2h5.2v-.2c0-.8.4-1.5 1-2A6 6 0 0 0 12 3z"/></svg>`;
 // the usual feed icon, in its usual orange, so people who use RSS recognise it
 const RSS_ICON = `<svg class="rss" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><rect width="24" height="24" rx="5" fill="#f26f21"/><circle cx="6.8" cy="17.2" r="2" fill="#fff"/><path d="M5 10.6a8.4 8.4 0 0 1 8.4 8.4M5 5.4A13.6 13.6 0 0 1 18.6 19" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/></svg>`;
 const SHARE_ICON = `<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3M7 8l5-5 5 5M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></svg>`;
@@ -84,7 +90,7 @@ const ALL_IDEAS = SHELF.flatMap(item => item.ideas || [item]);
 const problems = [];
 const seen = new Set(); // collections and ideas share one URL space
 for (const name of [...SHELF.flatMap(item => item.ideas ? [item.id, ...item.ideas.map(i => i.slug)] : [item.slug]), ...BOOKS.map(b => b.slug)]) {
-  if (seen.has(name) || ["home", "follow"].includes(name)) problems.push(`the name "${name}" is used twice or is taken by the site (collections and ideas need different names)`);
+  if (seen.has(name) || ["home", "follow", "suggest"].includes(name)) problems.push(`the name "${name}" is used twice or is taken by the site (collections and ideas need different names)`);
   seen.add(name);
 }
 for (const t of LANGS) {
@@ -347,7 +353,10 @@ function homePage(t) {
   <p class="lede">${E(t.ui.lede)}</p>
 </section>
 ${tiles}
-<p class="follow"><a href="${to(t.lang, "follow")}">${FOLLOW_ICON}<span>${E(t.ui.followTitle)}</span></a></p>
+<section class="home-more">
+  <a class="more-card follow-card" href="${to(t.lang, "follow")}">${FOLLOW_ICON}<span><strong>${E(t.ui.followTitle)}</strong><small>${E(t.ui.followLede)}</small></span></a>
+  <a class="more-card suggest-card" href="${to(t.lang, "suggest")}">${SUGGEST_ICON}<span><strong>${E(t.ui.suggestTitle)}</strong><small>${E(t.ui.suggestShort)}</small></span></a>
+</section>
 </main>`;
   const og = `og/${t.lang}/home.png`, first = ALL_IDEAS[0];
   const titles = SHELF.map(item => item.ideas ? t.collections[item.id].title : t.ideas[item.slug].title);
@@ -552,8 +561,47 @@ function followPage(t) {
     ${reader("Inoreader", `https://www.inoreader.com/?add_feed=${q}`)}
   </div>
 </section>
+<section class="follow-way">
+  <h2>${SUGGEST_ICON}<span>${E(t.ui.suggestTitle)}</span></h2>
+  <p>${E(t.ui.suggestLede)}</p>
+  <a class="btn" href="${to(t.lang, "suggest")}">${E(t.ui.suggestTitle)} →</a>
+</section>
 </main>`;
   return shell({ t, depth: 2, segs: ["follow"], title: `${t.ui.followTitle} · ${t.ui.site}`, desc: t.ui.followLede, body, og: `og/${t.lang}/home.png` });
+}
+
+// Suggest a topic: a plain form that Web3Forms emails to the owner. site.js sends it in the background and shows the
+// thanks here; without the script it still posts, and Web3Forms shows its own thank-you page. botcheck is a
+// honeypot: hidden from people, filled in by bots, and Web3Forms drops those. Every field but the topic is optional.
+function suggestPage(t) {
+  const to = linker(2), u = t.ui;
+  const field = (name, label, input, optional = true, note = "") => `<label for="s-${name}">${E(label)}${optional ? ` <span class="opt">(${E(u.optional)})</span>` : ""}</label>
+    ${input}${note ? `<p class="field-note">${E(note)}</p>` : ""}`;
+  const body = `<main>
+<a class="back" href="${to(t.lang)}">← ${E(u.allTopics)}</a>
+<section class="hero">
+  <h1>${E(u.suggestTitle)}</h1>
+  <p class="lede">${E(u.suggestLede)}</p>
+</section>
+<form class="suggest-form" id="suggest-form" action="https://api.web3forms.com/submit" method="POST" data-ready="${SUGGEST_KEY ? "yes" : "no"}" data-sending="${E(u.suggestSending)}" data-error="${E(u.suggestError)}">
+  <input type="hidden" name="access_key" value="${E(SUGGEST_KEY)}">
+  <input type="hidden" name="subject" value="${E(`Minideas: ${u.suggestTitle} (${t.lang})`)}">
+  <input type="hidden" name="from_name" value="Minideas">
+  <input type="checkbox" name="botcheck" class="botcheck" tabindex="-1" autocomplete="off">
+  ${field("topic", u.suggestTopic, `<input id="s-topic" name="topic" type="text" required maxlength="200" placeholder="${E(u.suggestTopicHint)}">`, false)}
+  ${field("details", u.suggestDetails, `<textarea id="s-details" name="details" rows="4" maxlength="2000"></textarea>`)}
+  ${field("link", u.suggestLink, `<input id="s-link" name="link" type="url" maxlength="500" placeholder="https://">`)}
+  ${field("email", u.suggestEmail, `<input id="s-email" name="email" type="email" maxlength="200" autocomplete="email">`, true, u.suggestEmailNote)}
+  <button class="btn primary" type="submit">${E(u.suggestSend)}</button>
+  <p class="form-status" role="status" aria-live="polite"></p>
+  <p class="field-note">${E(u.suggestVia)}</p>
+</form>
+<div class="suggest-thanks" id="suggest-thanks" hidden>
+  <p>${E(u.suggestThanks)}</p>
+  <button class="btn" type="button" id="suggest-again">${E(u.suggestAgain)}</button>
+</div>
+</main>`;
+  return shell({ t, depth: 2, segs: ["suggest"], title: `${u.suggestTitle} · ${u.site}`, desc: u.suggestLede, body, og: `og/${t.lang}/home.png` });
 }
 
 // 404.html: the host serves it for any address that doesn't exist, at any depth, so every link starts at the site
@@ -628,6 +676,7 @@ const files = { "index.html": rootPage(), "404.html": notFoundPage() };
 for (const t of LANGS) {
   files[`${t.lang}/index.html`] = homePage(t);
   files[`${t.lang}/follow/index.html`] = followPage(t);
+  files[`${t.lang}/suggest/index.html`] = suggestPage(t);
   for (const item of SHELF) {
     if (!item.ideas) { files[`${t.lang}/${item.slug}/index.html`] = ideaPage(t, item); continue; }
     files[`${t.lang}/${item.id}/index.html`] = collectionPage(t, item);
@@ -718,4 +767,5 @@ await rm(OUT, { recursive: true, force: true });
 await rename(TMP, OUT);
 
 console.log(`Built ${Object.keys(files).filter(p => p.endsWith(".html")).length} pages and ${Object.keys(images).length} preview images, ${rendered} re-rendered (${ALL_IDEAS.length} ideas, ${COLLECTIONS.length} collection${COLLECTIONS.length === 1 ? "" : "s"}, ${BOOKS.length} book${BOOKS.length === 1 ? "" : "s"}) for ${LANGS.map(t => t.lang).join(", ")} into ${OUT.startsWith(ROOT) ? relative(ROOT, OUT) : OUT}/`);
+if (!SUGGEST_KEY) console.log("Note: the suggestion form has no Web3Forms key yet (SUGGEST_KEY in build.mjs), so it can't send.");
 if (!SITE_URL) console.log("Note: SITE_URL is not set, so pages don't point to their preview images yet. Set it when you deploy.");
