@@ -7,7 +7,9 @@
 //   Paths are the same in every language; only the /<lang>/ prefix changes.
 //   og/<lang>/<name>.png             one link preview per page (home, collection, idea, book)
 //   photos/<book>/<file>             a book reviewer's own photos, copied from src/books/photos/
+//   <lang>/follow/index.html         how to follow new card stacks (the home page links here, not to the raw feed)
 //   <lang>/feed.xml                  RSS: everything on the shelves, newest first
+//   404.html                         for addresses that don't exist (hosts serve it at any depth)
 //   sitemap.xml, robots.txt          every page's address, for search engines
 //
 //   node build.mjs                    normal build (directory-style links)
@@ -69,6 +71,10 @@ const SHARE_ICONS = {
   linkedin: `<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="#0A66C2" d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 1 1 0-4.125 2.062 2.062 0 0 1 0 4.125zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>`,
   copy: `<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>`,
 };
+// a bell for "follow" (the home page link), in the share icon's line style so it follows the theme
+const FOLLOW_ICON = `<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8.5a6 6 0 0 0-12 0c0 6.5-2.5 8.5-2.5 8.5h17S18 15 18 8.5"/><path d="M10.3 20.5a1.9 1.9 0 0 0 3.4 0"/></svg>`;
+// the usual feed icon, in its usual orange, so people who use RSS recognise it
+const RSS_ICON = `<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><rect width="24" height="24" rx="5" fill="#f26f21"/><circle cx="6.8" cy="17.2" r="2" fill="#fff"/><path d="M5 10.6a8.4 8.4 0 0 1 8.4 8.4M5 5.4A13.6 13.6 0 0 1 18.6 19" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/></svg>`;
 const SHARE_ICON = `<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3M7 8l5-5 5 5M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></svg>`;
 
 /* ---------- checks ---------- */
@@ -78,7 +84,7 @@ const ALL_IDEAS = SHELF.flatMap(item => item.ideas || [item]);
 const problems = [];
 const seen = new Set(); // collections and ideas share one URL space
 for (const name of [...SHELF.flatMap(item => item.ideas ? [item.id, ...item.ideas.map(i => i.slug)] : [item.slug]), ...BOOKS.map(b => b.slug)]) {
-  if (seen.has(name) || name === "home") problems.push(`the name "${name}" is used twice (collections and ideas need different names)`);
+  if (seen.has(name) || ["home", "follow"].includes(name)) problems.push(`the name "${name}" is used twice or is taken by the site (collections and ideas need different names)`);
   seen.add(name);
 }
 for (const t of LANGS) {
@@ -333,7 +339,7 @@ function homePage(t) {
   <p class="lede">${E(t.ui.lede)}</p>
 </section>
 ${tiles}
-<p class="follow"><a href="feed.xml">${E(t.ui.follow)}</a></p>
+<p class="follow"><a href="${to(t.lang, "follow")}">${FOLLOW_ICON}<span>${E(t.ui.followTitle)}</span></a></p>
 </main>`;
   const og = `og/${t.lang}/home.png`, first = ALL_IDEAS[0];
   const titles = SHELF.map(item => item.ideas ? t.collections[item.id].title : t.ideas[item.slug].title);
@@ -520,6 +526,58 @@ function bookPage(t, b, parent = null) {
     desc: bl.abstract.replace(/\*/g, ""), body, og: bookImage(t, b, parent ? `${parent.slug}-full` : b.slug), langs: LANGS.filter(o => b[o.lang]) });
 }
 
+// Follow: how to get new card stacks. Browsers don't show RSS feeds (they save or dump the XML), so people read this
+// page instead: the feed's address to copy, and links that add it to a feed reader. A newsletter can join it later.
+function followPage(t) {
+  const to = linker(2), feedUrl = `${SITE_URL}/${t.lang}/feed.xml`, q = encodeURIComponent(feedUrl);
+  const reader = (name, url) => `<a href="${url}" target="_blank" rel="noopener"><strong>${name}</strong><span>${E(t.ui.followIn(name))}</span></a>`;
+  const body = `<main>
+<a class="back" href="${to(t.lang)}">← ${E(t.ui.allTopics)}</a>
+<section class="hero">
+  <h1>${E(t.ui.followTitle)}</h1>
+  <p class="lede">${E(t.ui.followLede)}</p>
+</section>
+<section class="follow-way">
+  <h2>${RSS_ICON}<span>${E(t.ui.rssTitle)}</span></h2>
+  <p>${E(t.ui.rssText)}</p>
+  <div class="feed-url"><code>${E(feedUrl)}</code><button class="btn" type="button" data-copy-text="${E(feedUrl)}" data-done="${E(t.ui.copiedShort)}">${E(t.ui.copyFeed)}</button></div>
+  <div class="links">
+    ${reader("Feedly", `https://feedly.com/i/subscription/feed/${q}`)}
+    ${reader("Inoreader", `https://www.inoreader.com/?add_feed=${q}`)}
+  </div>
+</section>
+</main>`;
+  return shell({ t, depth: 2, segs: ["follow"], title: `${t.ui.followTitle} · ${t.ui.site}`, desc: t.ui.followLede, body, og: `og/${t.lang}/home.png` });
+}
+
+// 404.html: the host serves it for any address that doesn't exist, at any depth, so every link starts at the site
+// root. It can't know the reader's language, so it speaks both, Vietnamese first.
+function notFoundPage() {
+  return `<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>${E(vi.ui.notFound)} · ${E(vi.ui.site)}</title>
+${FONTS}
+<script>(function () { var t = "light"; try { t = localStorage.getItem("theme") || "light"; } catch (e) {} document.documentElement.setAttribute("data-theme", t); })();</script>
+${iconLinks("/")}
+<link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+<main class="wrap picker not-found">
+  <a class="brand" href="/${INDEX}">${BRAND_MARK}<span>${E(vi.ui.site)}</span></a>
+  <h1>${E(vi.ui.notFound)}</h1>
+  <p>${E(vi.ui.notFoundText)}</p>
+  <p lang="en">${E(en.ui.notFound)}. ${E(en.ui.notFoundText)}</p>
+  <nav class="lang" aria-label="${E(vi.ui.homeLink)} / ${E(en.ui.homeLink)}">${[vi, en].map(o => `<a href="/${o.lang}/${INDEX}" hreflang="${o.lang}" lang="${o.lang}">${E(o.ui.homeLink)}</a>`).join("")}</nav>
+</main>
+</body>
+</html>
+`;
+}
+
 // Vietnamese readers come first. A saved choice wins; then Vietnamese if it is anywhere in the browser's languages
 // or the clock is on Vietnam time (many Vietnamese phones are set to English); everyone else gets English.
 function rootPage() {
@@ -560,9 +618,10 @@ ${iconLinks("")}
 }
 
 /* ---------- write ---------- */
-const files = { "index.html": rootPage() };
+const files = { "index.html": rootPage(), "404.html": notFoundPage() };
 for (const t of LANGS) {
   files[`${t.lang}/index.html`] = homePage(t);
+  files[`${t.lang}/follow/index.html`] = followPage(t);
   for (const item of SHELF) {
     if (!item.ideas) { files[`${t.lang}/${item.slug}/index.html`] = ideaPage(t, item); continue; }
     files[`${t.lang}/${item.id}/index.html`] = collectionPage(t, item);

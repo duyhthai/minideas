@@ -67,6 +67,14 @@
     document.addEventListener("keydown", e => { if (e.key === "Escape" && !menu.hidden) { open(false); share.focus(); } });
   }
 
+  // "Copy address" buttons (the Follow page): copy, then say so for a moment
+  document.querySelectorAll("[data-copy-text]").forEach(b => b.addEventListener("click", async () => {
+    try { await navigator.clipboard.writeText(b.dataset.copyText); } catch (e) { return; }
+    const label = b.textContent;
+    b.textContent = b.dataset.done;
+    setTimeout(() => { b.textContent = label; }, 2000);
+  }));
+
   // "New" marks show until their date (the build sets it), so a page built weeks ago doesn't keep calling old things new.
   const today = new Date().toISOString().slice(0, 10);
   document.querySelectorAll(".new-mark").forEach(m => { m.hidden = today > m.dataset.until; });

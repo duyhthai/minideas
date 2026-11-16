@@ -47,11 +47,11 @@ export default {
       },
       "Dù bạn đã làm chủ được tình hình hay chưa thì TTGT cũng là một trải nghiệm thú vị, chúng ta sẽ được giới thiệu về cách trí nhớ ngắn hạn và dài hạn hoạt động, những tăng trưởng và biến đổi não bộ của một nghệ sĩ violon, một người mù, hay khi ta lướt web, đọc sách... ông cũng chỉ ra rằng \"không ai nói được trạng thái mới của não là trạng thái trông đợi\" khi nó được hình thành từ những thói quen xấu.",
       "Chắc bạn không biết rằng The Shallows được đưa vào các mục *Neuroscience* và *Neuropsychology* trên Amazon! Và chỉ khi đã đọc sâu vào cuốn sách chúng ta mới nhận ra tại sao NXB Trẻ lại đưa nó vào bộ **Khoa Học Khám Phá**.",
-      "Sau vài chương đầu, bạn sẽ bất ngờ khi nhận ra rằng Carr đang chuyển qua nói về lịch sử và các nhu cầu hình thành lên các nhóm công nghệ, rồi ông lại chuyển tiếp đến các phân tích về ngôn ngữ, sự hình thành chữ viết và các loại phương tiện chuyên dụng cho nó, từ đất sét, giấy cuộn, giấy cói, da thuộc, bảng sáp... rồi mới đến sách. Bạn sẽ có thêm một ít kiến thức độc đáo như ban đầu *chữđượcviếtliêntục* mô phỏng theo cách nói, khoảng cách chỉ được \"phát minh\" sau đó và giúp việc đọc dễ hơn nhiều.",
+      "Sau vài chương đầu, bạn sẽ bất ngờ khi nhận ra rằng Carr đang chuyển qua nói về lịch sử và các nhu cầu hình thành nên các nhóm công nghệ, rồi ông lại chuyển tiếp đến các phân tích về ngôn ngữ, sự hình thành chữ viết và các loại phương tiện chuyên dụng cho nó, từ đất sét, giấy cuộn, giấy cói, da thuộc, bảng sáp... rồi mới đến sách. Bạn sẽ có thêm một ít kiến thức độc đáo như ban đầu *chữđượcviếtliêntục* mô phỏng theo cách nói, khoảng cách chỉ được \"phát minh\" sau đó và giúp việc đọc dễ hơn nhiều.",
       "Tác giả cũng có phần so sánh về sách truyền thống và ebook, ông chỉ ra những thế mạnh của sách giấy về tính trực quan và vật lý như dễ đọc và không sợ rơi vỡ, hư hỏng, hết pin... Tuy nhiên với kinh nghiệm của một người dùng Kindle lâu năm, người viết không hoàn toàn đồng quan điểm với tác giả vì các máy đọc sách có mặt mạnh của riêng chúng, công nghệ E-Ink giúp dễ đọc và pin dùng được rất lâu, dễ mua sách nước ngoài và tra từ, và mang theo được nhiều sách bên mình... Nên theo quan điểm cá nhân, một người yêu sách nên có sự kết hợp của cả hai.",
       "Sau những \"bài học lịch sử\" bạn sẽ được mang trở lại thời hiện đại với máy tính và Internet:",
       {
-        "quote": "Mỗi khi bật máy tính lên, chúng ta lại lao vào một \"hệ sinh thái các công nghệ gián đoạn\" - Corry Doctorow"
+        "quote": "Mỗi khi bật máy tính lên, chúng ta lại lao vào một \"hệ sinh thái các công nghệ gián đoạn\" - Cory Doctorow"
       },
       "Nhưng tất nhiên ta không chỉ nhận những tiêu cực từ công nghệ, thỉnh thoảng bạn sẽ đọc được vài điều sáng sủa hơn như \"lướt web dùng nhiều chức năng của não nên có thể giúp người lớn tuổi minh mẫn hơn\", hay \"chơi game giúp tăng tốc độ chuyển tập trung thị giác\"... Nên cuối cùng thiết nghĩ mỗi người chúng ta lại nên quay về vấn đề cơ bản về sự cân bằng thời gian cho các hoạt động và công việc của mình."
     ],
@@ -102,7 +102,7 @@ export default {
       "The author also compares traditional books and e-books, pointing out the strengths of paper books in how visual and physical they are: easy to read, and no fear of dropping and breaking them, damaging them or running out of battery... But with the experience of a long-time Kindle user, I don’t entirely agree with the author, because e-readers have strengths of their own: E-Ink technology makes them easy to read and the battery lasts a very long time, it’s easy to buy books from abroad and look up words, and you can carry lots of books with you... So in my personal view, a book lover should have a mix of both.",
       "After these \"history lessons\" you’re brought back to the present, with computers and the Internet:",
       {
-        "quote": "Every time we turn on our computers, we plunge into an \"ecosystem of interruption technologies\" - Corry Doctorow"
+        "quote": "Every time we turn on our computers, we plunge into an \"ecosystem of interruption technologies\" - Cory Doctorow"
       },
       "But of course technology doesn’t only bring negatives; now and then you’ll read something brighter, such as \"browsing the web uses many functions of the brain, so it may help older people stay sharper\", or \"playing games speeds up shifting visual focus\"... So in the end, I think each of us should come back to the basic question of balancing our time across our activities and our work."
     ],
