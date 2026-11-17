@@ -324,7 +324,7 @@ ${body}
 // Share, on its own under a stack or a full review: the share sheet on phones and tablets; on computers (whose share
 // sheets only offer system apps) a menu of Facebook, LinkedIn and copy link. Plain share links, no scripts from either
 // site; site.js fills in the address and shows the button (without the script there is nothing to show).
-const shareButton = (t, text) => `<div class="share-wrap share-solo">
+const shareButton = (t, text, cls = "share-solo") => `<div class="share-wrap ${cls}">
   <button class="btn share" id="share" type="button" hidden aria-expanded="false" aria-controls="share-menu" data-text="${E(text)}" data-copied="${E(t.ui.copied)}" data-copy-prompt="${E(t.ui.copyPrompt)}">${SHARE_ICON}<span>${E(t.ui.share)}</span></button>
   <div class="share-menu" id="share-menu" hidden>
     <a data-to="https://www.facebook.com/sharer/sharer.php?u=" target="_blank" rel="noopener">${SHARE_ICONS.facebook}Facebook</a>
@@ -445,11 +445,10 @@ ${slides.map(({ art, h, p }, j) => `<section class="slide" aria-roledescription=
     <div class="dots" role="group" aria-label="${E(t.ui.dotsLabel)}">${slides.map((_, j) => `<button class="dot" type="button" aria-label="${E(t.ui.panelN(j + 1))}"></button>`).join("")}</div>
     <button class="btn primary" id="next" type="button">${E(t.ui.next)}</button>
   </div>
-  <p class="hint">${E(t.ui.hint)}</p>
+  <div class="hint-row"><p class="hint">${E(t.ui.hint)}</p>${shareButton(t, gist, "share-row")}</div>
   </div>
   <div class="stack-next">
   ${pager}
-  ${shareButton(t, gist)}
   </div>
 </main>`;
 }

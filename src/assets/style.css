@@ -183,18 +183,17 @@ figure.book-photo img { display: block; width: 100%; height: auto; border-radius
   /* beside a rail, the card and its rows fill the column up to the page's right edge */
   .layout .stack-main > *, .layout .stack-next > * { max-width: none; }
   /* no contents rail (books, standalone ideas): the title and where to go next (full review, related) on the left;
-     the card, its buttons and the swipe hint on the right as one block, so the left column never pulls the buttons
-     away from the card, then share and follow under it. Phones keep the page order. */
+     the card, its buttons, the swipe hint and Share on the right as one block, so the left column never pulls the
+     buttons away from the card. Phones keep the page order. */
   .layout.solo .viewer {
     display: grid; grid-template-columns: minmax(240px, 1fr) minmax(0, 600px); column-gap: 56px; align-items: start;
-    grid-template-areas: "head main" "pager main" "pager act";
+    grid-template-areas: "head main" "pager main"; grid-template-rows: auto 1fr; /* the links follow the title */
   }
   .layout.solo .stack-head { grid-area: head; }
   .layout.solo .stack-main { grid-area: main; }
   .layout.solo .stack-next { display: contents; }
   .layout.solo .card { margin-top: 0; }
   .layout.solo .pager { grid-area: pager; grid-template-columns: minmax(0, 1fr); max-width: 360px; margin-top: 28px; }
-  .layout.solo .share-solo { grid-area: act; margin-top: 24px; }
   .layout.solo .pager a.next { text-align: left; grid-column: auto; }
 }
 .viewer { min-width: 0; }
@@ -240,6 +239,16 @@ figure.book-photo img { display: block; width: 100%; height: auto; border-radius
   .dot[aria-current="true"]::before { width: 14px; }
 }
 .hint { font-size: 13px; color: var(--ink-2); margin: 10px 0 0; }
+/* under the buttons: the swipe hint on the left, Share on the right, under Next */
+.hint-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 4px 16px; max-width: 540px; margin-top: 14px; }
+.hint-row .hint { margin: 0; }
+.hint-row .share-wrap { margin-left: auto; }
+/* Share: a text button with the yellow badge of the Follow and Suggest icons, so it never competes with Next */
+.btn.share { min-height: 40px; padding: 0 12px 0 4px; gap: 9px; border-color: transparent; background: none; color: var(--ink); font-size: 14px; }
+.btn.share svg { box-sizing: content-box; width: 16px; height: 16px; padding: 7px; border-radius: 50%; background: var(--f-yellow); color: var(--on); }
+.btn.share:hover, .btn.share[aria-expanded="true"] { border-color: var(--line); background: var(--card); color: var(--ink); }
+.hint-row .btn.share { margin-right: -12px; } /* its text lines up with Next's right edge */
+.share-solo .btn.share { margin-left: -4px; } /* its badge lines up with the text above */
 
 .pager { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr)); max-width: 540px; margin-top: 32px; }
 .pager a { display: block; min-width: 0; padding: 14px 16px; border-radius: 14px; background: var(--card); border: 1px solid var(--line); color: var(--ink); text-decoration: none; }
@@ -293,10 +302,9 @@ figure.book-photo img { display: block; width: 100%; height: auto; border-radius
 .links span { display: block; color: var(--ink-2); font-size: 14px; margin-top: 4px; line-height: 1.45; }
 .source { font-size: 13px; color: var(--ink-2); margin-top: 22px; }
 
-/* Share on its own: a button like Previous under the cards; its menu opens under it to the right */
+/* Share on its own (full reviews); its menu opens under it to the right */
 .share-solo { width: fit-content; margin-top: 16px; }
 .share-solo .share-menu { right: auto; left: 0; }
-.btn.share:hover, .btn.share[aria-expanded="true"] { background: var(--ink); color: var(--card); }
 
 /* suggest page */
 .suggest-form { max-width: 560px; margin-top: 24px; }
