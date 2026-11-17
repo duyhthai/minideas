@@ -52,7 +52,7 @@ const css = t => `
 .s{fill:none;stroke:${t.ink};stroke-width:${t.sw};stroke-linecap:round;stroke-linejoin:round}
 .sf{stroke:${t.ink};stroke-width:${t.sw};stroke-linejoin:round}
 .head{fill:${t.ink};stroke:${t.ink};stroke-width:1.5;stroke-linejoin:round}
-.fk{fill:${t.paper}}.fi{fill:${t.ink}}
+.fk,.pf{fill:${t.paper}}.pf{stroke:none}.fi{fill:${t.ink}}
 .cf{stroke:none}.cf.fy{fill:url(#pen-y)}.cf.fb{fill:url(#pen-b)}.cf.fm{fill:url(#pen-m)}.cf.fc{fill:url(#pen-c)}.cf.ft{fill:url(#pen-t)}
 .sf.fy,.sf.fb,.sf.fm,.sf.fc,.sf.ft{fill:none}
 .thin{stroke-width:1.2}.w3{stroke-width:2.4}.dash{stroke-dasharray:5 6}.faint{opacity:.28}
@@ -66,11 +66,11 @@ const LABEL = /<text[\s\S]*?<\/text>/g, SHAPE = /<(?:line|rect|circle|ellipse|pa
 export const sketchShapes = drawing => drawing.replace(LABEL, "");
 export const sketchLabels = drawing => drawing.replace(SHAPE, "");
 
-// Each group of shapes gets the pencil filter, with each coloured shape split into a colour layer, nudged off its
-// outline, and the outline itself.
+// Each group of shapes gets the pencil filter, with each coloured shape split into a solid paper base (so it still
+// hides what's behind it, as a flat fill did), a colour layer nudged off its outline, and the outline itself.
 const GROUP = /(<g [^>]*>)([\s\S]*?)<\/g>/g;
 const layer = (s, filter) => `<g filter="url(#${filter})">${s.replace(/<(rect|circle|path|ellipse|polygon) ([^>]*?)class="sf (f[ybmct])\b([^"]*)"\/>/g,
-  `<$1 $2class="cf $3" transform="translate(1.8 1.4)"/><$1 $2class="sf $3$4"/>`)}</g>`;
+  `<$1 $2class="pf$4"/><$1 $2class="cf $3$4" transform="translate(1.8 1.4)"/><$1 $2class="sf $3$4"/>`)}</g>`;
 const pencil = (shapes, filter) => layer(shapes.replace(GROUP, ""), filter) +
   [...shapes.matchAll(GROUP)].map(([, open, inner]) => `${open}${layer(inner, filter)}</g>`).join("");
 

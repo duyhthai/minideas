@@ -574,7 +574,12 @@ export const ART = {
   outEra(lb) {
     const t = lb.book, x = y => 20 + (y - 1820) * 1.867;
     let s = R(x(1914), 126, x(1945) - x(1914), 20, "fc", "thin faint", 4) + A(16, 120, 306, 120);
-    s += T((x(1914) + x(1945)) / 2, 162, t.hardTimes, { c: "sm cor b", max: 170 });
+    // the hard times, on two lines (broken at the "·" nearest the middle) when one line would have to shrink
+    const parts = t.hardTimes.split(" · "), half = t.hardTimes.length / 2;
+    let k = 1;
+    for (let i = 1, run = parts[0].length; i < parts.length; run += 3 + parts[i++].length) if (Math.abs(run - half) < Math.abs(parts.slice(0, k).join(" · ").length - half)) k = i;
+    const hard = t.hardTimes.length > 28 && parts.length > 1 ? `${parts.slice(0, k).join(" · ")}\n${parts.slice(k).join(" · ")}` : t.hardTimes;
+    s += T((x(1914) + x(1945)) / 2, hard.includes("\n") ? 168 : 162, hard, { c: "sm cor b", max: 170 });
     // role labels sit at different heights so neighbours don't overlap, and stay inside the frame
     [[1835, t.roles[2], 52], [1930, t.roles[0], 26], [1955, t.roles[1], 62]].forEach(([y, role, py]) => {
       const w = pillW(role, 12), px = Math.min(Math.max(x(y), w / 2 + 6), 314 - w / 2);
