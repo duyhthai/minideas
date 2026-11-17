@@ -2,6 +2,7 @@
 // and reloads open pages after each successful build.
 //
 //   npm run dev        (PORT=5000 npm run dev for another port)
+// /newsletter/ shows the newsletter drafts (ready-to-paste emails for the newest stacks).
 // Add ?noreload to a URL to get the page without the reload hook (headless screenshots wait forever on it).
 import { createServer } from "node:http";
 import { spawn } from "node:child_process";
@@ -55,6 +56,8 @@ createServer((req, res) => {
   }
   let file = normalize(join(DIST, path));
   if (!file.startsWith(DIST)) { res.writeHead(403).end(); return; }
+  // newsletter drafts: written by the build outside dist/, so they're never deployed
+  if (/^\/newsletter\/?$/.test(path)) file = join(ROOT, "node_modules/.cache/newsletter.html");
   if (existsSync(file) && statSync(file).isDirectory()) file = join(file, "index.html");
   // a missing address gets dist/404.html, as the host serves it
   let status = 200;

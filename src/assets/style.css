@@ -63,10 +63,10 @@ a:focus-visible, button:focus-visible, .track:focus-visible { outline: 3px solid
 .site-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 24px; margin-top: 32px; padding-top: 18px; border-top: 1px solid var(--line); font-size: 14px; color: var(--ink-2); }
 .site-foot p { margin: 0 0 0 auto; }
 @media (max-width: 560px) { .site-foot p { margin-left: 0; } }
-.foot-follow { display: inline-flex; align-items: center; gap: 8px; color: var(--ink); font-weight: 600; text-decoration: none; }
-.foot-follow svg { flex: none; width: 20px; height: 20px; } /* the feed icon in ink: following is by RSS for now */
+.foot-rss { display: inline-flex; align-items: center; gap: 8px; color: var(--ink); font-weight: 600; text-decoration: none; }
+.foot-rss svg { flex: none; width: 20px; height: 20px; } /* the feed icon in ink, so it stays quiet */
 .feed .bg { fill: var(--ink); } .feed .fg { fill: var(--paper); } .feed .fg-line { fill: none; stroke: var(--paper); stroke-width: 2.6; stroke-linecap: round; }
-.foot-follow:hover span { text-decoration: underline; }
+.foot-rss:hover span { text-decoration: underline; }
 .top-tools { display: flex; align-items: center; gap: 10px; }
 .theme-toggle { display: grid; place-items: center; width: 38px; height: 38px; padding: 0; border: 1.5px solid var(--ink); border-radius: 50%; background: var(--card); color: var(--ink); cursor: pointer; }
 .theme-toggle .sun { display: none; }
@@ -153,9 +153,8 @@ figure.book-photo img { display: block; width: 100%; height: auto; border-radius
 .tile-art img { display: block; height: 100%; width: auto; max-width: 100%; object-fit: contain; border-radius: 4px; box-shadow: 0 1px 4px rgb(0 0 0 / .18); }
 /* beside the title, so it never covers the picture */
 .new-mark { float: right; margin: 2px 0 4px 10px; padding: 1px 10px; border-radius: 999px; border: 1.5px solid var(--ink); background: var(--f-yellow); color: var(--on); font: 700 12px/1.5 var(--body); letter-spacing: .06em; text-transform: uppercase; }
-/* the end of every page, above the footer: Suggest, across the row, on the tint behind tile pictures (so it reads as
-   an action, not as another tile), with a yellow badge like the logo's bulb and a plain arrow. A grid, so Follow can
-   join it as a second card once there's an email newsletter */
+/* the end of every page, above the footer: Follow and Suggest, side by side (stacked on phones), on the tint behind
+   tile pictures (so they read as actions, not as more tiles), with a yellow badge like the logo's bulb and a plain arrow */
 .more-band { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); margin-top: 56px; }
 .more-card { display: flex; align-items: center; gap: 14px; padding: 16px 18px; border-radius: 14px; background: var(--card); border: 1px solid var(--line); color: var(--ink); text-decoration: none; }
 .more-card:hover { border-color: var(--ink); }
@@ -303,9 +302,9 @@ figure.book-photo img { display: block; width: 100%; height: auto; border-radius
 .suggest-form { max-width: 560px; margin-top: 24px; }
 .suggest-form label { display: block; margin: 18px 0 6px; font-weight: 700; font-size: 15px; }
 .suggest-form .opt { font-weight: 400; color: var(--ink-2); }
-.suggest-form input, .suggest-form textarea { display: block; width: 100%; padding: 11px 14px; border-radius: 12px; border: 1px solid var(--line); background: var(--card); color: var(--ink); font: 16px/1.4 var(--body); }
+.suggest-form input, .suggest-form textarea, .email-form input { display: block; width: 100%; padding: 11px 14px; border-radius: 12px; border: 1px solid var(--line); background: var(--card); color: var(--ink); font: 16px/1.4 var(--body); }
 .suggest-form textarea { resize: vertical; }
-.suggest-form input:focus, .suggest-form textarea:focus { outline: 2px solid var(--blue); outline-offset: 1px; border-color: transparent; }
+.suggest-form input:focus, .suggest-form textarea:focus, .email-form input:focus { outline: 2px solid var(--blue); outline-offset: 1px; border-color: transparent; }
 .suggest-form .botcheck { display: none; }
 .suggest-form .btn.primary { margin-top: 22px; }
 .field-note { margin: 6px 0 0; font-size: 13px; color: var(--ink-2); }
@@ -316,17 +315,32 @@ figure.book-photo img { display: block; width: 100%; height: auto; border-radius
 .examples button:hover { border-color: var(--ink); }
 .form-status { margin: 10px 0 0; font-weight: 600; color: var(--coral); }
 .form-status:empty { display: none; }
-.suggest-thanks { max-width: 560px; margin-top: 24px; padding: 18px 20px; border-radius: 14px; background: var(--card); border: 1px solid var(--line); }
+/* "it worked", after signing up or sending a suggestion: the mint of the drawings (dark text in both themes) and a tick */
+.suggest-thanks, .form-thanks { display: grid; grid-template-columns: auto 1fr; gap: 12px; align-items: start; max-width: 560px; margin-top: 24px; padding: 16px 20px; border-radius: 14px; background: var(--f-mint); color: var(--on); }
+.suggest-thanks > svg, .form-thanks > svg { margin-top: 1px; }
 .suggest-thanks p { margin: 0 0 14px; font-weight: 700; }
-.suggest-thanks[hidden], .suggest-form[hidden] { display: none; }
+.form-thanks { margin: 0 0 16px; } .form-thanks p { margin: 0; font-weight: 700; line-height: 1.5; }
+.suggest-thanks[hidden], .suggest-form[hidden], .form-thanks[hidden], .email-form[hidden] { display: none; }
 
 /* follow page */
 .follow-way { margin-top: 28px; max-width: 640px; }
 .follow-way h2 { display: flex; align-items: center; gap: 10px; font: 800 24px/1.2 var(--display); margin: 0 0 8px; }
 .follow-way h2 svg { width: 24px; height: 24px; flex: none; }
 .follow-way > p { color: var(--ink-2); margin: 0 0 16px; }
-.feed-url { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
-.feed-url code { flex: 1 1 240px; min-width: 0; overflow-wrap: anywhere; padding: 11px 14px; border-radius: 12px; background: var(--card); border: 1px solid var(--line); font: 14px/1.4 ui-monospace, Menlo, Consolas, monospace; }
+/* email sign-up: the address and the button on one line, the button under it on narrow phones */
+.email-form { margin-bottom: 16px; }
+.email-row { display: flex; flex-wrap: wrap; gap: 10px; }
+.email-row input { flex: 1 1 220px; min-width: 0; width: auto; }
+/* RSS, for the few who use it: one quiet line under the sign-up, with the feed's address to copy */
+.rss-line { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; max-width: 680px; margin: 36px 0 0; padding-top: 18px; border-top: 1px solid var(--line); font-size: 14.5px; color: var(--ink-2); }
+.rss-line svg { flex: none; width: 18px; height: 18px; }
+.rss-line code { min-width: 0; overflow-wrap: anywhere; padding: 4px 8px; border-radius: 8px; background: var(--card); border: 1px solid var(--line); color: var(--ink); font: 13.5px/1.4 ui-monospace, Menlo, Consolas, monospace; }
+.rss-line .btn { min-height: 36px; padding: 0 14px; font-size: 13.5px; border-width: 1px; }
+/* both labels in one grid cell, so the button is as wide as the longer one and doesn't jump when it says "Copied" */
+.copy-btn { display: inline-grid; justify-items: center; }
+.copy-btn > span { grid-area: 1 / 1; }
+.copy-btn .done, .copy-btn.copied > span:first-child { visibility: hidden; }
+.copy-btn.copied .done { visibility: visible; }
 
 /* language picker (site root) */
 .picker { min-height: 70vh; display: grid; place-content: center; gap: 14px; text-align: center; }

@@ -7,11 +7,14 @@
 //   Paths are the same in every language; only the /<lang>/ prefix changes.
 //   og/<lang>/<name>.png             one link preview per page (home, collection, idea, book)
 //   photos/<book>/<file>             a book reviewer's own photos, copied from src/books/photos/
-//   <lang>/follow/index.html         how to follow new card stacks (the home page links here, not to the raw feed)
+//   <lang>/follow/index.html         how to follow new card stacks: an email sign-up (Kit), then the RSS feed
+//   <lang>/follow/confirmed/index.html  where Kit sends new subscribers after they confirm (not in the sitemap)
 //   <lang>/suggest/index.html        a form for suggesting topics (sent by Web3Forms to the owner's email)
 //   <lang>/feed.xml                  RSS: everything on the shelves, newest first
 //   404.html                         for addresses that don't exist (hosts serve it at any depth)
 //   sitemap.xml, robots.txt          every page's address, for search engines
+//   Outside dist/, never deployed: node_modules/.cache/newsletter.html, ready-to-paste emails for the newest stacks
+//   (the dev server shows it at /newsletter/)
 //
 //   node build.mjs                    normal build (directory-style links)
 //   node build.mjs --explicit-index   links end in index.html (for file hosts without directory indexes)
@@ -41,6 +44,9 @@ const SITE_URL = (process.env.SITE_URL || "https://minideas.com").replace(/\/$/,
 // The "Suggest a topic" form posts to Web3Forms (web3forms.com), which emails each suggestion to the owner. Its
 // access key is meant to be public. Until it's set the form can't send, and the build says so.
 const SUGGEST_KEY = "5981853d-1fdd-4f7f-9c1b-21ab1c13822a";
+// The newsletter: one Kit (kit.com) sign-up form per language, so each email goes only to readers of its language
+// (Kit's free plan sends a broadcast to the subscribers of chosen forms). Form ids are public, like the key above.
+const KIT_FORMS = { en: 10201800, vi: 10201799 };
 
 const FONTS = `<link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -75,11 +81,15 @@ const SHARE_ICONS = {
   linkedin: `<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="#0A66C2" d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 1 1 0-4.125 2.062 2.062 0 0 1 0 4.125zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>`,
   copy: `<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>`,
 };
+// a tick in a circle, for "it worked" (after signing up or sending a suggestion)
+const DONE_ICON = `<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><path d="m7.8 12.3 2.9 2.9 5.5-5.8"/></svg>`;
+// an envelope, for following by email, in the share icon's line style
+const MAIL_ICON = `<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5.5" width="18" height="13" rx="2.2"/><path d="m3.8 7.2 8.2 6.1 8.2-6.1"/></svg>`;
 // a lit bulb, with short rays, for "suggest a topic", in the share icon's line style so it follows the theme
 const SUGGEST_ICON = `<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6.5a4.6 4.6 0 0 0-2.8 8.2c.5.4.8 1 .8 1.6v.2h4v-.2c0-.6.3-1.2.8-1.6A4.6 4.6 0 0 0 12 6.5z"/><path d="M10.4 19h3.2M10.9 21.6h2.2"/><path d="M12 1.8v1.7M5.2 4.6l1.2 1.2M18.8 4.6l-1.2 1.2M2.8 11.2h1.7M19.5 11.2h1.7"/></svg>`;
 // the usual feed icon, in its usual orange, so people who use RSS recognise it
 const RSS_ICON = `<svg class="rss" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><rect width="24" height="24" rx="5" fill="#f26f21"/><circle cx="6.8" cy="17.2" r="2" fill="#fff"/><path d="M5 10.6a8.4 8.4 0 0 1 8.4 8.4M5 5.4A13.6 13.6 0 0 1 18.6 19" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/></svg>`;
-// the feed icon's shape in the theme's ink instead of orange, for the footer's Follow link, where the orange stood out
+// the feed icon's shape in the theme's ink instead of orange, for the footer's RSS link, where the orange stood out
 const FEED_ICON = `<svg class="feed" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><rect class="bg" width="24" height="24" rx="5"/><circle class="fg" cx="6.8" cy="17.2" r="2"/><path class="fg-line" d="M5 10.6a8.4 8.4 0 0 1 8.4 8.4M5 5.4A13.6 13.6 0 0 1 18.6 19"/></svg>`;
 const SHARE_ICON = `<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3M7 8l5-5 5 5M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></svg>`;
 
@@ -94,6 +104,7 @@ for (const name of [...SHELF.flatMap(item => item.ideas ? [item.id, ...item.idea
   seen.add(name);
 }
 for (const t of LANGS) {
+  if (!KIT_FORMS[t.lang]) problems.push(`${t.lang}: no Kit form for the email sign-up (KIT_FORMS in build.mjs)`);
   for (const c of COLLECTIONS) {
     const ct = t.collections[c.id];
     if (!ct) { problems.push(`${t.lang}: no text for collection "${c.id}"`); continue; }
@@ -238,10 +249,10 @@ const linker = depth => (...seg) => "../".repeat(depth) + (seg.length ? seg.join
 
 // langs: the languages this page exists in (the switcher sends the others to their home page)
 // segs: the page's path below /<lang>/ (the same in every language)
-// Every page ends with Suggest, a card with its one-line pitch, then the footer: Follow (the RSS feed, which few readers
-// use, so a small link until there's an email newsletter) and the small print. A page doesn't link to itself (segs[0]
-// is its own name).
-function shell({ t, depth, segs, title, desc, body, og, langs = LANGS }) {
+// Every page ends with two cards, Follow (by email) and Suggest, each with its one-line pitch, then the footer: a small
+// link to the RSS feed (on the Follow page, which explains it; few readers use RSS) and the small print. A page doesn't
+// link to itself (segs[0] is its own name).
+function shell({ t, depth, segs, title, desc, body, og, langs = LANGS, noindex = false }) {
   const to = linker(depth);
   const alternates = SITE_URL ? langs.map(o => `<link rel="alternate" hreflang="${o.lang}" href="${SITE_URL}/${[o.lang, ...segs].join("/")}/">`).join("\n") +
     `\n<link rel="alternate" hreflang="x-default" href="${SITE_URL}/">\n<link rel="canonical" href="${SITE_URL}/${[t.lang, ...segs].join("/")}/">` : "";
@@ -252,7 +263,7 @@ function shell({ t, depth, segs, title, desc, body, og, langs = LANGS }) {
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>${E(title)}</title>
-<meta name="description" content="${E(desc)}">
+<meta name="description" content="${E(desc)}">${noindex ? `\n<meta name="robots" content="noindex">` : ""}
 <meta property="og:type" content="website">
 <meta property="og:title" content="${E(title)}">
 <meta property="og:description" content="${E(desc)}">
@@ -281,11 +292,12 @@ ${ROUGH}
   </div>
 </header>
 ${body}
-${segs[0] === "suggest" ? "" : `<aside class="more-band">
-  <a class="more-card" href="${to(t.lang, "suggest")}">${SUGGEST_ICON}<span><strong>${E(t.ui.suggestTitle)}</strong><small>${E(t.ui.suggestShort)}</small></span></a>
-</aside>`}
+<aside class="more-band">
+  ${segs[0] === "follow" ? "" : `<a class="more-card" href="${to(t.lang, "follow")}">${MAIL_ICON}<span><strong>${E(t.ui.followTitle)}</strong><small>${E(t.ui.followLede)}</small></span></a>`}
+  ${segs[0] === "suggest" ? "" : `<a class="more-card" href="${to(t.lang, "suggest")}">${SUGGEST_ICON}<span><strong>${E(t.ui.suggestTitle)}</strong><small>${E(t.ui.suggestShort)}</small></span></a>`}
+</aside>
 <footer class="site-foot">
-  ${segs[0] === "follow" ? "" : `<a class="foot-follow" href="${to(t.lang, "follow")}">${FEED_ICON}<span>${E(t.ui.followButton)}</span></a>`}
+  ${segs[0] === "follow" ? "" : `<a class="foot-rss" href="${to(t.lang, "follow")}#rss">${FEED_ICON}<span>RSS</span></a>`}
   <p>© ${new Date().getUTCFullYear()} ${E(t.ui.site)} · ${E(t.ui.madeBy)}</p>
 </footer>
 </div>
@@ -333,23 +345,26 @@ function readMinutes(t, bl) {
 }
 
 /* ---------- pages ---------- */
+// home-page tiles, for a page `depth` folders below the site root: one per shelf item (a collection's ideas are on its
+// own page), one per book with a review in this language
+const tileCaption = (count, html, icon = "") => `<span class="tile-caption"><span class="count">${icon}${E(count)}</span>${html}</span>`;
+function shelfTile(t, item, depth) {
+  const to = linker(depth), first = (item.ideas ? item.ideas[0] : item).panels[0];
+  const pic = tileDrawing(art(t, first, `${t.lang}/${item.id || item.slug} tile`));
+  if (!item.ideas) {
+    const it = t.ideas[item.slug];
+    return tile(to(t.lang, item.slug), pic, it.title, tileCaption(t.ui.panelCount(item.panels.length), E(it.gist)), newMark(t, item));
+  }
+  const ct = t.collections[item.id];
+  return tile(to(t.lang, item.id), pic, ct.title, tileCaption(t.ui.ideaCount(item.ideas.length), E(ct.lede), SERIES_ICON), newMark(t, item));
+}
+const bookTile = (t, b, depth) => tile(linker(depth)(t.lang, b.slug), bookTileArt(t, b, "../".repeat(depth)), b[t.lang].title,
+  tileCaption(b.panels ? `${b.author} · ${t.ui.panelCount(b.panels.length)}` : b.author, rich(b[t.lang].abstract)), newMark(t, b));
+
 function homePage(t) {
-  // Ideas: one tile per shelf item (a collection's ideas are on its own page). Books: reviews in this language.
-  const to = linker(1);
-  const caption = (count, html, icon = "") => `<span class="tile-caption"><span class="count">${icon}${E(count)}</span>${html}</span>`;
-  const ideaTiles = SHELF.map(item => {
-    const first = (item.ideas ? item.ideas[0] : item).panels[0];
-    const pic = tileDrawing(art(t, first, `${t.lang}/${item.id || item.slug} tile`));
-    if (!item.ideas) {
-      const it = t.ideas[item.slug];
-      return tile(to(t.lang, item.slug), pic, it.title, caption(t.ui.panelCount(item.panels.length), E(it.gist)), newMark(t, item));
-    }
-    const ct = t.collections[item.id];
-    return tile(to(t.lang, item.id), pic, ct.title, caption(t.ui.ideaCount(item.ideas.length), E(ct.lede), SERIES_ICON), newMark(t, item));
-  }).join("");
+  const ideaTiles = SHELF.map(item => shelfTile(t, item, 1)).join("");
   const books = booksIn(t);
-  const bookTiles = books.map(b => tile(to(t.lang, b.slug), bookTileArt(t, b, "../"), b[t.lang].title,
-    caption(b.panels ? `${b.author} · ${t.ui.panelCount(b.panels.length)}` : b.author, rich(b[t.lang].abstract)), newMark(t, b))).join("");
+  const bookTiles = books.map(b => bookTile(t, b, 1)).join("");
   const tiles = !books.length ? `<ul class="tile-grid shelf">${ideaTiles}</ul>` :
     `<h2 class="shelf-label">${SHELF_ICONS.tech}<span>${E(t.ui.shelfTech)}</span></h2><ul class="tile-grid">${ideaTiles}</ul>
 <h2 class="shelf-label">${SHELF_ICONS.books}<span>${E(t.ui.shelfBooks)}</span></h2><ul class="tile-grid">${bookTiles}</ul>`;
@@ -543,11 +558,12 @@ function bookPage(t, b, parent = null) {
     desc: bl.abstract.replace(/\*/g, ""), body, og: bookImage(t, b, parent ? `${parent.slug}-full` : b.slug), langs: LANGS.filter(o => b[o.lang]) });
 }
 
-// Follow: how to get new card stacks. Browsers don't show RSS feeds (they save or dump the XML), so people read this
-// page instead: the feed's address to copy, and links that add it to a feed reader. A newsletter can join it later.
+// Follow: how to get new card stacks. First by email: a plain form that posts to the language's Kit form; site.js sends
+// it in the background and shows the thanks here (without the script, Kit shows its own page). Kit then emails a link
+// to confirm. Then one line for the few who use RSS: the feed's address to copy (browsers don't show feeds, they save
+// or dump the XML, so the site links here rather than to the feed). Feed reader users need no explanation.
 function followPage(t) {
-  const to = linker(2), feedUrl = `${SITE_URL}/${t.lang}/feed.xml`, q = encodeURIComponent(feedUrl);
-  const reader = (name, url) => `<a href="${url}" target="_blank" rel="noopener"><strong>${name}</strong><span>${E(t.ui.followIn(name))}</span></a>`;
+  const to = linker(2), u = t.ui, feedUrl = `${SITE_URL}/${t.lang}/feed.xml`;
   const body = `<main>
 <a class="back" href="${to(t.lang)}">← ${E(t.ui.allTopics)}</a>
 <section class="hero">
@@ -555,16 +571,40 @@ function followPage(t) {
   <p class="lede">${E(t.ui.followLede)}</p>
 </section>
 <section class="follow-way">
-  <h2>${RSS_ICON}<span>${E(t.ui.rssTitle)}</span></h2>
-  <p>${E(t.ui.rssText)}</p>
-  <div class="feed-url"><code>${E(feedUrl)}</code><button class="btn" type="button" data-copy-text="${E(feedUrl)}" data-done="${E(t.ui.copiedShort)}">${E(t.ui.copyFeed)}</button></div>
-  <div class="links">
-    ${reader("Feedly", `https://feedly.com/i/subscription/feed/${q}`)}
-    ${reader("Inoreader", `https://www.inoreader.com/?add_feed=${q}`)}
-  </div>
+  <h2>${MAIL_ICON}<span>${E(u.emailTitle)}</span></h2>
+  <p>${E(u.emailText)}</p>
+  <form class="email-form" id="email-form" action="https://app.kit.com/forms/${KIT_FORMS[t.lang]}/subscriptions" method="POST" data-sending="${E(u.suggestSending)}" data-error="${E(u.emailError)}">
+    <label class="visually-hidden" for="f-email">${E(u.emailLabel)}</label>
+    <div class="email-row">
+      <input id="f-email" name="email_address" type="email" required maxlength="200" autocomplete="email" placeholder="${E(u.emailLabel)}">
+      <button class="btn primary" type="submit">${E(u.emailSubscribe)}</button>
+    </div>
+    <p class="form-status" role="status" aria-live="polite"></p>
+    <p class="field-note">${E(u.emailVia)}</p>
+  </form>
+  <div class="form-thanks" id="email-thanks" hidden>${DONE_ICON}<p>${E(u.emailThanks)}</p></div>
 </section>
+<p class="rss-line" id="rss">${RSS_ICON}<span>${E(u.rssLine)}</span><code>${E(feedUrl)}</code><button class="btn copy-btn" type="button" data-copy-text="${E(feedUrl)}"><span>${E(u.copyFeed)}</span><span class="done" aria-hidden="true">${E(u.copiedShort)}</span></button><span class="visually-hidden" role="status"></span></p>
 </main>`;
   return shell({ t, depth: 2, segs: ["follow"], title: `${t.ui.followTitle} · ${t.ui.site}`, desc: t.ui.followLede, body, og: `og/${t.lang}/home.png` });
+}
+
+// Where Kit sends new subscribers after they click the link in its confirmation email (each language's Kit form
+// points at its own). It says it worked, then offers the three newest stacks. Not in the sitemap or search results.
+function confirmedPage(t) {
+  const to = linker(3), u = t.ui;
+  const newest = [...SHELF.map(item => ({ date: item.date, html: shelfTile(t, item, 3) })), ...booksIn(t).map(b => ({ date: b.added, html: bookTile(t, b, 3) }))]
+    .sort((a, b) => b.date.localeCompare(a.date)).slice(0, 3);
+  const body = `<main>
+<a class="back" href="${to(t.lang)}">← ${E(u.allTopics)}</a>
+<section class="hero">
+  <h1>${E(u.confirmedTitle)}</h1>
+  <p class="lede">${E(u.confirmedText)}</p>
+</section>
+<h2 class="shelf-label"><span>${E(u.confirmedNewest)}</span></h2>
+<ul class="tile-grid">${newest.map(x => x.html).join("")}</ul>
+</main>`;
+  return shell({ t, depth: 3, segs: ["follow", "confirmed"], title: `${u.confirmedTitle} · ${u.site}`, desc: u.confirmedText, body, og: `og/${t.lang}/home.png`, noindex: true });
 }
 
 // Suggest a topic: a plain form that Web3Forms emails to the owner. site.js sends it in the background and shows the
@@ -595,8 +635,8 @@ function suggestPage(t) {
   <p class="field-note">${E(u.suggestVia)}</p>
 </form>
 <div class="suggest-thanks" id="suggest-thanks" hidden>
-  <p>${E(u.suggestThanks)}</p>
-  <button class="btn" type="button" id="suggest-again">${E(u.suggestAgain)}</button>
+  ${DONE_ICON}
+  <div><p>${E(u.suggestThanks)}</p><button class="btn" type="button" id="suggest-again">${E(u.suggestAgain)}</button></div>
 </div>
 </main>`;
   return shell({ t, depth: 2, segs: ["suggest"], title: `${u.suggestTitle} · ${u.site}`, desc: u.suggestLede, body, og: `og/${t.lang}/home.png` });
@@ -674,6 +714,7 @@ const files = { "index.html": rootPage(), "404.html": notFoundPage() };
 for (const t of LANGS) {
   files[`${t.lang}/index.html`] = homePage(t);
   files[`${t.lang}/follow/index.html`] = followPage(t);
+  files[`${t.lang}/follow/confirmed/index.html`] = confirmedPage(t);
   files[`${t.lang}/suggest/index.html`] = suggestPage(t);
   for (const item of SHELF) {
     if (!item.ideas) { files[`${t.lang}/${item.slug}/index.html`] = ideaPage(t, item); continue; }
@@ -685,14 +726,18 @@ for (const t of LANGS) {
     if (b.panels && b.full?.[t.lang]) files[`${t.lang}/${b.slug}/full/index.html`] = bookPage(t, b.full, b);
   }
 }
-// RSS, one feed per language: collections, standalone ideas and books, newest first, each with its preview image
-function feed(t) {
-  const items = [
+// what the RSS feed and the newsletter drafts announce: collections, standalone ideas and books, newest first
+function newsItems(t) {
+  return [
     ...SHELF.map(item => item.ideas
       ? { name: item.id, date: item.date, title: t.collections[item.id].title, text: t.collections[item.id].lede, og: collectionImage(t, item) }
       : { name: item.slug, date: item.date, title: t.ideas[item.slug].title, text: t.ideas[item.slug].gist, og: ideaImage(t, item) }),
-    ...booksIn(t).map(b => ({ name: b.slug, date: b.added, title: b[t.lang].title, text: b[t.lang].abstract.replace(/\*/g, ""), og: bookImage(t, b) })),
+    ...booksIn(t).map(b => ({ name: b.slug, date: b.added, book: true, title: b[t.lang].title, text: b[t.lang].abstract.replace(/\*/g, ""), og: bookImage(t, b) })),
   ].sort((a, b) => b.date.localeCompare(a.date));
+}
+// RSS, one feed per language, each item with its preview image
+function feed(t) {
+  const items = newsItems(t);
   const home = `${SITE_URL}/${t.lang}/`;
   return `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
@@ -714,8 +759,77 @@ ${items.map(x => `<item>
 `;
 }
 for (const t of LANGS) files[`${t.lang}/feed.xml`] = feed(t);
+// Newsletter drafts: Kit's free plan can't send from the feed, so each new stack is sent by hand. This page has the
+// newest stacks in each language as ready-to-paste emails (subject, preview text, body with the preview image, a
+// link and a sign-off). It's written outside dist/ so it's never deployed; the dev server shows it at /newsletter/. The copied email
+// loads its picture from SITE_URL, so deploy before sending; the preview here uses the local copy.
+const NEWSLETTER = join(ROOT, "node_modules/.cache/newsletter.html");
+function newsletterPage() {
+  let n = 0;
+  const draft = (t, x) => {
+    const url = `${SITE_URL}/${t.lang}/${x.name}/`, id = `mail${++n}`;
+    const subject = x.book ? t.ui.emailBookSubject(x.title) : x.title;
+    const html = `<p><a href="${url}"><img src="${SITE_URL}/${x.og}" alt="${E(x.title)}" width="600" style="max-width:100%;height:auto;border-radius:8px"></a></p>
+<h2><a href="${url}">${E(x.title)}</a></h2>
+<p>${E(x.text)}</p>
+<p><a href="${url}"><strong>${E(t.ui.emailRead)}</strong></a></p>
+<p>${E(t.ui.emailSignOff)}<br>Duy, Minideas</p>`;
+    const field = (label, value) => `<div class="field"><span>${label}</span><input readonly value="${E(value)}"><button type="button" data-text="${E(value)}">Copy</button></div>`;
+    return `<article>
+  <h3>${E(x.title)} <small>${x.date}</small></h3>
+  ${field("Subject", subject)}
+  ${field("Preview text", x.text)}
+  <div class="field"><span>Email</span><button type="button" data-html="${id}" data-plain="${E(`${x.title}\n\n${x.text}\n\n${url}\n\n${t.ui.emailSignOff}\nDuy, Minideas`)}">Copy email</button></div>
+  <template id="${id}">${html}</template>
+  <div class="mail">${html.replace(`${SITE_URL}/og/`, "/og/")}</div>
+</article>`;
+  };
+  return `<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Newsletter drafts · Minideas</title>
+<style>
+body { font: 16px/1.5 system-ui, sans-serif; max-width: 720px; margin: 0 auto; padding: 24px 16px 64px; color: #1c2333; background: #f6f7fb; }
+h1 { margin: 0 0 4px; } h2 { margin: 40px 0 8px; } .note { color: #55607a; margin: 0 0 8px; }
+article { background: #fff; border: 1px solid #dde2ec; border-radius: 12px; padding: 16px; margin: 16px 0; }
+h3 { margin: 0 0 12px; } h3 small { font-weight: 400; color: #55607a; margin-left: 8px; }
+.field { display: flex; gap: 8px; align-items: center; margin: 8px 0; }
+.field span { width: 96px; flex: none; color: #55607a; font-size: 14px; }
+.field input { flex: 1; min-width: 0; font: inherit; padding: 6px 8px; border: 1px solid #dde2ec; border-radius: 6px; }
+button { font: inherit; padding: 6px 12px; border: 1px solid #1c2333; border-radius: 6px; background: #1c2333; color: #fff; cursor: pointer; }
+.mail { border-top: 1px dashed #dde2ec; margin-top: 12px; padding-top: 12px; }
+.mail img { display: block; }
+</style>
+</head>
+<body>
+<h1>Newsletter drafts</h1>
+<p class="note">One email per new stack, sent from Kit to the subscribers who signed up in that language. Deploy first: the copied email loads its picture from ${E(SITE_URL)}.</p>
+<p class="note">In Kit: new broadcast, paste the subject and preview text, click into the email and paste. Send it to the subscribers of that language's form.</p>
+${LANGS.slice().reverse().map(t => `<h2>${E(t.name)}</h2>\n${newsItems(t).slice(0, 3).map(x => draft(t, x)).join("\n")}`).join("\n")}
+<script>
+document.addEventListener("click", async e => {
+  const b = e.target.closest("button");
+  if (!b) return;
+  try {
+    if (b.dataset.text != null) await navigator.clipboard.writeText(b.dataset.text);
+    else {
+      const html = document.getElementById(b.dataset.html).innerHTML;
+      await navigator.clipboard.write([new ClipboardItem({ "text/html": new Blob([html], { type: "text/html" }), "text/plain": new Blob([b.dataset.plain], { type: "text/plain" }) })]);
+    }
+    const label = b.textContent;
+    b.textContent = "Copied";
+    setTimeout(() => b.textContent = label, 1500);
+  } catch (err) { b.textContent = "Couldn’t copy"; }
+});
+</script>
+</body>
+</html>
+`;
+}
 // every page (the root only picks a language), at the same addresses as the canonical links
-const pageUrls = Object.keys(files).filter(p => p.endsWith("index.html") && p !== "index.html").map(p => `${SITE_URL}/${p.replace(/index\.html$/, "")}`);
+const pageUrls = Object.keys(files).filter(p => p.endsWith("index.html") && p !== "index.html" && !p.endsWith("follow/confirmed/index.html")).map(p => `${SITE_URL}/${p.replace(/index\.html$/, "")}`);
 files["sitemap.xml"] = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${pageUrls.map(u => `<url><loc>${E(u)}</loc></url>`).join("\n")}
@@ -763,6 +877,7 @@ for (const [path, o] of Object.entries(images)) {
 }
 await rm(OUT, { recursive: true, force: true });
 await rename(TMP, OUT);
+await writeFile(NEWSLETTER, newsletterPage());
 
 console.log(`Built ${Object.keys(files).filter(p => p.endsWith(".html")).length} pages and ${Object.keys(images).length} preview images, ${rendered} re-rendered (${ALL_IDEAS.length} ideas, ${COLLECTIONS.length} collection${COLLECTIONS.length === 1 ? "" : "s"}, ${BOOKS.length} book${BOOKS.length === 1 ? "" : "s"}) for ${LANGS.map(t => t.lang).join(", ")} into ${OUT.startsWith(ROOT) ? relative(ROOT, OUT) : OUT}/`);
 if (!SUGGEST_KEY) console.log("Note: the suggestion form has no Web3Forms key yet (SUGGEST_KEY in build.mjs), so it can't send.");

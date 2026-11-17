@@ -67,13 +67,32 @@
     document.addEventListener("keydown", e => { if (e.key === "Escape" && !menu.hidden) { open(false); share.focus(); } });
   }
 
-  // "Copy address" buttons (the Follow page): copy, then say so for a moment
+  // Copy buttons (the feed's address on the Follow page): copy, then show "Copied" for a moment. The button holds both
+  // labels in one spot, so it keeps its width; the status next to it tells screen readers.
   document.querySelectorAll("[data-copy-text]").forEach(b => b.addEventListener("click", async () => {
     try { await navigator.clipboard.writeText(b.dataset.copyText); } catch (e) { return; }
-    const label = b.textContent;
-    b.textContent = b.dataset.done;
-    setTimeout(() => { b.textContent = label; }, 2000);
+    const status = b.nextElementSibling;
+    b.classList.add("copied"); status.textContent = b.querySelector(".done").textContent;
+    setTimeout(() => { b.classList.remove("copied"); status.textContent = ""; }, 2000);
   }));
+
+  // Follow by email: send the address to Kit in the background and say what happens next (Kit emails a link to
+  // confirm). Without this, the browser posts the form and Kit shows its own page.
+  const emailForm = document.getElementById("email-form");
+  if (emailForm) {
+    const status = emailForm.querySelector(".form-status"), send = emailForm.querySelector("button[type=submit]"), thanks = document.getElementById("email-thanks");
+    emailForm.addEventListener("submit", async e => {
+      e.preventDefault();
+      const label = send.textContent;
+      send.disabled = true; send.textContent = emailForm.dataset.sending; status.textContent = "";
+      try {
+        const res = await fetch(emailForm.action, { method: "POST", body: new FormData(emailForm), headers: { Accept: "application/json" } });
+        if ((await res.json()).status !== "success") throw new Error();
+        emailForm.reset(); emailForm.hidden = true; thanks.hidden = false;
+      } catch (err) { status.textContent = emailForm.dataset.error; }
+      send.disabled = false; send.textContent = label;
+    });
+  }
 
   // Suggest a topic: send the form in the background and say thanks on the page (without this, the browser posts it
   // and Web3Forms shows its own page). data-ready is "no" until the build has a Web3Forms key.
