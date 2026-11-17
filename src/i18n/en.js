@@ -61,6 +61,7 @@ export default {
     suggestSend: "Send suggestion",
     suggestSending: "Sending…",
     suggestThanks: "Thanks! Your suggestion is on its way.",
+    suggestFollowAsk: "Want to know when new stacks come out?",
     suggestAgain: "Suggest another",
     suggestError: "Couldn’t send it. Please try again later.",
     suggestVia: "Suggestions reach Minideas by email, through the Web3Forms service.",

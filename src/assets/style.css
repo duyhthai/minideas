@@ -319,6 +319,7 @@ figure.book-photo img { display: block; width: 100%; height: auto; border-radius
 .suggest-thanks, .form-thanks { display: grid; grid-template-columns: auto 1fr; gap: 12px; align-items: start; max-width: 560px; margin-top: 24px; padding: 16px 20px; border-radius: 14px; background: var(--f-mint); color: var(--on); }
 .suggest-thanks > svg, .form-thanks > svg { margin-top: 1px; }
 .suggest-thanks p { margin: 0 0 14px; font-weight: 700; }
+.suggest-thanks .thanks-next { margin-top: -8px; font-weight: 400; } .suggest-thanks a { color: inherit; font-weight: 700; }
 .form-thanks { margin: 0 0 16px; } .form-thanks p { margin: 0; font-weight: 700; line-height: 1.5; }
 .suggest-thanks[hidden], .suggest-form[hidden], .form-thanks[hidden], .email-form[hidden] { display: none; }
 

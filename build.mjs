@@ -636,7 +636,7 @@ function suggestPage(t) {
 </form>
 <div class="suggest-thanks" id="suggest-thanks" hidden>
   ${DONE_ICON}
-  <div><p>${E(u.suggestThanks)}</p><button class="btn" type="button" id="suggest-again">${E(u.suggestAgain)}</button></div>
+  <div><p>${E(u.suggestThanks)}</p><p class="thanks-next">${E(u.suggestFollowAsk)} <a href="${to(t.lang, "follow")}">${E(u.followTitle)}</a></p><button class="btn" type="button" id="suggest-again">${E(u.suggestAgain)}</button></div>
 </div>
 </main>`;
   return shell({ t, depth: 2, segs: ["suggest"], title: `${u.suggestTitle} · ${u.site}`, desc: u.suggestLede, body, og: `og/${t.lang}/home.png` });
