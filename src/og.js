@@ -1,16 +1,20 @@
 // Link-preview images (1200 × 630 PNG) for Facebook, Zalo, LinkedIn, X and chat apps.
-// Rendered at build time from the same drawings as the pages, in the light theme.
+// Rendered at build time from the same drawings as the pages, in the light theme: the pencil sketch picture
+// (src/sketch.js) with the labels drawn on top.
 import { Resvg } from "@resvg/resvg-js";
 import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { E } from "./draw.js";
+import { sketchDocument, sketchShapes, sketchLabels } from "./sketch.js";
 
 const FONT_DIR = join(dirname(fileURLToPath(import.meta.url)), "fonts");
 const FONTS = ["PatrickHand-Regular", "Lexend-Regular", "Lexend-Bold", "BricolageGrotesque-ExtraBold"].map(f => join(FONT_DIR, f + ".ttf"));
 
-// Light-theme colors from assets/style.css, written out because the renderer has no CSS variables.
-const C = { paper: "#edf0f6", card: "#ffffff", art: "#f4f6fb", ink: "#1c2333", ink2: "#56607a", line: "#d8deea", blue: "#2f58d6", coral: "#d4462c" };
+// Light-theme colors from assets/style.css, written out because the renderer has no CSS variables. art and
+// sketchInk are the drawings' paper and pencil.
+const C = { paper: "#edf0f6", card: "#ffffff", art: "#fbf9f3", ink: "#1c2333", ink2: "#56607a", line: "#d8deea", blue: "#2f58d6", coral: "#d4462c",
+  sketchInk: "#2c3038" };
 const DRAWING_CSS = `
 .s{fill:none;stroke:${C.ink};stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;filter:url(#rough)}
 .sf{stroke:${C.ink};stroke-width:2.4;stroke-linejoin:round;filter:url(#rough)}
@@ -20,7 +24,7 @@ const DRAWING_CSS = `
 .grid{stroke:${C.ink2};stroke-width:1;opacity:.5}
 .blue-s{stroke:${C.blue}}.head.blue-s{fill:${C.blue}}.coral-s{stroke:${C.coral}}.head.coral-s{fill:${C.coral}}
 .sq{fill:${C.coral};fill-opacity:.2;stroke:${C.coral};stroke-width:1.4}
-.lbl{font-family:"Patrick Hand";font-size:15px;fill:${C.ink}}
+.lbl{font-family:"Patrick Hand";font-size:15px;fill:${C.sketchInk}}
 .lbl.on{fill:${C.ink}}.lbl.mut{fill:${C.ink2}}.lbl.cor{fill:${C.coral}}.lbl.blu{fill:${C.blue}}
 .lbl.halo{paint-order:stroke;stroke:${C.art};stroke-width:5px;stroke-linejoin:round}`;
 
@@ -102,7 +106,6 @@ export function renderOg({ title, text, footer, drawing, photo }) {
 
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
 <defs>
-  ${ROUGH}
   <style>${DRAWING_CSS}</style>
 </defs>
 <rect width="1200" height="630" fill="${C.paper}"/>
@@ -110,8 +113,9 @@ ${titleSvg}
 ${textSvg}
 ${footer ? `<text x="64" y="568" font-family="Patrick Hand" font-size="30" fill="${C.ink2}">${E(footer)}</text>` : ""}
 ${photo ? photoPanel(photo) : `<rect x="624" y="123" width="544" height="384" rx="28" fill="${C.card}" stroke="${C.line}" stroke-width="2"/>
-<rect x="640" y="139" width="512" height="352" rx="18" fill="${C.art}"/>
-<svg x="640" y="139" width="512" height="352" viewBox="0 0 320 220">${withArrows(drawing || "")}</svg>`}
+<clipPath id="art"><rect x="640" y="139" width="512" height="352" rx="18"/></clipPath>
+<image x="640" y="139" width="512" height="352" clip-path="url(#art)" href="data:image/svg+xml;base64,${Buffer.from(sketchDocument(sketchShapes(drawing || ""), "light")).toString("base64")}"/>
+<svg x="640" y="139" width="512" height="352" viewBox="0 0 320 220">${withArrows(sketchLabels(drawing || ""))}</svg>`}
 </svg>`;
   return new Resvg(svg, { font: { fontFiles: FONTS, loadSystemFonts: false, defaultFontFamily: "Lexend" } }).render().asPng();
 }

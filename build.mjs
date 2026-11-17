@@ -27,6 +27,7 @@ import { dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { ART, E } from "./src/draw.js";
 import { renderOg, drawingViewBox } from "./src/og.js";
+import { renderSketch, sketchShapes, sketchLabels } from "./src/sketch.js";
 import { Resvg } from "@resvg/resvg-js";
 import { SHELF } from "./src/stacks.js";
 import { BOOKS } from "./src/books/index.js";
@@ -52,12 +53,6 @@ const FONTS = `<link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Lexend:wght@400;600;700&family=Patrick+Hand&display=swap">`;
 
-const ROUGH = `<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
-  <filter id="rough" filterUnits="userSpaceOnUse" x="-20" y="-20" width="360" height="260">
-    <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="4"/>
-    <feDisplacementMap in="SourceGraphic" scale="1.8"/>
-  </filter>
-</svg>`;
 
 // The icon (src/assets/icon.svg, a bulb with an "m" filament) becomes the favicon, app icons and web manifest; BRAND_MARK is the header's logo (a small card stack with the same "m" bulb on top),
 // drawn with theme colors so it works on light and dark backgrounds.
@@ -186,7 +181,28 @@ function art(t, [fn, ...args], where) {
   if (/undefined|NaN/.test(svg)) problems.push(`${where}: drawing "${fn}" is missing a label or has a bad number`);
   return svg;
 }
-const drawing = (t, spec, label, where) => `<svg viewBox="0 0 320 220" role="img" aria-label="${E(label)}">${art(t, spec, where)}</svg>`;
+// Drawings are pencil sketches: a drawing's shapes are a picture, rendered at build time by src/sketch.js, one per
+// theme, with its labels on top as real text so readers can copy them. Pictures are named after their shapes, so a
+// drawing that looks the same in both languages is one file. In a card stack the picture is a CSS background
+// (style.css, .sk): every card shows at once (Chrome doesn't reliably load lazy images in a sideways scroller) and
+// only the current theme's picture downloads; its path starts at the site root, because a url() in a custom property
+// resolves against the stylesheet that uses it. Elsewhere (lazy) it's a pair of lazy images, and the hidden theme's
+// one never loads.
+const sketches = {}; // path → what to render; written after the pages, cached like the preview images
+function sketchPicture(svg, { viewBox = "0 0 320 220", label = "", lazy = false } = {}) {
+  const [, , w, h] = viewBox.split(" ").map(Number), shapes = sketchShapes(svg), url = {};
+  const id = createHash("sha1").update(viewBox + shapes).digest("hex").slice(0, 12);
+  for (const theme of ["light", "dark"]) {
+    const path = `sketch/${id}-${theme}.webp`;
+    sketches[path] = { drawing: shapes, theme, viewBox };
+    url[theme] = `/${path}`;
+  }
+  const labels = `<svg viewBox="${viewBox}">${sketchLabels(svg)}</svg>`, a11y = label ? `role="img" aria-label="${E(label)}"` : 'aria-hidden="true"';
+  if (lazy) return `<span class="sk" ${a11y} style="aspect-ratio:${w}/${h}">` +
+    ["light", "dark"].map(theme => `<img class="sk-${theme}" src="${url[theme]}" alt="" width="${w * 2}" height="${h * 2}" loading="lazy" decoding="async">`).join("") + `${labels}</span>`;
+  return `<span class="sk" ${a11y} style="--sk-light:url(${url.light});--sk-dark:url(${url.dark});aspect-ratio:${w}/${h}">${labels}</span>`;
+}
+const drawing = (t, spec, label, where) => sketchPicture(art(t, spec, where), { label });
 
 // preview images, rendered after the pages: path → renderOg() options
 const images = {};
@@ -218,14 +234,14 @@ function collectionImage(t, c) {
 // A tile: a picture, the title as text, then a caption. The picture is a drawing inline (theme colors, so it suits
 // light and dark) or a book's cover photo; the title says what it is, so the picture is decorative.
 const tile = (href, pic, title, caption = "", mark = "") =>
-  `<li><a class="tile" href="${href}"><span class="tile-art dw">${pic}</span><span class="tile-body">${mark}<h3 class="tile-title">${E(title)}</h3>${caption}</span></a></li>`;
+  `<li><a class="tile" href="${href}"><span class="tile-art">${pic}</span><span class="tile-body">${mark}<h3 class="tile-title">${E(title)}</h3>${caption}</span></a></li>`;
 // in a collection's count: a fan of cards like the logo's, so a series of stacks reads apart from a single stack
 const SERIES_ICON = `<svg class="series-icon" viewBox="0 0 18 18" aria-hidden="true"><rect x="5" y="3.5" width="8" height="11" rx="1.6" transform="rotate(-24 9 16)"/><rect x="5" y="3.5" width="8" height="11" rx="1.6" transform="rotate(-12 9 16)"/><rect class="front" x="6" y="3" width="8" height="11" rx="1.6"/></svg>`;
 // "New" for NEW_DAYS after something is added; site.js shows it only until then, so an old build doesn't keep saying it
 const addDays = (iso, n) => new Date(Date.parse(`${iso}T00:00:00Z`) + n * 864e5).toISOString().slice(0, 10);
 const newMark = (t, item) => siteDate(item) > LAUNCH ? `<span class="new-mark" data-until="${addDays(siteDate(item), NEW_DAYS)}" hidden>${E(t.ui.new)}</span>` : "";
 // cropped to what is drawn, so the drawing shows as large as the tile allows
-const tileDrawing = svg => `<svg viewBox="${drawingViewBox(svg)}" aria-hidden="true">${svg}</svg>`;
+const tileDrawing = svg => sketchPicture(svg, { viewBox: drawingViewBox(svg), lazy: true });
 function bookTileArt(t, b, rel) {
   if (b.cover) { const { width, height } = sizeOf(photoSource(b, b.cover)); return `<img src="${rel}photos/${photoDir(b)}/${b.cover}" alt="" width="${width}" height="${height}" loading="lazy" decoding="async">`; }
   const first = firstDrawing(b);
@@ -282,7 +298,6 @@ ${iconLinks("../".repeat(depth))}
 <script src="${"../".repeat(depth)}assets/site.js" defer></script>
 </head>
 <body>
-${ROUGH}
 <div class="wrap">
 <header class="topbar">
   <a class="brand" href="${to(t.lang)}">${BRAND_MARK}<span>${E(t.ui.site)}</span></a>
@@ -419,7 +434,7 @@ function cardStack({ t, slides, data, top, title, gist, meta = "", pager = "" })
   <div class="stack-main">
   <div class="card"><div class="track" id="track" tabindex="0" aria-label="${E(t.ui.trackLabel)}">
 ${slides.map(({ art, h, p }, j) => `<section class="slide" aria-roledescription="slide" aria-label="${j + 1} / ${n}">
-      <div class="art dw">${art}</div>
+      <div class="art">${art}</div>
       <div class="count">${j + 1} / ${n}</div>
       <h2>${E(h)}</h2>
       <p>${E(p)}</p>
@@ -447,7 +462,7 @@ function bookStackPage(t, b) {
     const [h, p] = bl.panels[j];
     const art = spec[0] === "photo"
       ? `<img class="photo-panel" src="../../photos/${photoDir(b)}/${spec[1]}" alt="${E(bl.captions[spec[1]].replace(/\*/g, ""))}" loading="${j ? "lazy" : "eager"}">`
-      : `<svg viewBox="0 0 320 220" role="img" aria-label="${E(h)}">${bookArt(t, b, spec, `${where}#${j + 1}`)}</svg>`;
+      : sketchPicture(bookArt(t, b, spec, `${where}#${j + 1}`), { label: h });
     return { art, h, p };
   });
   const data = { "prev-url": "", "next-url": fullUrl, "t-back": t.ui.back, "t-prev-idea": t.ui.prevIdea, "t-next": t.ui.next,
@@ -520,7 +535,7 @@ function bookPage(t, b, parent = null) {
     const spec = b.art.sections?.[n];
     if (!spec) return "";
     if (spec[0] === "photo") return photoFigure(spec[1]);
-    return `<figure><div class="art dw">${`<svg viewBox="0 0 320 220" role="img" aria-label="${E(bl.sections[n - 1].h)}">${bookArt(t, b, spec, `${where} §${n}`)}</svg>`}</div></figure>`;
+    return `<figure><div class="art">${sketchPicture(bookArt(t, b, spec, `${where} §${n}`), { label: bl.sections[n - 1].h, lazy: true })}</div></figure>`;
   };
   const sections = bl.sections.map((s, i) => `<section>
     <h2>${rich(s.h)}</h2>
@@ -865,7 +880,7 @@ for (const b of BOOK_PARTS) for (const file of bookPhotos(b)) {
   await copyFile(photoSource(b, file), join(TMP, "photos", photoDir(b), file));
 }
 // a preview image is re-rendered only when its inputs change (text, drawing, photo, or the renderer itself)
-const renderer = readFileSync(join(ROOT, "src/og.js"), "utf8");
+const renderer = readFileSync(join(ROOT, "src/og.js"), "utf8") + readFileSync(join(ROOT, "src/sketch.js"), "utf8");
 let rendered = 0;
 await mkdir(CACHE, { recursive: true });
 for (const [path, o] of Object.entries(images)) {
@@ -875,10 +890,18 @@ for (const [path, o] of Object.entries(images)) {
   await mkdir(dirname(join(TMP, path)), { recursive: true });
   await writeFile(join(TMP, path), await readFile(cached));
 }
+const sketcher = readFileSync(join(ROOT, "src/sketch.js"), "utf8");
+for (const [path, o] of Object.entries(sketches)) {
+  const key = createHash("sha1").update(sketcher + JSON.stringify(o)).digest("hex");
+  const cached = join(CACHE, `${key}.webp`);
+  if (!existsSync(cached)) { await writeFile(cached, await renderSketch(o.drawing, o.theme, o.viewBox)); rendered++; }
+  await mkdir(dirname(join(TMP, path)), { recursive: true });
+  await writeFile(join(TMP, path), await readFile(cached));
+}
 await rm(OUT, { recursive: true, force: true });
 await rename(TMP, OUT);
 await writeFile(NEWSLETTER, newsletterPage());
 
-console.log(`Built ${Object.keys(files).filter(p => p.endsWith(".html")).length} pages and ${Object.keys(images).length} preview images, ${rendered} re-rendered (${ALL_IDEAS.length} ideas, ${COLLECTIONS.length} collection${COLLECTIONS.length === 1 ? "" : "s"}, ${BOOKS.length} book${BOOKS.length === 1 ? "" : "s"}) for ${LANGS.map(t => t.lang).join(", ")} into ${OUT.startsWith(ROOT) ? relative(ROOT, OUT) : OUT}/`);
+console.log(`Built ${Object.keys(files).filter(p => p.endsWith(".html")).length} pages, ${Object.keys(images).length} preview images and ${Object.keys(sketches).length} sketches, ${rendered} re-rendered (${ALL_IDEAS.length} ideas, ${COLLECTIONS.length} collection${COLLECTIONS.length === 1 ? "" : "s"}, ${BOOKS.length} book${BOOKS.length === 1 ? "" : "s"}) for ${LANGS.map(t => t.lang).join(", ")} into ${OUT.startsWith(ROOT) ? relative(ROOT, OUT) : OUT}/`);
 if (!SUGGEST_KEY) console.log("Note: the suggestion form has no Web3Forms key yet (SUGGEST_KEY in build.mjs), so it can't send.");
 if (!SITE_URL) console.log("Note: SITE_URL is not set, so pages don't point to their preview images yet. Set it when you deploy.");

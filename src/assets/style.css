@@ -1,10 +1,10 @@
 /* Minideas
    Layout: top bar (brand + language switch); home = chapters of idea cards; idea page = numbered
-   contents rail + one swipeable card stack. Drawings sit on a cool worksheet tint in hand-lettered ink. */
+   contents rail + one swipeable card stack. Drawings are pencil sketches on warm paper. */
 :root {
   --paper: #edf0f6;
   --card: #ffffff;
-  --art: #f4f6fb;
+  --art: #fbf9f3; /* warm paper behind pictures: drawings, tiles, the Follow and Suggest boxes */
   --ink: #1c2333;
   --ink-2: #56607a;
   --line: #d8deea;
@@ -25,14 +25,14 @@
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --paper: #0f121a; --card: #191e2b; --art: #141927; --ink: #e7eaf3; --ink-2: #a3abc0; --line: #2a3145;
+    --paper: #0f121a; --card: #191e2b; --art: #1b2030; --ink: #e7eaf3; --ink-2: #a3abc0; --line: #2a3145;
     --blue: #8ba5ff; --coral: #ff8d77; --on: #141927; --fk: #20263a;
     --f-blue: #8ea5f7; --f-yellow: #f0c75a; --f-mint: #6cd1b1; --f-coral: #f59a87; --f-tint: #283150; --chip: #252e4a;
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --paper: #0f121a; --card: #191e2b; --art: #141927; --ink: #e7eaf3; --ink-2: #a3abc0; --line: #2a3145;
+  --paper: #0f121a; --card: #191e2b; --art: #1b2030; --ink: #e7eaf3; --ink-2: #a3abc0; --line: #2a3145;
   --blue: #8ba5ff; --coral: #ff8d77; --on: #141927; --fk: #20263a;
   --f-blue: #8ea5f7; --f-yellow: #f0c75a; --f-mint: #6cd1b1; --f-coral: #f59a87; --f-tint: #283150; --chip: #252e4a;
   color-scheme: dark;
@@ -353,22 +353,27 @@ figure.book-photo img { display: block; width: 100%; height: auto; border-radius
 .not-found p { margin: 0; color: var(--ink-2); }
 .not-found p[lang="en"] { font-size: 14.5px; }
 
-/* drawing vocabulary */
-.dw .s, .dw .sf { filter: url(#rough); }
-.s { fill: none; stroke: var(--ink); stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
-.sf { stroke: var(--ink); stroke-width: 2.4; stroke-linejoin: round; }
-.head { fill: var(--ink); stroke: var(--ink); stroke-width: 1.5; stroke-linejoin: round; }
-.fb { fill: var(--f-blue); } .fy { fill: var(--f-yellow); } .fm { fill: var(--f-mint); } .fc { fill: var(--f-coral); }
-.ft { fill: var(--f-tint); } .fk { fill: var(--fk); } .fi { fill: var(--ink); }
-.thin { stroke-width: 1.5; } .w3 { stroke-width: 3.2; } .dash { stroke-dasharray: 5 6; } .faint { opacity: .28; }
-.grid { stroke: var(--ink-2); stroke-width: 1; opacity: .5; }
-.blue-s { stroke: var(--blue); } .head.blue-s { fill: var(--blue); }
-.coral-s { stroke: var(--coral); } .head.coral-s { fill: var(--coral); }
-.sq { fill: var(--coral); fill-opacity: .2; stroke: var(--coral); stroke-width: 1.4; }
+/* drawings are pencil sketches: a drawing's shapes are a picture rendered at build time by src/sketch.js, one per
+   theme, on warm paper (dark: like chalk on a blackboard), with its labels on top as real text. In a card stack the
+   picture is the background, so only the current theme's one loads; elsewhere it's a pair of lazy images, and the
+   hidden one never loads. */
+:root { --sketch-ink: #2c3038; }
+:root[data-theme="dark"] { --sketch-ink: #e4e2dc; }
+.sk { position: relative; display: block; width: 100%; background: var(--sk-light) center / contain no-repeat; border-radius: inherit;
+  --ink: var(--sketch-ink); }
+:root[data-theme="dark"] .sk { background-image: var(--sk-dark); }
+.sk > svg, .sk > img { position: absolute; inset: 0; width: 100%; height: 100%; }
+.sk > .sk-dark, :root[data-theme="dark"] .sk > .sk-light { display: none; }
+:root[data-theme="dark"] .sk > .sk-dark { display: block; }
+.tile-art > .sk { width: auto; height: 100%; max-width: 100%; }
+.tile-art .sk > img { width: 100%; height: 100%; box-shadow: none; border-radius: 0; }
+
+/* labels in drawings */
 .lbl { font-family: var(--hand); font-size: 15px; fill: var(--ink); }
 .lbl.on { fill: var(--on); } .lbl.mut { fill: var(--ink-2); } .lbl.cor { fill: var(--coral); } .lbl.blu { fill: var(--blue); }
 .lbl.b { font-weight: 700; }
 .lbl.halo { paint-order: stroke; stroke: var(--art); stroke-width: 5px; stroke-linejoin: round; }
+
 
 @media (prefers-reduced-motion: reduce) {
   .dot::before, .tile { transition: none; }
