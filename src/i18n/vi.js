@@ -47,7 +47,7 @@ export default {
     followTitle: "Theo dõi Minideas",
     madeBy: "Thực hiện: Duy Thai",
     suggestTitle: "Gợi ý chủ đề",
-    suggestShort: "Muốn hiểu điều gì qua vài bức hình? Mọi gợi ý đều được đọc, câu hỏi nào nhiều người hỏi sẽ được vẽ trước.",
+    suggestShort: "Bạn muốn hiểu điều gì qua vài bức hình?",
     suggestLede: "Bạn muốn hiểu điều gì qua vài bức hình? Gửi câu hỏi cho Minideas: mọi gợi ý đều được đọc, câu hỏi nào nhiều người hỏi sẽ được vẽ thành bộ thẻ trước.",
     suggestExamplesLabel: "Chưa nghĩ ra? Chọn một gợi ý:",
     // a question goes into the topic field as it is; [label, start] puts the start there for the reader to finish

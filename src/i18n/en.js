@@ -47,7 +47,7 @@ export default {
     followTitle: "Follow Minideas",
     madeBy: "Made by Duy Thai",
     suggestTitle: "Suggest a topic",
-    suggestShort: "What would you like explained in a few pictures? Every suggestion is read, and the most-asked questions get drawn first.",
+    suggestShort: "What would you like explained in a few pictures?",
     suggestLede: "What would you like explained in a few pictures? Send Minideas your question: every suggestion is read, and the most-asked questions get drawn as card stacks first.",
     suggestExamplesLabel: "Not sure? Start with one of these:",
     // a question goes into the topic field as it is; [label, start] puts the start there for the reader to finish
