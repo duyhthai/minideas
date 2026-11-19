@@ -309,7 +309,7 @@ ${FONTS}
 <script>(function () { var t = "light"; try { t = localStorage.getItem("theme") || "light"; } catch (e) {} document.documentElement.setAttribute("data-theme", t); })();</script>
 ${iconLinks("../".repeat(depth))}
 <link rel="stylesheet" href="${"../".repeat(depth)}assets/style.css">
-<link rel="alternate" type="application/rss+xml" title="${E(t.ui.site)}" href="${"../".repeat(depth)}${t.lang}/feed.xml">
+<link rel="alternate" type="application/rss+xml" title="${E(feedTitle(t))}" href="${"../".repeat(depth)}${t.lang}/feed.xml">
 <script src="${"../".repeat(depth)}assets/site.js" defer></script>
 </head>
 <body>
@@ -722,6 +722,7 @@ function rootPage() {
 })();
 </script>
 <noscript><meta http-equiv="refresh" content="0; url=vi/${INDEX}"></noscript>
+${[vi, en].map(t => `<link rel="alternate" type="application/rss+xml" title="${E(feedTitle(t))}" href="${t.lang}/feed.xml">`).join("\n")}
 ${FONTS}
 <script>(function () { var t = "light"; try { t = localStorage.getItem("theme") || "light"; } catch (e) {} document.documentElement.setAttribute("data-theme", t); })();</script>
 ${iconLinks("")}
@@ -763,6 +764,8 @@ function newsItems(t) {
     ...booksIn(t).map(b => ({ name: b.slug, date: b.added, book: true, title: b[t.lang].title, text: b[t.lang].abstract.replace(/\*/g, ""), og: bookImage(t, b) })),
   ].sort((a, b) => b.date.localeCompare(a.date));
 }
+// a feed's name in readers, with its language, so readers who follow both can tell them apart
+function feedTitle(t) { return `${t.ui.site} (${t.name})`; }
 // RSS, one feed per language, each item with its preview image. The channel names the bulb icon twice: RSS's own
 // <image>, which most readers use, and Feedly's webfeeds tags (icon, logo, accent color), which it prefers.
 function feed(t) {
@@ -771,12 +774,12 @@ function feed(t) {
   return `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:webfeeds="http://webfeeds.org/rss/1.0">
 <channel>
-<title>${E(t.ui.site)}</title>
+<title>${E(feedTitle(t))}</title>
 <link>${home}</link>
 <description>${E(t.ui.lede)}</description>
 <language>${t.lang}</language>
 <atom:link href="${home}feed.xml" rel="self" type="application/rss+xml"/>
-<image><url>${SITE_URL}/icon-192.png</url><title>${E(t.ui.site)}</title><link>${home}</link></image>
+<image><url>${SITE_URL}/icon-192.png</url><title>${E(feedTitle(t))}</title><link>${home}</link></image>
 <webfeeds:icon>${SITE_URL}/icon-192.png</webfeeds:icon>
 <webfeeds:logo>${SITE_URL}/favicon.svg</webfeeds:logo>
 <webfeeds:accentColor>1c2333</webfeeds:accentColor>
