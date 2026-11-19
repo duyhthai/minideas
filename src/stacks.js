@@ -11,7 +11,7 @@
 export const SHELF = [
   {
     id: "ai-fundamentals",
-    date: "2026-11-08",
+    date: "2026-11-19",
     related: "the-shallows",
     chapters: ["big", "learn", "work", "gen", "use"],
     resources: [
@@ -39,7 +39,7 @@ export const SHELF = [
   },
   {
     slug: "clean-code-refactoring",
-    date: "2026-11-08",
+    date: "2026-11-19",
     related: "graph-databases",
     panels: [["readMore"], ["stamina"], ["sameResult"], ["goodNames"], ["oneJob"], ["sayOnce"], ["onlyNeed"], ["safetyNet"], ["aiWrites"], ["littleCleaner"]],
     resources: [
@@ -51,7 +51,7 @@ export const SHELF = [
   },
   {
     slug: "graph-databases",
-    date: "2026-11-09",
+    date: "2026-11-19",
     related: "clean-code-refactoring",
     panels: [["graphIntro"], ["graphLabels"], ["graphRel"], ["graphProps"], ["graphTables"], ["graphPattern"], ["graphHops"], ["graphPath"], ["graphRecommend"], ["graphMerge"], ["graphIndex"], ["graphWhen"]],
     resources: [
