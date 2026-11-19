@@ -26,7 +26,7 @@ import { createHash } from "node:crypto";
 import { dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { ART, E } from "./src/draw.js";
-import { renderOg, drawingViewBox } from "./src/og.js";
+import { renderOg, renderHomeOg, drawingViewBox } from "./src/og.js";
 import { renderSketch, sketchShapes, sketchLabels } from "./src/sketch.js";
 import { Resvg } from "@resvg/resvg-js";
 import { SHELF } from "./src/stacks.js";
@@ -167,6 +167,10 @@ const LAUNCH = [...SHELF, ...BOOKS].map(siteDate).sort()[0];
 const NEW_DAYS = 14;
 // `related`: one stack worth reading next (an idea, a collection or a book, on either shelf), shown at the end of a
 // standalone idea or a book, and after a collection's last idea
+// The home page's preview shows these three stacks (a collection, standalone idea or book each), chosen by hand so the
+// picture says what the site is, tech and books, and doesn't change with every new stack (apps cache previews for weeks)
+const HOME_PREVIEW = ["ai-fundamentals", "the-shallows", "graph-databases"];
+for (const name of HOME_PREVIEW) if (!seen.has(name)) problems.push(`HOME_PREVIEW: "${name}" isn't a collection, idea or book`);
 for (const item of [...SHELF, ...BOOKS]) if (item.related && !seen.has(item.related)) problems.push(`"${item.id || item.slug}": related "${item.related}" isn't a collection, idea or book`);
 if (problems.length) fail();
 
@@ -224,6 +228,14 @@ function bookImage(t, b, name = b.slug) {
     ...(b.cover ? { photo: { file: photoSource(b, b.cover), ...sizeOf(photoSource(b, b.cover)) } }
       : { drawing: first ? bookArt(t, b, b.art.sections[first], path) : "" }) };
   return path;
+}
+// One stack in the home page's preview: its first drawing and title, or a book's cover and its title up to any colon
+function homePreviewTile(t, name, where) {
+  const b = BOOKS.find(b => b.slug === name);
+  if (b) return { title: b[t.lang].title.split(":")[0], photo: { file: photoSource(b, b.cover), ...sizeOf(photoSource(b, b.cover)) } };
+  const item = SHELF.find(item => (item.id || item.slug) === name) || ALL_IDEAS.find(i => i.slug === name);
+  const idea = item.ideas ? item.ideas[0] : item;
+  return { title: item.ideas ? t.collections[item.id].title : t.ideas[item.slug].title, drawing: art(t, idea.panels[0], where) };
 }
 const sizeOf = file => { const [width, height] = jpegSize(file); return { width, height }; };
 function collectionImage(t, c) {
@@ -390,9 +402,8 @@ function homePage(t) {
 </section>
 ${tiles}
 </main>`;
-  const og = `og/${t.lang}/home.png`, first = ALL_IDEAS[0];
-  const titles = SHELF.map(item => item.ideas ? t.collections[item.id].title : t.ideas[item.slug].title);
-  images[og] = { title: t.ui.site, text: t.ui.lede, footer: titles.join(" · "), drawing: art(t, first.panels[0], og) };
+  const og = `og/${t.lang}/home.png`;
+  images[og] = { home: true, title: t.ui.site, text: t.ui.lede, mark: BRAND_MARK, tiles: HOME_PREVIEW.map(name => homePreviewTile(t, name, og)) };
   return shell({ t, depth: 1, segs: [], title: t.ui.site, desc: t.ui.lede, body, og });
 }
 
@@ -883,9 +894,10 @@ const renderer = readFileSync(join(ROOT, "src/og.js"), "utf8") + readFileSync(jo
 let rendered = 0;
 await mkdir(CACHE, { recursive: true });
 for (const [path, o] of Object.entries(images)) {
-  const key = createHash("sha1").update(renderer + JSON.stringify(o) + (o.photo ? statSync(o.photo.file).mtimeMs : "")).digest("hex");
+  const photos = [o.photo, ...(o.tiles || []).map(x => x.photo)].filter(Boolean).map(p => statSync(p.file).mtimeMs);
+  const key = createHash("sha1").update(renderer + JSON.stringify(o) + photos.join()).digest("hex");
   const cached = join(CACHE, `${key}.png`);
-  if (!existsSync(cached)) { await writeFile(cached, renderOg(o)); rendered++; }
+  if (!existsSync(cached)) { await writeFile(cached, o.home ? renderHomeOg(o) : renderOg(o)); rendered++; }
   await mkdir(dirname(join(TMP, path)), { recursive: true });
   await writeFile(join(TMP, path), await readFile(cached));
 }

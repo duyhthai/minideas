@@ -68,6 +68,13 @@ export function drawingViewBox(drawing, pad = 8, minW = 220, minH = 150) {
   return `${x} ${y} ${w} ${h}`;
 }
 
+// A drawing as a pencil sketch (light theme) with its labels on top, filling a w × h box at x, y.
+function sketchPanel(drawing, x, y, w, h, id) {
+  return `<clipPath id="${id}"><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${Math.round(w / 28)}"/></clipPath>
+<image x="${x}" y="${y}" width="${w}" height="${h}" clip-path="url(#${id})" href="data:image/svg+xml;base64,${Buffer.from(sketchDocument(sketchShapes(drawing || ""), "light")).toString("base64")}"/>
+<svg x="${x}" y="${y}" width="${w}" height="${h}" viewBox="0 0 320 220">${withArrows(sketchLabels(drawing || ""))}</svg>`;
+}
+
 // A photo, uncropped and right-aligned, scaled to fit a 544 × 470 box, with rounded corners.
 function photoPanel({ file, width, height }) {
   const k = Math.min(544 / width, 470 / height), w = Math.round(width * k), h = Math.round(height * k);
@@ -113,9 +120,52 @@ ${titleSvg}
 ${textSvg}
 ${footer ? `<text x="64" y="568" font-family="Patrick Hand" font-size="30" fill="${C.ink2}">${E(footer)}</text>` : ""}
 ${photo ? photoPanel(photo) : `<rect x="624" y="123" width="544" height="384" rx="28" fill="${C.card}" stroke="${C.line}" stroke-width="2"/>
-<clipPath id="art"><rect x="640" y="139" width="512" height="352" rx="18"/></clipPath>
-<image x="640" y="139" width="512" height="352" clip-path="url(#art)" href="data:image/svg+xml;base64,${Buffer.from(sketchDocument(sketchShapes(drawing || ""), "light")).toString("base64")}"/>
-<svg x="640" y="139" width="512" height="352" viewBox="0 0 320 220">${withArrows(sketchLabels(drawing || ""))}</svg>`}
+${sketchPanel(drawing, 640, 139, 512, 352, "art")}`}
+</svg>`;
+  return new Resvg(svg, { font: { fontFiles: FONTS, loadSystemFonts: false, defaultFontFamily: "Lexend" } }).render().asPng();
+}
+
+// Light-theme values of the CSS tokens the header logo uses (assets/style.css)
+const TOKENS = { ink: C.ink, on: C.ink, fk: "#ffffff", "f-blue": "#a9bcff", "f-yellow": "#ffd466", "f-mint": "#86dcc1" };
+
+/**
+ * The home page's preview: the logo and site name, the tagline, then a row of three stacks, each a card with its
+ * picture (a drawing, or a book's cover photo shown whole) and its title.
+ * @param {object} o
+ * @param {string} o.title   the site name
+ * @param {string} o.text    the tagline
+ * @param {string} o.mark    the header logo's SVG (viewBox 0 0 32 32), colored with var(--token)
+ * @param {{ title: string, drawing?: string, photo?: { file, width, height } }[]} o.tiles
+ */
+export function renderHomeOg({ title, text, mark, tiles }) {
+  const markSvg = mark.replace(/^<svg[^>]*>|<\/svg>$/g, "").replace(/var\(--([\w-]+)\)/g, (m, k) => TOKENS[k] || m);
+  const textSvg = wrap(text, Math.floor(1072 / (28 * .58)), 2).map((l, i) =>
+    `<text x="64" y="${206 + i * 38}" font-family="Lexend" font-size="28" fill="${C.ink2}">${E(l)}</text>`).join("");
+  const cardW = 334, gap = 35, top = 262, pic = { w: 310, h: 213 };
+  const cards = tiles.map((tile, i) => {
+    const x = 64 + i * (cardW + gap), px = x + 12, py = top + 12;
+    let picture;
+    if (tile.photo) {
+      const { file, width, height } = tile.photo, k = Math.min((pic.w - 24) / width, (pic.h - 24) / height);
+      const w = Math.round(width * k), h = Math.round(height * k), ix = px + Math.round((pic.w - w) / 2), iy = py + Math.round((pic.h - h) / 2);
+      picture = `<rect x="${px}" y="${py}" width="${pic.w}" height="${pic.h}" rx="11" fill="${C.art}"/>
+<clipPath id="tp${i}"><rect x="${ix}" y="${iy}" width="${w}" height="${h}" rx="6"/></clipPath>
+<image href="data:image/jpeg;base64,${readFileSync(file).toString("base64")}" x="${ix}" y="${iy}" width="${w}" height="${h}" clip-path="url(#tp${i})" preserveAspectRatio="xMidYMid meet"/>`;
+    } else picture = sketchPanel(tile.drawing, px, py, pic.w, pic.h, `ta${i}`);
+    const caption = wrap(tile.title, Math.floor((cardW - 24) / (24 * .6)), 2).map((l, j) =>
+      `<text x="${x + cardW / 2}" y="${py + pic.h + 40 + j * 30}" text-anchor="middle" font-family="Lexend" font-weight="700" font-size="24" fill="${C.ink}">${E(l)}</text>`).join("");
+    return `<rect x="${x}" y="${top}" width="${cardW}" height="306" rx="20" fill="${C.card}" stroke="${C.line}" stroke-width="2"/>\n${picture}\n${caption}`;
+  }).join("\n");
+
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+<defs>
+  <style>${DRAWING_CSS}</style>
+</defs>
+<rect width="1200" height="630" fill="${C.paper}"/>
+<svg x="60" y="52" width="92" height="92" viewBox="0 0 32 32">${markSvg}</svg>
+<text x="164" y="126" font-family="Bricolage Grotesque" font-weight="800" font-size="76" fill="${C.ink}">${E(title)}</text>
+${textSvg}
+${cards}
 </svg>`;
   return new Resvg(svg, { font: { fontFiles: FONTS, loadSystemFonts: false, defaultFontFamily: "Lexend" } }).render().asPng();
 }
