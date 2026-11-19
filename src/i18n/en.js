@@ -186,7 +186,7 @@ export default {
       ["More ways to get better answers", "Ask a few times and compare. Ask for several options before picking one. Paste in the documents it should rely on. And where the app allows it, let it search or calculate instead of guessing."],
     ]},
     "made-up-answers": { title: "Why AI makes things up", gist: "It writes what sounds likely, and likely isn’t always true.", panels: [
-      ["Confident and wrong", "Ask about a rare detail and a chatbot may invent one: a book nobody wrote, a quote nobody said, a mayor who never existed. It sounds just as sure as when it’s right. This is called a hallucination."],
+      ["Confident and wrong", "Ask about a rare detail and a chatbot may invent one: a book nobody wrote, a quote nobody said, a study nobody did. It sounds just as sure as when it’s right. This is called a hallucination."],
       ["Likely isn’t the same as true", "It writes the words that sound most likely. For famous facts, seen countless times, likely and true line up. For rare names, dates and numbers, a likely-sounding guess fills the gap."],
       ["How to protect yourself", "Give it a source to work from, ask where each fact came from, and check anything that matters, especially names, numbers and quotes, before you rely on it."],
     ]},
@@ -282,9 +282,9 @@ export default {
       tricks: ["ask a few times", "ask for options", "give it sources", "let it use tools"],
     },
     trust: {
-      ask: "Who was the first mayor\nof Millbrook?", claim: "It was Thomas Hale,\nelected in 1887.", stamp: "made up", sure: "said as surely as a real fact",
+      ask: "Any good books on the\nhistory of Vietnamese coffee?", claim: "Try “The Slow Drip” by\nAnna Kessler (2014).", stamp: "made up", sure: "said as surely as a real fact",
       famous: ["a famous fact", "The capital\nof France is", "Paris", "seen countless times"],
-      rare: ["a rare detail", "Millbrook’s first\nmayor was", "Thomas Hale", "seen rarely, if ever"],
+      rare: ["a rare detail", "A good book on\nVietnamese coffee is", "The Slow Drip", "seen rarely, if ever"],
       checks: ["give it a source", "ask where each\nfact came from", "check names,\nnumbers, quotes"],
     },
     resp: {

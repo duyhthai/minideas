@@ -186,7 +186,7 @@ export default {
       ["Thêm vài cách để có câu trả lời tốt hơn", "Hỏi vài lần rồi so sánh. Xin vài phương án trước khi chọn một. Dán vào những tài liệu mà nó nên dựa vào. Và nếu ứng dụng cho phép, hãy để nó tra cứu hoặc tính toán thay vì đoán."],
     ]},
     "made-up-answers": { title: "Vì sao AI bịa chuyện", gist: "Nó viết ra điều nghe có vẻ hợp lý, mà hợp lý chưa chắc đã đúng.", panels: [
-      ["Tự tin mà sai", "Hỏi về một chi tiết hiếm gặp, chatbot có thể tự bịa ra: một cuốn sách không ai viết, một câu nói không ai nói, một vị chủ tịch xã chưa từng tồn tại. Giọng nó vẫn chắc chắn như khi nói đúng. Hiện tượng này gọi là ảo giác (hallucination)."],
+      ["Tự tin mà sai", "Hỏi về một chi tiết hiếm gặp, chatbot có thể tự bịa ra: một cuốn sách không ai viết, một câu nói không ai nói, một nghiên cứu chưa ai làm. Giọng nó vẫn chắc chắn như khi nói đúng. Hiện tượng này gọi là ảo giác (hallucination)."],
       ["Nghe hợp lý chưa chắc đã đúng", "Nó viết ra những từ nghe hợp lý nhất. Với các sự thật nổi tiếng, xuất hiện vô số lần, hợp lý và đúng trùng nhau. Với tên người, ngày tháng và con số hiếm gặp, một phỏng đoán nghe xuôi tai sẽ lấp vào chỗ trống."],
       ["Cách tự bảo vệ mình", "Đưa cho nó nguồn tài liệu để dựa vào, hỏi xem mỗi thông tin lấy từ đâu, và kiểm tra lại những gì quan trọng, nhất là tên, số liệu và trích dẫn, trước khi dùng."],
     ]},
@@ -282,9 +282,9 @@ export default {
       tricks: ["hỏi vài lần", "xin vài phương án", "đưa nguồn tài liệu", "cho dùng công cụ"],
     },
     trust: {
-      ask: "Ai là chủ tịch đầu tiên\ncủa xã Hòa An?", claim: "Đó là ông Nguyễn Văn Hải,\nnhậm chức năm 1947.", stamp: "bịa ra", sure: "nói chắc như đinh đóng cột",
+      ask: "Có sách nào hay về lịch sử\ncà phê Việt Nam không?", claim: "Bạn thử đọc “Giọt đắng”\ncủa Trần Minh Khang (2014).", stamp: "bịa ra", sure: "nói chắc như đinh đóng cột",
       famous: ["sự thật nổi tiếng", "Thủ đô\ncủa Pháp là", "Paris", "gặp vô số lần"],
-      rare: ["chi tiết hiếm gặp", "Chủ tịch đầu tiên\ncủa xã Hòa An là", "Nguyễn Văn Hải", "hiếm khi, hoặc chưa từng gặp"],
+      rare: ["chi tiết hiếm gặp", "Sách hay về lịch sử\ncà phê Việt Nam là", "Giọt đắng", "hiếm khi, hoặc chưa từng gặp"],
       checks: ["đưa nó nguồn\ntài liệu", "hỏi mỗi thông tin\nlấy từ đâu", "kiểm tra tên,\nsố liệu, trích dẫn"],
     },
     resp: {
