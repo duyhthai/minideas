@@ -763,18 +763,23 @@ function newsItems(t) {
     ...booksIn(t).map(b => ({ name: b.slug, date: b.added, book: true, title: b[t.lang].title, text: b[t.lang].abstract.replace(/\*/g, ""), og: bookImage(t, b) })),
   ].sort((a, b) => b.date.localeCompare(a.date));
 }
-// RSS, one feed per language, each item with its preview image
+// RSS, one feed per language, each item with its preview image. The channel names the bulb icon twice: RSS's own
+// <image>, which most readers use, and Feedly's webfeeds tags (icon, logo, accent color), which it prefers.
 function feed(t) {
   const items = newsItems(t);
   const home = `${SITE_URL}/${t.lang}/`;
   return `<?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:webfeeds="http://webfeeds.org/rss/1.0">
 <channel>
 <title>${E(t.ui.site)}</title>
 <link>${home}</link>
 <description>${E(t.ui.lede)}</description>
 <language>${t.lang}</language>
 <atom:link href="${home}feed.xml" rel="self" type="application/rss+xml"/>
+<image><url>${SITE_URL}/icon-192.png</url><title>${E(t.ui.site)}</title><link>${home}</link></image>
+<webfeeds:icon>${SITE_URL}/icon-192.png</webfeeds:icon>
+<webfeeds:logo>${SITE_URL}/favicon.svg</webfeeds:logo>
+<webfeeds:accentColor>1c2333</webfeeds:accentColor>
 ${items.map(x => `<item>
   <title>${E(x.title)}</title>
   <link>${home}${x.name}/</link>
