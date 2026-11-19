@@ -402,7 +402,7 @@ function collectionPage(t, c) {
     tile(to(t.lang, idea.slug), tileDrawing(art(t, idea.panels[0], `${t.lang}/${idea.slug} tile`)), t.ideas[idea.slug].title,
       `<span class="tile-caption">${E(t.ideas[idea.slug].gist)}</span>`)).join("")}</ol>`;
   const groups = c.chapters
-    ? c.chapters.map(ch => `<h2 class="chapter-label">${E(ct.chapters[ch])}</h2>${grid(c.ideas.filter(idea => idea.chapter === ch))}`).join("\n")
+    ? c.chapters.map((ch, k) => `<h2 class="chapter-label"><span class="chapter-num">${k + 1}</span>${E(ct.chapters[ch])}</h2>${grid(c.ideas.filter(idea => idea.chapter === ch))}`).join("\n")
     : grid(c.ideas);
   const body = `<main>
 <a class="back" href="${to(t.lang)}">← ${E(t.ui.allTopics)}</a>

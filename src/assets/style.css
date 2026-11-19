@@ -10,6 +10,7 @@
   --line: #d8deea;
   --blue: #2f58d6;
   --coral: #d4462c;
+  --green: #0f6e50; /* chapters: the number circles on a collection page, the chapter headings in the sidebar */
   --on: #1c2333;
   --fk: #ffffff;
   --f-blue: #a9bcff;
@@ -26,14 +27,14 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --paper: #0f121a; --card: #191e2b; --art: #1b2030; --ink: #e7eaf3; --ink-2: #a3abc0; --line: #2a3145;
-    --blue: #8ba5ff; --coral: #ff8d77; --on: #141927; --fk: #20263a;
+    --blue: #8ba5ff; --coral: #ff8d77; --green: #6cd1b1; --on: #141927; --fk: #20263a;
     --f-blue: #8ea5f7; --f-yellow: #f0c75a; --f-mint: #6cd1b1; --f-coral: #f59a87; --f-tint: #283150; --chip: #252e4a;
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
   --paper: #0f121a; --card: #191e2b; --art: #1b2030; --ink: #e7eaf3; --ink-2: #a3abc0; --line: #2a3145;
-  --blue: #8ba5ff; --coral: #ff8d77; --on: #141927; --fk: #20263a;
+  --blue: #8ba5ff; --coral: #ff8d77; --green: #6cd1b1; --on: #141927; --fk: #20263a;
   --f-blue: #8ea5f7; --f-yellow: #f0c75a; --f-mint: #6cd1b1; --f-coral: #f59a87; --f-tint: #283150; --chip: #252e4a;
   color-scheme: dark;
 }
@@ -144,7 +145,9 @@ figure.book-photo img { display: block; width: 100%; height: auto; border-radius
 .gallery span { display: block; margin-top: 6px; font-size: 13px; line-height: 1.4; color: var(--ink-2); }
 .back { display: inline-block; margin: 4px 0 0; padding: 6px 0; font-weight: 700; font-size: 14.5px; color: var(--ink); text-decoration: none; }
 .back:hover { text-decoration: underline; }
-.chapter-label { font: 700 12.5px/1 var(--body); letter-spacing: .12em; text-transform: uppercase; color: var(--ink-2); margin: 36px 0 14px; }
+.chapter-label { display: flex; align-items: center; gap: 14px; font: 800 24px/1.2 var(--display); letter-spacing: -.01em; color: var(--ink); margin: 44px 0 14px; text-wrap: balance; }
+/* chapter number in a solid green circle (green marks chapters; blue is for links and buttons) */
+.chapter-num { flex: none; width: 40px; height: 40px; display: grid; place-items: center; border-radius: 50%; background: var(--green); color: var(--card); font: 800 20px/1 var(--display); letter-spacing: 0; }
 .tile-grid { list-style: none; padding: 0; margin: 24px 0 0; display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); }
 .chapter-label + .tile-grid { margin-top: 0; }
 .tile { display: block; height: 100%; border-radius: 14px; overflow: hidden; background: var(--card); border: 1px solid var(--line); color: var(--ink); text-decoration: none; transition: border-color .15s, transform .15s; }
@@ -283,7 +286,7 @@ figure.book-photo img { display: block; width: 100%; height: auto; border-radius
 /* contents rail */
 .toc .home { display: inline-block; font-weight: 700; font-size: 14.5px; color: var(--ink); text-decoration: none; padding: 8px 10px; border-radius: 10px; }
 .toc .home:hover { background: var(--card); }
-.toc h2 { font: 700 12px/1 var(--body); letter-spacing: .12em; text-transform: uppercase; color: var(--ink-2); margin: 20px 10px 8px; }
+.toc h2 { font: 700 12px/1 var(--body); letter-spacing: .12em; text-transform: uppercase; color: var(--green); margin: 20px 10px 8px; }
 .toc ol { list-style: none; padding: 0; margin: 0; display: grid; gap: 2px; }
 .toc ol a {
   display: grid; grid-template-columns: 26px minmax(0, 1fr); align-items: baseline; gap: 6px; padding: 8px 10px; border-radius: 10px;
