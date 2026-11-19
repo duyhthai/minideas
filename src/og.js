@@ -92,8 +92,10 @@ function photoPanel({ file, width, height }) {
  * @param {string} [o.footer]     small line at the bottom
  * @param {string} [o.drawing]    inner markup of a 320 × 220 drawing from draw.js
  * @param {object} [o.photo]      { file, width, height }: a JPEG shown whole on the right instead of a drawing
+ * @param {string} [o.mark]       the header logo's SVG: drawn with the site name above the title
+ * @param {string} [o.site]       the site name next to the logo
  */
-export function renderOg({ title, text, footer, drawing, photo }) {
+export function renderOg({ title, text, footer, drawing, photo, mark, site }) {
   const colW = 528;
   let size = 64, titleLines;
   for (size of text ? [64, 54, 46] : [84, 72, 60]) {
@@ -103,19 +105,25 @@ export function renderOg({ title, text, footer, drawing, photo }) {
     const tooLong = titleLines.some(l => l.length > perLine); // a single word wider than the column
     if (!last.endsWith("…") && !orphan && !tooLong) break;
   }
-  // without a summary, centre the title block vertically
-  const top = text ? 110 : (630 - (titleLines.length - 1) * size * 1.08) / 2 - size * .62;
+  // without a summary, centre the title block vertically (below the logo, when there is one)
+  const top = text ? (mark ? 140 : 110) : (630 - (titleLines.length - 1) * size * 1.08) / 2 - size * .62 + (mark ? 20 : 0);
   const titleSvg = titleLines.map((l, i) =>
     `<text x="64" y="${top + size + i * size * 1.08}" font-family="Bricolage Grotesque" font-weight="800" font-size="${size}" fill="${C.ink}">${E(l)}</text>`).join("");
   const textTop = top + size + (titleLines.length - 1) * size * 1.08 + 56;
-  const textSvg = !text ? "" : wrap(text, Math.floor(colW / (26 * .58)), 4).map((l, i) =>
-    `<text x="64" y="${textTop + i * 37}" font-family="Lexend" font-size="26" fill="${C.ink2}">${E(l)}</text>`).join("");
+  const ts = mark ? 24 : 26;
+  // as many lines as fit above the footer (4 without the logo)
+  const textLines = mark ? Math.max(2, Math.floor((532 - textTop) / (ts * 1.42)) + 1) : 4;
+  const textSvg = !text ? "" : wrap(text, Math.floor(colW / (ts * .58)), textLines).map((l, i) =>
+    `<text x="64" y="${textTop + i * ts * 1.42}" font-family="Lexend" font-size="${ts}" fill="${C.ink2}">${E(l)}</text>`).join("");
+  const header = !mark ? "" : `<svg x="60" y="48" width="58" height="58" viewBox="0 0 32 32">${brandMark(mark)}</svg>
+<text x="126" y="91" font-family="Bricolage Grotesque" font-weight="800" font-size="36" fill="${C.ink}">${E(site || "")}</text>`;
 
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
 <defs>
   <style>${DRAWING_CSS}</style>
 </defs>
 <rect width="1200" height="630" fill="${C.paper}"/>
+${header}
 ${titleSvg}
 ${textSvg}
 ${footer ? `<text x="64" y="568" font-family="Patrick Hand" font-size="30" fill="${C.ink2}">${E(footer)}</text>` : ""}
@@ -127,6 +135,8 @@ ${sketchPanel(drawing, 640, 139, 512, 352, "art")}`}
 
 // Light-theme values of the CSS tokens the header logo uses (assets/style.css)
 const TOKENS = { ink: C.ink, on: C.ink, fk: "#ffffff", "f-blue": "#a9bcff", "f-yellow": "#ffd466", "f-mint": "#86dcc1" };
+// the header logo's inner markup, with its theme colors written out
+const brandMark = mark => mark.replace(/^<svg[^>]*>|<\/svg>$/g, "").replace(/var\(--([\w-]+)\)/g, (m, k) => TOKENS[k] || m);
 
 /**
  * The home page's preview: the logo and site name, the tagline, then a row of three stacks, each a card with its
@@ -138,7 +148,6 @@ const TOKENS = { ink: C.ink, on: C.ink, fk: "#ffffff", "f-blue": "#a9bcff", "f-y
  * @param {{ title: string, drawing?: string, photo?: { file, width, height } }[]} o.tiles
  */
 export function renderHomeOg({ title, text, mark, tiles }) {
-  const markSvg = mark.replace(/^<svg[^>]*>|<\/svg>$/g, "").replace(/var\(--([\w-]+)\)/g, (m, k) => TOKENS[k] || m);
   const textSvg = wrap(text, Math.floor(1072 / (28 * .58)), 2).map((l, i) =>
     `<text x="64" y="${206 + i * 38}" font-family="Lexend" font-size="28" fill="${C.ink2}">${E(l)}</text>`).join("");
   const cardW = 334, gap = 35, top = 262, pic = { w: 310, h: 213 };
@@ -162,7 +171,7 @@ export function renderHomeOg({ title, text, mark, tiles }) {
   <style>${DRAWING_CSS}</style>
 </defs>
 <rect width="1200" height="630" fill="${C.paper}"/>
-<svg x="60" y="52" width="92" height="92" viewBox="0 0 32 32">${markSvg}</svg>
+<svg x="60" y="52" width="92" height="92" viewBox="0 0 32 32">${brandMark(mark)}</svg>
 <text x="164" y="126" font-family="Bricolage Grotesque" font-weight="800" font-size="76" fill="${C.ink}">${E(title)}</text>
 ${textSvg}
 ${cards}
