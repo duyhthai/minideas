@@ -58,8 +58,11 @@ const FONTS = `<link rel="preconnect" href="https://fonts.googleapis.com">
 // drawn with theme colors so it works on light and dark backgrounds.
 const iconLinks = rel => `<link rel="icon" href="${rel}favicon.svg" type="image/svg+xml">
 <link rel="icon" href="${rel}favicon-32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="${rel}icon-192.png" sizes="192x192" type="image/png">
 <link rel="apple-touch-icon" href="${rel}apple-touch-icon.png">
 <link rel="manifest" href="${rel}site.webmanifest">`;
+// Tells Google the site's name ("Minideas", not "minideas.com") for search results; it reads it from the home pages.
+const SITE_LD = SITE_URL ? `<script type="application/ld+json">${JSON.stringify({ "@context": "https://schema.org", "@type": "WebSite", name: en.ui.site, url: `${SITE_URL}/` })}</script>` : "";
 const BRAND_MARK = `<svg class="mark" viewBox="0 0 32 32" width="40" height="40" aria-hidden="true"><g stroke="var(--ink)" stroke-width="1.3" stroke-linejoin="round"><rect x="8" y="4" width="17" height="24" rx="3" fill="var(--f-blue)" transform="rotate(-17 16.5 30)"/><rect x="8" y="4" width="17" height="24" rx="3" fill="var(--f-mint)" transform="rotate(-8.5 16.5 30)"/><rect x="8" y="4" width="17" height="24" rx="3" fill="var(--fk)"/><path d="M16.5 7.6a5.2 5.2 0 0 1 3.1 9.4c-.55.45-.85 1.05-.85 1.75v.3h-4.5v-.3c0-.7-.3-1.3-.85-1.75A5.2 5.2 0 0 1 16.5 7.6z" fill="var(--f-yellow)"/></g><path d="M14.2 15.2v-2.4a1.15 1.15 0 0 1 2.3 0v2.4M16.5 12.8a1.15 1.15 0 0 1 2.3 0v2.4" fill="none" stroke="var(--on)" stroke-width="1.15" stroke-linecap="round" stroke-linejoin="round"/><path d="M14.7 21.3h3.6M15.3 23.4h2.4" stroke="var(--ink)" stroke-width="1.3" stroke-linecap="round"/></svg>`;
 
 // Shelf icons on the home page, in the header logo's style (ink outline, pastel fill, theme colors).
@@ -296,6 +299,7 @@ function shell({ t, depth, segs, title, desc, body, og, langs = LANGS, noindex =
 <title>${E(title)}</title>
 <meta name="description" content="${E(desc)}">${noindex ? `\n<meta name="robots" content="noindex">` : ""}
 <meta property="og:type" content="website">
+<meta property="og:site_name" content="${E(t.ui.site)}">
 <meta property="og:title" content="${E(title)}">
 <meta property="og:description" content="${E(desc)}">
 <meta property="og:locale" content="${t.locale}">
@@ -304,7 +308,7 @@ ${SITE_URL ? `<meta property="og:url" content="${SITE_URL}/${[t.lang, ...segs].j
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">` : ""}
-${alternates}
+${alternates}${segs.length ? "" : `\n${SITE_LD}`}
 ${FONTS}
 <script>(function () { var t = "light"; try { t = localStorage.getItem("theme") || "light"; } catch (e) {} document.documentElement.setAttribute("data-theme", t); })();</script>
 ${iconLinks("../".repeat(depth))}
@@ -722,6 +726,7 @@ function rootPage() {
 })();
 </script>
 <noscript><meta http-equiv="refresh" content="0; url=vi/${INDEX}"></noscript>
+${SITE_LD}
 ${[vi, en].map(t => `<link rel="alternate" type="application/rss+xml" title="${E(feedTitle(t))}" href="${t.lang}/feed.xml">`).join("\n")}
 ${FONTS}
 <script>(function () { var t = "light"; try { t = localStorage.getItem("theme") || "light"; } catch (e) {} document.documentElement.setAttribute("data-theme", t); })();</script>
