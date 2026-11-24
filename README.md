@@ -14,7 +14,7 @@ npm run dev      # builds, serves http://localhost:4321 and rebuilds when src/ c
 npm run build    # one-off build into dist/
 ```
 
-[CLAUDE.md](CLAUDE.md) explains how content is organised and how to add an explainer or a book.
+To add an explainer or a book review, see [docs/adding-content.md](docs/adding-content.md). [CLAUDE.md](CLAUDE.md) explains how everything is organised.
 
 ## Contributing
 

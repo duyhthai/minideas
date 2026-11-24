@@ -1,0 +1,148 @@
+# Adding an explainer or a book review
+
+This guide walks through adding content to Minideas. Read [CONTRIBUTING.md](../CONTRIBUTING.md) first for what's welcome and how to send it.
+
+You can write in English or Vietnamese, or both. A page in one language appears only on that language's site, and the other can be translated later.
+
+Run `npm run dev` while you work. It rebuilds on every save, reloads the page, and stops with a list of problems when something doesn't fit (a missing panel, a label that doesn't exist, a photo that isn't there).
+
+## An explainer
+
+An explainer is a card stack: 3 to 12 panels, each with a drawing, a short heading and one or two sentences. It is either **standalone** (one stack) or part of a **collection** (several stacks in order, like AI Fundamentals). Most new explainers should be standalone; `clean-code-refactoring` is a good one to copy.
+
+Pick a slug: lowercase words joined by dashes, in English, used in every language (`/en/my-topic/` and `/vi/my-topic/`). It can't be `home`, `follow` or `suggest`, or any name already used.
+
+### 1. The panels: `src/stacks.js`
+
+Add an item to `SHELF`. Its place in the list is its place on the home page.
+
+```js
+{
+  slug: "how-qr-payments-work",
+  date: "2026-12-01",                  // the day it goes on the site
+  related: "graph-databases",          // optional: one stack to read next
+  panels: [["qrScan"], ["qrBank", 1], ["qrBank", 2]],
+  resources: [                         // "Go deeper" links; pages must open without an account
+    { key: "napas", name: "NAPAS", url: "https://napas.com.vn/" },
+  ],
+},
+```
+
+Each panel is `[drawingName, ...arguments]`. The drawing is a function in `src/draw.js` (step 3), and the arguments let one drawing show several steps.
+
+### 2. The words: `src/i18n/en.js` and/or `src/i18n/vi.js`
+
+Under `ideas`, add an entry with the same slug: one `[heading, text]` per panel, in the same order as the drawings.
+
+```js
+"how-qr-payments-work": {
+  title: "How paying by QR code works",
+  gist: "One short sentence that sums it up; it shows on the home page and in link previews.",
+  panels: [
+    ["The code is just an address", "…"],
+    ["Your bank sends the money", "…"],
+    ["The shop hears back in seconds", "…"],
+  ],
+  links: { napas: "Who runs the network behind Vietnam’s QR payments" },
+},
+```
+
+Put the words inside the drawings under `art`, in a group of your own:
+
+```js
+art: {
+  // …
+  qr: { phone: "your phone", shop: "shop", bank: "bank", paid: "paid" },
+},
+```
+
+Every text the reader sees comes from these files, never from `draw.js`, so the same drawing works in every language.
+
+### 3. The drawings: `src/draw.js`
+
+Each drawing is a function in `ART` that returns SVG for a **320 × 220** box (x to the right, y down). It receives `lb`, the language's `art` labels.
+
+```js
+qrScan(lb) {
+  const t = lb.qr;
+  return R(30, 50, 80, 130, "fk") + T(70, 200, t.phone) +
+    A(120, 115, 200, 115, "blue-s") +
+    R(210, 70, 80, 80, "fy") + T(250, 115, t.shop, { c: "on", max: 70 });
+},
+```
+
+The helpers:
+
+| Helper | Draws |
+| --- | --- |
+| `T(x, y, text, { c, max, size, a })` | a label, centred on x (`a: "start"` or `"end"` to align); `\n` breaks lines; `max` shrinks the font to fit that width |
+| `L(x1, y1, x2, y2, cls)` | a line |
+| `A(x1, y1, x2, y2, cls)` | an arrow |
+| `R(x, y, w, h, fill, cls, radius)` | a box |
+| `C(cx, cy, r, fill, cls)` / `EL(cx, cy, rx, ry, fill, cls)` | a circle / an ellipse |
+| `P(d, fill, cls)` | an SVG path |
+| `pill(cx, cy, text, fill)` | a rounded label |
+| `fig(x, y, pose)` / `face(x, y, mood)` | a little person (`"walk"`, `"run"`, `"bike"`) / a face (`"up"`, `"down"`, `"flat"`) |
+
+Fills are coloured pencil: `fy` yellow, `fb` blue, `fm` mint, `fc` coral, `ft` a pale tint, `fk` plain paper, `fi` solid ink. Lines take `thin`, `w3` (thick), `dash`, `faint`, `blue-s` or `coral-s`. Labels take `b` (bold), `sm` (small), `mut` (grey), `blu`, `cor`, `on` (for text on a coloured fill) and `halo` (for text that sits on a line, so the line doesn't strike through it).
+
+Tips:
+
+- Vietnamese labels run longer. Give any label that might not fit a `max` width.
+- The drawing font has no ← → arrows or other unusual symbols; draw arrows with `A()`.
+- Copy a drawing you like: `readMore`, `goodNames` and the `graph…` drawings are short and readable.
+- The first panel is also the home-page tile and the link preview, so it should make sense on its own.
+
+### 4. Check it
+
+Open your stack on the dev server in light and dark mode (the moon button), in each language you wrote, on a wide window and a narrow one. The drawings appear as pencil sketches, and that look is applied at build time, so what you see is what readers get.
+
+### A collection
+
+A collection groups several stacks that build on each other. In `stacks.js` it has an `id`, a `date`, optional `chapters`, `resources` and a list of `ideas` (each a `slug`, a `chapter` and `panels`). In the i18n files it gets `collections[id]` (`title`, `lede`, `chapters`, `links`) plus one `ideas[slug]` entry per idea. See `ai-fundamentals` for the full shape. Talk to us in an issue before starting one.
+
+## A book review
+
+A book is a card stack too: one panel per idea from your review, each with a drawing or a photo. A full-length review behind it is optional.
+
+### 1. Photos (optional)
+
+Put your photos in `src/books/photos/<slug>/` as JPEGs, with their metadata removed (for example `exiftool -all= photo.jpg`). Only use photos you took or have the right to use. Every photo needs a caption in each language you write.
+
+### 2. The review: `src/books/<slug>.js`
+
+```js
+export default {
+  slug: "atomic-habits",
+  author: "James Clear",                 // the book's author
+  added: "2026-12-01",                   // the day it goes on the site
+  date: "2026-11-20",                    // optional: when you wrote it, if earlier
+  cover: "cover.jpg",                    // optional: the tile and preview picture
+  related: "outliers",                   // optional: one stack to read next
+  panels: [["photo", "cover.jpg"], ["habitLoop"], ["habitOnePercent"]],
+  en: {
+    title: "Atomic Habits",
+    abstract: "One or two sentences on what the book is about and why it’s worth reading.",
+    panels: [
+      ["Small changes, big results", "…"],
+      ["Cue, craving, response, reward", "…"],
+      ["1% better every day", "…"],
+    ],
+    labels: { loop: ["cue", "craving", "response", "reward"] },
+    captions: { "cover.jpg": "The cover of the first edition" },
+  },
+  // vi: { … the same shape, if you write Vietnamese too }
+};
+```
+
+Write it your way: your opinions, your structure, a rating if you want to give one (put it in the text).
+
+Book drawings live in `src/draw.js` like any other (prefix their names with the book, e.g. `habitLoop`). They read their labels from `lb.book`, which holds your `labels` plus the book's `title`, `author` and `facts`.
+
+### 3. Put it on the shelf: `src/books/index.js`
+
+Import your file and add it to `BOOKS`. Its place in the list is its place on the home page.
+
+### A full review (optional)
+
+For a long review, put the article in `src/books/<slug>-full.js`, import it in `<slug>.js` and add it as `full`. It shares the card stack's slug, author, date and cover unless it sets its own. Its language blocks hold `title`, `abstract`, `intro` (paragraphs), `sections` (each `{ h: heading, body: [paragraphs] }`) and an optional `conclusion`. A paragraph can also be `{ quote: "…" }` or `{ photo: "file.jpg" }`. `art.sections` can put a drawing or photo at the top of a section by its number, and `photos` lists a gallery shown before the conclusion. `*italic*` and `**bold**` work in the text. The card stack then ends with a link to the full review. See `steal-like-an-artist-full.js` for a complete example.

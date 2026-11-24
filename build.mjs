@@ -101,29 +101,42 @@ for (const name of [...SHELF.flatMap(item => item.ideas ? [item.id, ...item.idea
   if (seen.has(name) || ["home", "follow", "suggest"].includes(name)) problems.push(`the name "${name}" is used twice or is taken by the site (collections and ideas need different names)`);
   seen.add(name);
 }
+// A collection or standalone idea is published in each language that has its text (a collection's own text): one
+// language is enough, the other can be translated later. A collection in a language needs all its ideas in it.
+const inLang = (t, item) => !!(item.ideas ? t.collections[item.id] : t.ideas[item.slug]);
+const shelfIn = t => SHELF.filter(item => inLang(t, item));
+const langsOf = item => LANGS.filter(o => inLang(o, item));
+for (const item of SHELF) if (!langsOf(item).length) problems.push(`"${item.id || item.slug}": no text in any language (i18n/en.js or i18n/vi.js)`);
 for (const t of LANGS) {
   if (!KIT_FORMS[t.lang]) problems.push(`${t.lang}: no Kit form for the email sign-up (KIT_FORMS in build.mjs)`);
-  for (const c of COLLECTIONS) {
+  for (const c of COLLECTIONS.filter(c => inLang(t, c))) {
     const ct = t.collections[c.id];
-    if (!ct) { problems.push(`${t.lang}: no text for collection "${c.id}"`); continue; }
     for (const ch of c.chapters || []) if (!ct.chapters?.[ch]) problems.push(`${t.lang}/${c.id}: no name for chapter "${ch}"`);
     for (const r of c.resources) if (!ct.links?.[r.key]) problems.push(`${t.lang}/${c.id}: no description for link "${r.key}"`);
   }
-  for (const idea of ALL_IDEAS) {
+  for (const idea of shelfIn(t).flatMap(item => item.ideas || [item])) {
     const it = t.ideas[idea.slug];
     if (!it) problems.push(`${t.lang}: no text for "${idea.slug}"`);
     else if (it.panels.length !== idea.panels.length) problems.push(`${t.lang}/${idea.slug}: ${it.panels.length} panels of text, ${idea.panels.length} drawings`);
   }
-  for (const idea of STANDALONE) for (const r of idea.resources || []) if (!t.ideas[idea.slug]?.links?.[r.key]) problems.push(`${t.lang}/${idea.slug}: no description for link "${r.key}"`);
+  for (const idea of STANDALONE.filter(i => inLang(t, i))) for (const r of idea.resources || []) if (!t.ideas[idea.slug].links?.[r.key]) problems.push(`${t.lang}/${idea.slug}: no description for link "${r.key}"`);
 }
 // each shelf item shows when it was published: a collection on its own page (not on each idea), a standalone idea on its page
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
 for (const item of SHELF) if (!ISO_DATE.test(item.date || "")) problems.push(`"${item.id || item.slug}": no date (YYYY-MM-DD)`);
 // A book is a card stack (panels) that may carry its full review in `full` (an article: intro + sections), or an
-// article on its own. Vietnamese is required (the original review); other languages are optional but must match.
+// article on its own. It needs text in one language at least (the other can be translated later); a translation must
+// match the original's panels and sections. `date` is when the review was written, if not the day it went on the site
+// (`added`); a full review shares its card stack's slug, author, date and cover unless it sets its own.
+for (const b of BOOKS) {
+  b.date ||= b.added;
+  if (b.full) for (const k of ["slug", "author", "date", "cover"]) b.full[k] ??= b[k];
+}
 const BOOK_PARTS = BOOKS.flatMap(b => [b, ...(b.full ? [b.full] : [])]);
+// the language a book was written in (Vietnamese for the Sâu Sách reviews): its photos and sections are counted from it
+const original = b => b.vi || b.en;
 for (const b of BOOK_PARTS) {
-  if (!b.vi) { problems.push(`book "${b.slug}": no Vietnamese text`); continue; }
+  if (!original(b)) { problems.push(`book "${b.slug}": no text in any language (vi or en)`); continue; }
   if (!ISO_DATE.test(b.date || "")) problems.push(`book "${b.slug}": no date (YYYY-MM-DD) for when the review was published`);
   const parts = b.panels ? ["panels"] : ["intro", "sections"];
   for (const t of LANGS) {
@@ -131,9 +144,9 @@ for (const b of BOOK_PARTS) {
     if (!bl) continue;
     for (const k of ["title", "abstract", ...parts]) if (!bl[k]) problems.push(`book "${b.slug}" (${t.lang}): missing ${k}`);
     if (b.panels && bl.panels?.length !== b.panels.length) problems.push(`book "${b.slug}" (${t.lang}): ${bl.panels?.length} panels of text, ${b.panels.length} pictures`);
-    if (!b.panels && bl.sections?.length !== b.vi.sections.length) problems.push(`book "${b.slug}" (${t.lang}): ${bl.sections?.length} sections, the Vietnamese review has ${b.vi.sections.length}`);
+    if (!b.panels && bl.sections?.length !== original(b).sections.length) problems.push(`book "${b.slug}" (${t.lang}): ${bl.sections?.length} sections, the original has ${original(b).sections.length}`);
   }
-  for (const n of Object.keys(b.art?.sections || {})) if (!b.vi.sections?.[n - 1]) problems.push(`book "${b.slug}": a drawing is set for section ${n}, which doesn't exist`);
+  for (const n of Object.keys(b.art?.sections || {})) if (!original(b).sections?.[n - 1]) problems.push(`book "${b.slug}": a drawing is set for section ${n}, which doesn't exist`);
   for (const file of bookPhotos(b)) {
     if (!existsSync(photoSource(b, file))) problems.push(`book "${b.slug}": photo src/books/photos/${photoDir(b)}/${file} not found`);
     for (const t of LANGS) if (b[t.lang] && !b[t.lang].captions?.[file]) problems.push(`book "${b.slug}" (${t.lang}): no caption for ${file}`);
@@ -143,7 +156,7 @@ for (const b of BOOK_PARTS) {
 // all in src/books/photos/<slug>/ (photosFrom overrides)
 function bookPhotos(b) {
   const photo = specs => specs.filter(p => p[0] === "photo").map(p => p[1]);
-  const inText = [...(b.vi.intro || []), ...(b.vi.sections || []).flatMap(s => s.body)].map(x => x?.photo);
+  const inText = [...(original(b).intro || []), ...(original(b).sections || []).flatMap(s => s.body)].map(x => x?.photo);
   return [b.cover, ...(b.photos || []), ...photo(b.panels || []), ...photo(Object.values(b.art?.sections || {})), ...inText].filter(Boolean);
 }
 // the first section with a drawing (not a photo), for a book without a cover photo
@@ -163,7 +176,7 @@ function jpegSize(file) {
 }
 const booksIn = t => BOOKS.filter(b => b[t.lang]);
 // When something went on the site: a collection's or standalone idea's `date`, a book's `added` (a book's `date` is
-// when the review first appeared on Sâu Sách). Things added after launch day (the earliest of these) are marked "New".
+// when the review was written, e.g. when it first appeared on Sâu Sách). Things added after launch day (the earliest of these) are marked "New".
 for (const b of BOOKS) if (!ISO_DATE.test(b.added || "")) problems.push(`book "${b.slug}": no added date (YYYY-MM-DD) for when it went on the site`);
 const siteDate = item => item.added || item.date;
 const LAUNCH = [...SHELF, ...BOOKS].map(siteDate).sort()[0];
@@ -269,7 +282,7 @@ function bookTileArt(t, b, rel) {
 /* ---------- links ---------- */
 // the title of a collection, idea or book in this language (a book may not have one)
 function titleOf(t, name) {
-  if (COLLECTIONS.some(c => c.id === name)) return t.collections[name].title;
+  if (COLLECTIONS.some(c => c.id === name)) return t.collections[name]?.title;
   return t.ideas[name]?.title || BOOKS.find(b => b.slug === name)?.[t.lang]?.title;
 }
 // a card for item.related; extra classes place it in the pager
@@ -367,8 +380,9 @@ function deeper(t, resources, text) {
 // *italic* and **bold** in book text
 const rich = s => E(s).replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>").replace(/\*(.+?)\*/g, "<em>$1</em>");
 
-// "Published 8 November 2026" (or where a review first appeared), plus any extras such as reading time
-function dateline(t, date, source, ...extra) {
+// "Published 8 November 2026" (or where a review first appeared), plus any extras such as reading time.
+// item: a collection, standalone idea or book, with its date and, for a book, any `source`.
+function dateline(t, { date, source }, ...extra) {
   const line = E(source ? t.ui.publishedOn(source, "\0") : t.ui.published("\0")).replace("\0", `<time datetime="${date}">${E(t.ui.date(date))}</time>`);
   return `<p class="dateline">${[line, ...extra.map(E)].join(" · ")}</p>`;
 }
@@ -396,7 +410,7 @@ const bookTile = (t, b, depth) => tile(linker(depth)(t.lang, b.slug), bookTileAr
   tileCaption(b.panels ? `${b.author} · ${t.ui.panelCount(b.panels.length)}` : b.author, rich(b[t.lang].abstract)), newMark(t, b));
 
 function homePage(t) {
-  const ideaTiles = SHELF.map(item => shelfTile(t, item, 1)).join("");
+  const ideaTiles = shelfIn(t).map(item => shelfTile(t, item, 1)).join("");
   const books = booksIn(t);
   const bookTiles = books.map(b => bookTile(t, b, 1)).join("");
   const tiles = !books.length ? `<ul class="tile-grid shelf">${ideaTiles}</ul>` :
@@ -428,12 +442,12 @@ function collectionPage(t, c) {
   <p class="eyebrow">${E(t.ui.ideaCount(c.ideas.length))}</p>
   <h1>${E(ct.title)}</h1>
   <p class="lede">${E(ct.lede)}</p>
-  ${dateline(t, c.date)}
+  ${dateline(t, c)}
 </section>
 ${groups}
 </main>
 ${deeper(t, c.resources, ct)}`;
-  return shell({ t, depth: 2, segs: [c.id], title: `${ct.title} · ${t.ui.site}`, desc: ct.lede, body, og: collectionImage(t, c) });
+  return shell({ t, depth: 2, segs: [c.id], title: `${ct.title} · ${t.ui.site}`, desc: ct.lede, body, og: collectionImage(t, c), langs: langsOf(c) });
 }
 
 // The swipeable card stack shared by ideas and quick-read reviews. slides: [{ art, h, p }], where art is the
@@ -489,7 +503,7 @@ function bookStackPage(t, b) {
   const pager = (full ? `<a class="next" href="${fullUrl}"><small>${E(t.ui.fullReview)}</small><strong>${E(full.title)}</strong></a>` : "") + relatedCard(t, b, to);
 
   const body = `<div class="layout solo">
-${cardStack({ t, slides, data, top, title: bl.title, gist: bl.abstract.replace(/\*/g, ""), meta: dateline(t, b.date, b.source), pager: pager && `<nav class="pager">${pager}</nav>` })}
+${cardStack({ t, slides, data, top, title: bl.title, gist: bl.abstract.replace(/\*/g, ""), meta: dateline(t, b), pager: pager && `<nav class="pager">${pager}</nav>` })}
 </div>`;
   return shell({ t, depth: 2, segs: [b.slug], title: `${bl.title} · ${t.ui.site}`, desc: bl.abstract.replace(/\*/g, ""), body, og: bookImage(t, b), langs: LANGS.filter(o => b[o.lang]) });
 }
@@ -519,11 +533,11 @@ function ideaPage(t, idea, c = null, i = 0) {
   const eyebrow = !c ? "" : total > 1 ? [t.ui.ideaOf(i + 1, total), ...(c.chapters ? [ct.chapters[idea.chapter]] : [])].map(E).join(" · ") : E(ct.title);
   const top = c ? `<p class="eyebrow">${eyebrow}</p>` : `<a class="back" href="${to(t.lang)}">← ${E(t.ui.allTopics)}</a>`;
   const body = `<div class="layout${c ? "" : " solo"}">
-${cardStack({ t, slides, data, top, title: it.title, gist: it.gist, meta: c ? "" : dateline(t, idea.date), pager: pager && `<nav class="pager">${pager}</nav>` })}
+${cardStack({ t, slides, data, top, title: it.title, gist: it.gist, meta: c ? "" : dateline(t, idea), pager: pager && `<nav class="pager">${pager}</nav>` })}
 ${toc}
 </div>
 ${c ? deeper(t, c.resources, ct) : idea.resources?.length ? deeper(t, idea.resources, it) : ""}`;
-  return shell({ t, depth: 2, segs: [idea.slug], title: `${it.title} · ${t.ui.site}`, desc: it.gist, body, og: ideaImage(t, idea) });
+  return shell({ t, depth: 2, segs: [idea.slug], title: `${it.title} · ${t.ui.site}`, desc: it.gist, body, og: ideaImage(t, idea), langs: langsOf(c || idea) });
 }
 
 // A book review as one article, in the reviewer's own words: intro, their sections (with drawings where set),
@@ -565,7 +579,7 @@ function bookPage(t, b, parent = null) {
   <p class="eyebrow">${[t.ui.bookReview, parent && t.ui.fullReview, b.author].filter(Boolean).map(E).join(" · ")}</p>
   <h1 class="stack-title">${E(bl.title)}</h1>
   ${about ? `<p class="edition">${E(about)}</p>` : ""}
-  ${dateline(t, b.date, b.source, t.ui.readTime(readMinutes(t, bl)))}
+  ${dateline(t, b, t.ui.readTime(readMinutes(t, bl)))}
   ${parent ? `<a class="quick-link" href="${to(t.lang, parent.slug)}">${E(t.ui.quickLink(parent.panels.length))}</a>` : ""}
   <div class="book-head${b.cover ? "" : " no-photo"}">
     ${b.cover ? (() => {
@@ -625,7 +639,7 @@ function followPage(t) {
 // points at its own). It says it worked, then offers the three newest stacks. Not in the sitemap or search results.
 function confirmedPage(t) {
   const to = linker(3), u = t.ui;
-  const newest = [...SHELF.map(item => ({ date: item.date, html: shelfTile(t, item, 3) })), ...booksIn(t).map(b => ({ date: b.added, html: bookTile(t, b, 3) }))]
+  const newest = [...shelfIn(t).map(item => ({ date: item.date, html: shelfTile(t, item, 3) })), ...booksIn(t).map(b => ({ date: b.added, html: bookTile(t, b, 3) }))]
     .sort((a, b) => b.date.localeCompare(a.date)).slice(0, 3);
   const body = `<main>
 <a class="back" href="${to(t.lang)}">← ${E(u.allTopics)}</a>
@@ -750,7 +764,7 @@ for (const t of LANGS) {
   files[`${t.lang}/follow/index.html`] = followPage(t);
   files[`${t.lang}/follow/confirmed/index.html`] = confirmedPage(t);
   files[`${t.lang}/suggest/index.html`] = suggestPage(t);
-  for (const item of SHELF) {
+  for (const item of shelfIn(t)) {
     if (!item.ideas) { files[`${t.lang}/${item.slug}/index.html`] = ideaPage(t, item); continue; }
     files[`${t.lang}/${item.id}/index.html`] = collectionPage(t, item);
     item.ideas.forEach((idea, i) => files[`${t.lang}/${idea.slug}/index.html`] = ideaPage(t, idea, item, i));
@@ -763,7 +777,7 @@ for (const t of LANGS) {
 // what the RSS feed and the newsletter drafts announce: collections, standalone ideas and books, newest first
 function newsItems(t) {
   return [
-    ...SHELF.map(item => item.ideas
+    ...shelfIn(t).map(item => item.ideas
       ? { name: item.id, date: item.date, title: t.collections[item.id].title, text: t.collections[item.id].lede, og: collectionImage(t, item) }
       : { name: item.slug, date: item.date, title: t.ideas[item.slug].title, text: t.ideas[item.slug].gist, og: ideaImage(t, item) }),
     ...booksIn(t).map(b => ({ name: b.slug, date: b.added, book: true, title: b[t.lang].title, text: b[t.lang].abstract.replace(/\*/g, ""), og: bookImage(t, b) })),

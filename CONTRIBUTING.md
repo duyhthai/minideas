@@ -18,20 +18,21 @@ The reviews imported from the old Sâu Sách site are Duy's. Please don't rewrit
 3. Run `npm run dev` and look at your pages at http://localhost:4321, in light and dark mode, on a wide and a narrow window.
 4. Open a pull request into **`dev`**, not `main`. Every change to `main` goes live on minideas.com, so only the owner merges into it.
 
-[CLAUDE.md](CLAUDE.md) explains how the site is built and where everything lives. It is written for AI coding assistants but works as a guide for people too.
+**[docs/adding-content.md](docs/adding-content.md) walks through adding an explainer or a book review, with examples to copy.** [CLAUDE.md](CLAUDE.md) goes deeper into how the site is built; it is written for AI coding assistants but works for people too.
+
+You can write in English or Vietnamese, or both. A page in one language appears only on that language's site, and we can translate it later.
 
 ## Explainers
 
-- Every visible word needs both languages: the words go in `src/i18n/en.js` **and** `src/i18n/vi.js`, the panels in `src/stacks.js`, and new drawings in `src/draw.js`. If you only write one language, open the pull request anyway and say so.
+- The panels go in `src/stacks.js`, the words in `src/i18n/en.js` or `src/i18n/vi.js` (or both), and new drawings in `src/draw.js`.
 - Write for a general curious reader. Read "Writing explainers" and "Vietnamese text" in [CLAUDE.md](CLAUDE.md) first. In short: one idea builds on the last, use concrete scenes rather than definitions, introduce jargon once, and leave out vendor product lists.
 - "Go deeper" links must open without an account.
 
 ## Book reviews
 
-- A book is `src/books/<slug>.js`, listed in `src/books/index.js`: a stack of cards, one per idea, each with a drawing or a photo. A full-length review can sit behind it. See `src/books/outliers.js` for an example.
-- A review can be in both languages or in Vietnamese only; a book without English text appears only on the Vietnamese site.
+- A book is `src/books/<slug>.js`, listed in `src/books/index.js`: a stack of cards, one per idea, each with a drawing or a photo. A full-length review behind it is optional.
 - It must be your own writing. Don't paste reviews from other sites.
-- Only add photos you took or have the right to use, with a caption in each language.
+- Only add photos you took or have the right to use, with a caption in each language you write.
 
 ## License
 
