@@ -11,12 +11,43 @@ Thanks for helping. Minideas is a bilingual (English / Vietnamese) site of illus
 
 The reviews imported from the old Sâu Sách site are Duy's. Please don't rewrite them; a typo report is welcome. Only Duy's Sâu Sách reviews are in this repo.
 
+## First time
+
+You need [Node 22](https://nodejs.org/), [git](https://git-scm.com/) and a GitHub account. You don't need any accounts or keys for the site's services: the build works offline with what's in the repo.
+
+1. On GitHub, click **Fork** on this repo to make your own copy.
+2. Download your copy and install what the build uses:
+
+   ```sh
+   git clone https://github.com/<your-name>/minideas.git
+   cd minideas
+   git remote add upstream https://github.com/duyhthai/minideas.git
+   git checkout dev
+   npm install
+   ```
+
 ## How to send a change
 
-1. Fork the repo and branch off **`dev`**.
-2. Make your change and run `npm install` then `npm run build`. There are no tests: the build is the check, and it stops with a list of problems (missing text in one language, panel counts that don't match, drawings that output `NaN`, missing photos).
-3. Run `npm run dev` and look at your pages at http://localhost:4321, in light and dark mode, on a wide and a narrow window.
-4. Open a pull request into **`dev`**, not `main`. Every change to `main` goes live on minideas.com, so only the owner merges into it.
+1. Start a branch from **`dev`** for each article or fix, after getting the latest changes from Minideas:
+
+   ```sh
+   git checkout dev
+   git pull upstream dev
+   git checkout -b my-topic
+   ```
+
+2. Run `npm run dev` and open <http://localhost:4321>. The first build takes about 40 seconds; after that, every save rebuilds in a second and reloads the page.
+3. Make your change. There are no tests: the build is the check, and it stops with a list of problems (a missing panel or label, a photo that isn't there, a drawing that outputs `NaN`).
+4. Look at your pages in light and dark mode, on a wide and a narrow window.
+5. Save your work and send it to your copy on GitHub:
+
+   ```sh
+   git add -A
+   git commit -m "Add an explainer on QR payments"
+   git push -u origin my-topic
+   ```
+
+6. On GitHub, open a pull request from your branch into **`dev`**, not `main`. Every change to `main` goes live on minideas.com, so only the owner merges into it.
 
 **[docs/adding-content.md](docs/adding-content.md) walks through adding an explainer or a book review, with examples to copy.** [CLAUDE.md](CLAUDE.md) goes deeper into how the site is built; it is written for AI coding assistants but works for people too.
 
