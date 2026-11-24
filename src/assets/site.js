@@ -94,7 +94,7 @@
     });
   }
 
-  // Suggest a topic: send the form in the background and say thanks on the page (without this, the browser posts it
+  // Suggest or send an article: send the form in the background and say thanks on the page (without this, the browser posts it
   // and Web3Forms shows its own page). data-ready is "no" until the build has a Web3Forms key.
   const form = document.getElementById("suggest-form");
   if (form) {

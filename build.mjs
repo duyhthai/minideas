@@ -9,7 +9,7 @@
 //   photos/<book>/<file>             a book reviewer's own photos, copied from src/books/photos/
 //   <lang>/follow/index.html         how to follow new card stacks: an email sign-up (Kit), then the RSS feed
 //   <lang>/follow/confirmed/index.html  where Kit sends new subscribers after they confirm (not in the sitemap)
-//   <lang>/suggest/index.html        a form for suggesting topics (sent by Web3Forms to the owner's email)
+//   <lang>/suggest/index.html        a form for suggesting a topic or sending an article's link (Web3Forms emails it)
 //   <lang>/feed.xml                  RSS: everything on the shelves, newest first
 //   404.html                         for addresses that don't exist (hosts serve it at any depth)
 //   sitemap.xml, robots.txt          every page's address, for search engines
@@ -42,12 +42,16 @@ const TMP = `${OUT}-tmp`; // built here first, then swapped in, so a running pre
 const CACHE = join(ROOT, "node_modules/.cache/og"); // preview images keyed by their inputs; most rebuilds render none
 const INDEX = process.argv.includes("--explicit-index") ? "index.html" : "";
 const SITE_URL = (process.env.SITE_URL || "https://minideas.com").replace(/\/$/, "");
-// The "Suggest a topic" form posts to Web3Forms (web3forms.com), which emails each suggestion to the owner. Its
+// The "Suggest or send an article" form posts to Web3Forms (web3forms.com), which emails each suggestion to the owner. Its
 // access key is meant to be public. Until it's set the form can't send, and the build says so.
 const SUGGEST_KEY = "5981853d-1fdd-4f7f-9c1b-21ab1c13822a";
 // The newsletter: one Kit (kit.com) sign-up form per language, so each email goes only to readers of its language
 // (Kit's free plan sends a broadcast to the subscribers of chosen forms). Form ids are public, like the key above.
 const KIT_FORMS = { en: 10201800, vi: 10201799 };
+// The site's code, public on GitHub (linked from the footer), and its guide for writing for Minideas (linked from the
+// bottom of the Suggest page, whose form also takes the link to an article someone wrote)
+const REPO_URL = "https://github.com/duyhthai/minideas";
+const CONTRIBUTE_URL = `${REPO_URL}/blob/main/CONTRIBUTING.md`;
 
 const FONTS = `<link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -87,8 +91,8 @@ const MAIL_ICON = `<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="
 const SUGGEST_ICON = `<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6.5a4.6 4.6 0 0 0-2.8 8.2c.5.4.8 1 .8 1.6v.2h4v-.2c0-.6.3-1.2.8-1.6A4.6 4.6 0 0 0 12 6.5z"/><path d="M10.4 19h3.2M10.9 21.6h2.2"/><path d="M12 1.8v1.7M5.2 4.6l1.2 1.2M18.8 4.6l-1.2 1.2M2.8 11.2h1.7M19.5 11.2h1.7"/></svg>`;
 // the usual feed icon, in its usual orange, so people who use RSS recognise it
 const RSS_ICON = `<svg class="rss" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><rect width="24" height="24" rx="5" fill="#f26f21"/><circle cx="6.8" cy="17.2" r="2" fill="#fff"/><path d="M5 10.6a8.4 8.4 0 0 1 8.4 8.4M5 5.4A13.6 13.6 0 0 1 18.6 19" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/></svg>`;
-// the feed icon's shape in the theme's ink instead of orange, for the footer's RSS link, where the orange stood out
-const FEED_ICON = `<svg class="feed" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><rect class="bg" width="24" height="24" rx="5"/><circle class="fg" cx="6.8" cy="17.2" r="2"/><path class="fg-line" d="M5 10.6a8.4 8.4 0 0 1 8.4 8.4M5 5.4A13.6 13.6 0 0 1 18.6 19"/></svg>`;
+// GitHub's mark, for the footer's link to the site's code, in ink like the feed icon
+const GITHUB_ICON = `<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="currentColor"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>`;
 const SHARE_ICON = `<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3M7 8l5-5 5 5M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></svg>`;
 
 /* ---------- checks ---------- */
@@ -297,7 +301,8 @@ const linker = depth => (...seg) => "../".repeat(depth) + (seg.length ? seg.join
 // langs: the languages this page exists in (the switcher sends the others to their home page)
 // segs: the page's path below /<lang>/ (the same in every language)
 // Every page ends with two cards, Follow (by email) and Suggest, each with its one-line pitch, then the footer: a small
-// link to the RSS feed (on the Follow page, which explains it; few readers use RSS) and the small print. A page doesn't
+// link to the code on GitHub and the small print. The RSS feed has no footer link: the Follow page gives its address,
+// and every page names it in <head>, so feed readers find it from any page's address. A page doesn't
 // link to itself (segs[0] is its own name).
 function shell({ t, depth, segs, title, desc, body, og, langs = LANGS, noindex = false }) {
   const to = linker(depth);
@@ -344,7 +349,7 @@ ${body}
   ${segs[0] === "suggest" ? "" : `<a class="more-card" href="${to(t.lang, "suggest")}">${SUGGEST_ICON}<span><strong>${E(t.ui.suggestTitle)}</strong><small>${E(t.ui.suggestShort)}</small></span></a>`}
 </aside>
 <footer class="site-foot">
-  ${segs[0] === "follow" ? "" : `<a class="foot-rss" href="${to(t.lang, "follow")}#rss">${FEED_ICON}<span>RSS</span></a>`}
+  <a class="foot-link" href="${REPO_URL}" target="_blank" rel="noopener">${GITHUB_ICON}<span>GitHub</span></a>
   <p>© ${new Date().getUTCFullYear()} ${E(t.ui.site)} · ${E(t.ui.madeBy)}</p>
 </footer>
 </div>
@@ -653,7 +658,8 @@ function confirmedPage(t) {
   return shell({ t, depth: 3, segs: ["follow", "confirmed"], title: `${u.confirmedTitle} · ${u.site}`, desc: u.confirmedText, body, og: `og/${t.lang}/home.png`, noindex: true });
 }
 
-// Suggest a topic: a plain form that Web3Forms emails to the owner. site.js sends it in the background and shows the
+// Suggest or send an article: a plain form that Web3Forms emails to the owner (a topic, and optionally the link to
+// something the reader wrote about it; the GitHub way to contribute is a note under it). site.js sends it in the background and shows the
 // thanks here; without the script it still posts, and Web3Forms shows its own thank-you page. botcheck is a
 // honeypot: hidden from people, filled in by bots, and Web3Forms drops those. Every field but the topic is optional.
 function suggestPage(t) {
@@ -684,6 +690,7 @@ function suggestPage(t) {
   ${DONE_ICON}
   <div><p>${E(u.suggestThanks)}</p><p class="thanks-next">${E(u.suggestFollowAsk)} <a href="${to(t.lang, "follow")}">${E(u.followTitle)}</a></p><button class="btn" type="button" id="suggest-again">${E(u.suggestAgain)}</button></div>
 </div>
+<p class="write-own">${GITHUB_ICON}<span><strong>${E(u.writeGit[0])}</strong> ${E(u.writeGit[1])} <a href="${CONTRIBUTE_URL}" target="_blank" rel="noopener">${E(u.writeHow)}</a></span></p>
 </main>`;
   return shell({ t, depth: 2, segs: ["suggest"], title: `${u.suggestTitle} · ${u.site}`, desc: u.suggestLede, body, og: `og/${t.lang}/home.png` });
 }

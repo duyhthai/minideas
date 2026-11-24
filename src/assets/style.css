@@ -60,14 +60,13 @@ a:focus-visible, button:focus-visible, .track:focus-visible { outline: 3px solid
 .brand .mark { flex: none; width: 56px; height: 56px; }
 @media (max-width: 479px) { .brand { gap: 10px; font-size: 17px; } .brand .mark { width: 46px; height: 46px; } }
 
-/* site footer: Follow on the left, small print on the right; on phones the small print goes under Follow, lined up with it */
+/* site footer: the GitHub link on the left, small print on the right; on phones the small print goes under it, lined up with it */
 .site-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 24px; margin-top: 32px; padding-top: 18px; border-top: 1px solid var(--line); font-size: 14px; color: var(--ink-2); }
 .site-foot p { margin: 0 0 0 auto; }
 @media (max-width: 560px) { .site-foot p { margin-left: 0; } }
-.foot-rss { display: inline-flex; align-items: center; gap: 8px; color: var(--ink); font-weight: 600; text-decoration: none; }
-.foot-rss svg { flex: none; width: 20px; height: 20px; } /* the feed icon in ink, so it stays quiet */
-.feed .bg { fill: var(--ink); } .feed .fg { fill: var(--paper); } .feed .fg-line { fill: none; stroke: var(--paper); stroke-width: 2.6; stroke-linecap: round; }
-.foot-rss:hover span { text-decoration: underline; }
+.foot-link { display: inline-flex; align-items: center; gap: 8px; color: var(--ink); font-weight: 600; text-decoration: none; }
+.foot-link svg { flex: none; width: 20px; height: 20px; }
+.foot-link:hover span { text-decoration: underline; }
 .top-tools { display: flex; align-items: center; gap: 10px; }
 .theme-toggle { display: grid; place-items: center; width: 38px; height: 38px; padding: 0; border: 1.5px solid var(--ink); border-radius: 50%; background: var(--card); color: var(--ink); cursor: pointer; }
 .theme-toggle .sun { display: none; }
@@ -334,6 +333,10 @@ figure.book-photo img { display: block; width: 100%; height: auto; border-radius
 .suggest-thanks p { margin: 0 0 14px; font-weight: 700; }
 .suggest-thanks .thanks-next { margin-top: -8px; font-weight: 400; } .suggest-thanks a { color: inherit; font-weight: 700; }
 .form-thanks { margin: 0 0 16px; } .form-thanks p { margin: 0; font-weight: 700; line-height: 1.5; }
+.write-own { display: flex; align-items: flex-start; gap: 10px; max-width: 560px; margin: 36px 0 0; padding-top: 18px; border-top: 1px dashed var(--line); font-size: 15px; color: var(--ink-2); }
+.write-own svg { flex: none; width: 20px; height: 20px; margin-top: 1px; color: var(--ink); } /* GitHub's mark, as in the footer */
+.write-own strong { color: var(--ink); }
+.write-own a { color: var(--ink); font-weight: 700; white-space: nowrap; }
 .suggest-thanks[hidden], .suggest-form[hidden], .form-thanks[hidden], .email-form[hidden] { display: none; }
 
 /* follow page */

@@ -5,7 +5,7 @@ Thanks for helping. Minideas is a bilingual (English / Vietnamese) site of illus
 ## What you can contribute
 
 - **Fixes:** typos, awkward Vietnamese or English, broken links, drawings that look wrong. These are always welcome.
-- **Topic ideas:** open an issue or use the "Suggest a topic" page on the site.
+- **Topic ideas:** open an issue or use the "Suggest or send an article" page on the site (its form also takes a link to a draft you wrote, if you'd rather not use GitHub).
 - **New tech explainers:** a short illustrated stack on one idea, or a collection of them.
 - **Your own book reviews:** written your way, in your own structure and voice. Ratings are fine if you want to give one.
 
