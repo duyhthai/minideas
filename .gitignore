@@ -11,3 +11,10 @@ ideas/sausach/Images/
 
 # OS files
 .DS_Store
+
+# Private: the owner's planning notes and the source slide decks stay on this machine, out of the public repo.
+growth-plan.md
+launch-checklist.md
+minideas.md
+ideas/*.pdf
+ideas/ai-fundamentals.html
