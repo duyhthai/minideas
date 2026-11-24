@@ -22,7 +22,8 @@ You need [Node 22](https://nodejs.org/), [git](https://git-scm.com/) and a GitHu
    git clone https://github.com/<your-name>/minideas.git
    cd minideas
    git remote add upstream https://github.com/duyhthai/minideas.git
-   git checkout dev
+   git fetch upstream
+   git checkout -b dev upstream/dev
    npm install
    ```
 
