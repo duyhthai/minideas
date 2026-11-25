@@ -725,14 +725,28 @@ ${iconLinks("/")}
 
 // Vietnamese readers come first. A saved choice wins; then Vietnamese if it is anywhere in the browser's languages
 // or the clock is on Vietnam time (many Vietnamese phones are set to English); everyone else gets English.
+// Link previews (Facebook, LinkedIn) don't run the script, so the page carries its own: the Vietnamese home page's
+// image, with the tagline in both languages, for a bare minideas.com shared anywhere.
 function rootPage() {
-  const langs = LANGS.map(o => o.lang);
+  const langs = LANGS.map(o => o.lang), desc = `${vi.ui.lede} · ${en.ui.lede}`;
   return `<!doctype html>
 <html lang="vi">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>${E(en.ui.site)}</title>
+<meta name="description" content="${E(desc)}">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="${E(en.ui.site)}">
+<meta property="og:title" content="${E(en.ui.site)}">
+<meta property="og:description" content="${E(desc)}">
+<meta property="og:locale" content="${vi.locale}">
+<meta property="og:locale:alternate" content="${en.locale}">
+${SITE_URL ? `<meta property="og:url" content="${SITE_URL}/">
+<meta property="og:image" content="${SITE_URL}/og/vi/home.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">` : ""}
 <script>
 (function () {
   var langs = ${JSON.stringify(langs)}, pick = null, zone = "";
