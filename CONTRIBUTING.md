@@ -1,17 +1,25 @@
 # Contributing to Minideas
 
-Thanks for helping. Minideas is a bilingual (English / Vietnamese) site of illustrated explainers and book reviews. This guide says what you can add and how.
+Thanks for helping. Minideas is a bilingual (English / Vietnamese) site of illustrated explainers and book reviews.
 
-## What you can contribute
+## Ways to help
 
-- **Fixes:** typos, awkward Vietnamese or English, broken links, drawings that look wrong. These are always welcome.
-- **Topic ideas:** open an issue or use the "Suggest or send an article" page on the site (its form also takes a link to a draft you wrote, if you'd rather not use GitHub).
-- **New tech explainers:** a short illustrated stack on one idea, or a collection of them.
-- **Your own book reviews:** written your way, in your own structure and voice. Ratings are fine if you want to give one.
+- **Fix something:** a typo, awkward Vietnamese or English, a broken link, a drawing that looks wrong. Open an issue, or send the fix as a pull request.
+- **Suggest a topic:** open an issue, or use the [Suggest or send an article](https://minideas.com/en/suggest/) page on the site.
+- **Write a tech explainer:** a short illustrated stack on one idea.
+- **Write a book review:** in your own structure and voice. A rating is fine if you want to give one.
 
-The reviews imported from the old Sâu Sách site are Duy's. Please don't rewrite them; a typo report is welcome. Only Duy's Sâu Sách reviews are in this repo.
+You can write in English or Vietnamese, or both. A page in one language appears only on that language's site, and we can translate it later.
 
-## First time
+## Writing without GitHub
+
+Write your draft anywhere (Google Docs, a blog, a note), then send its link through the [Suggest or send an article](https://minideas.com/en/suggest/) page. Minideas turns it into a card stack and gets back to you if you leave your email.
+
+## Writing with GitHub
+
+**Start with [docs/adding-content.md](docs/adding-content.md).** It walks through adding an explainer or a book review, with examples to copy. [CLAUDE.md](CLAUDE.md) goes deeper into how the site is built; it is written for AI coding assistants but works for people too.
+
+### First time
 
 You need [Node 22](https://nodejs.org/), [git](https://git-scm.com/) and a GitHub account. You don't need any accounts or keys for the site's services: the build works offline with what's in the repo.
 
@@ -27,9 +35,9 @@ You need [Node 22](https://nodejs.org/), [git](https://git-scm.com/) and a GitHu
    npm install
    ```
 
-## How to send a change
+### Each article or fix
 
-1. Start a branch from **`dev`** for each article or fix, after getting the latest changes from Minideas:
+1. Get the latest changes from Minideas and start a branch from **`dev`**:
 
    ```sh
    git checkout dev
@@ -50,21 +58,18 @@ You need [Node 22](https://nodejs.org/), [git](https://git-scm.com/) and a GitHu
 
 6. On GitHub, open a pull request from your branch into **`dev`**, not `main`. Every change to `main` goes live on minideas.com, so only the owner merges into it.
 
-**[docs/adding-content.md](docs/adding-content.md) walks through adding an explainer or a book review, with examples to copy.** [CLAUDE.md](CLAUDE.md) goes deeper into how the site is built; it is written for AI coding assistants but works for people too.
+## Guidelines
 
-You can write in English or Vietnamese, or both. A page in one language appears only on that language's site, and we can translate it later.
+### Explainers
 
-## Explainers
-
-- The panels go in `src/stacks.js`, the words in `src/i18n/en.js` or `src/i18n/vi.js` (or both), and new drawings in `src/draw.js`.
 - Write for a general curious reader. Read "Writing explainers" and "Vietnamese text" in [CLAUDE.md](CLAUDE.md) first. In short: one idea builds on the last, use concrete scenes rather than definitions, introduce jargon once, and leave out vendor product lists.
 - "Go deeper" links must open without an account.
 
-## Book reviews
+### Book reviews
 
-- A book is `src/books/<slug>.js`, listed in `src/books/index.js`: a stack of cards, one per idea, each with a drawing or a photo. A full-length review behind it is optional.
 - It must be your own writing. Don't paste reviews from other sites.
 - Only add photos you took or have the right to use, with a caption in each language you write.
+- The reviews from Sâu Sách, Duy's old book site, stay as he wrote them; typo reports are welcome.
 
 ## License
 
