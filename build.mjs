@@ -840,7 +840,7 @@ ${items.map(x => `<item>
   <link>${home}${x.name}/</link>
   <guid isPermaLink="true">${home}${x.name}/</guid>
   <pubDate>${new Date(`${x.date}T00:00:00Z`).toUTCString()}</pubDate>
-  <description>${E(`<p><img src="${ogUrl(x.og)}" alt=""" width="1200" height="630"></p><p>${E(x.text)}</p>`)}</description>
+  <description>${E(`<p><img src="${ogUrl(x.og)}" alt="" width="1200" height="630"></p><p>${E(x.text)}</p>`)}</description>
 </item>`).join("\n")}
 </channel>
 </rss>
@@ -857,7 +857,7 @@ function newsletterPage() {
   const draft = (t, x) => {
     const url = `${SITE_URL}/${t.lang}/${x.name}/`, id = `mail${++n}`;
     const subject = x.book ? t.ui.emailBookSubject(x.title) : x.title;
-    const html = `<p><a href="${url}"><img src="${ogUrl(x.og)}" alt=""${E(x.title)}" width="600" style="max-width:100%;height:auto;border-radius:8px"></a></p>
+    const html = `<p><a href="${url}"><img src="${ogUrl(x.og)}" alt="${E(x.title)}" width="600" style="max-width:100%;height:auto;border-radius:8px"></a></p>
 <h2><a href="${url}">${E(x.title)}</a></h2>
 <p>${E(x.text)}</p>
 <p><a href="${url}"><strong>${E(t.ui.emailRead)}</strong></a></p>
