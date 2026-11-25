@@ -21,7 +21,7 @@
 //   The site's address is https://minideas.com, used for canonical/hreflang links and preview-image tags (social
 //   sites only accept absolute image URLs). SITE_URL=https://other.example overrides it, e.g. for a pages.dev test.
 import { mkdir, rm, writeFile, copyFile, rename, readFile } from "node:fs/promises";
-import { readFileSync, existsSync, statSync } from "node:fs";
+import { readFileSync, existsSync } from "node:fs";
 import { createHash } from "node:crypto";
 import { dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -230,6 +230,17 @@ const drawing = (t, spec, label, where) => sketchPicture(art(t, spec, where), { 
 
 // preview images, rendered after the pages: path → renderOg() options
 const images = {};
+// What a preview image is drawn from: the renderer, its options and any photos' bytes. It names the image in the
+// render cache, and its start is the image's version in links (ogUrl).
+const OG_RENDERER = readFileSync(join(ROOT, "src/og.js"), "utf8") + readFileSync(join(ROOT, "src/sketch.js"), "utf8");
+const ogKey = o => {
+  const hash = createHash("sha1").update(OG_RENDERER + JSON.stringify(o));
+  for (const p of [o.photo, ...(o.tiles || []).map(x => x.photo)].filter(Boolean)) hash.update(readFileSync(p.file));
+  return hash.digest("hex");
+};
+// A preview image's address with ?v=<version>. Facebook and LinkedIn keep images by address, even after "Scrape
+// Again", so a changed picture needs a new one; the version changes only when the picture does.
+const ogUrl = path => `${SITE_URL}/${path}?v=${ogKey(images[path]).slice(0, 10)}`;
 // One image per idea, collection and book: the logo and site name, where it sits (Bài 3/15 · Nền tảng AI, or the
 // author), the title, and its first drawing or the book's cover, centred so Facebook's square crop keeps them (og.js)
 const brand = t => ({ mark: BRAND_MARK, site: t.ui.site });
@@ -322,7 +333,7 @@ function shell({ t, depth, segs, title, desc, body, og, langs = LANGS, noindex =
 <meta property="og:description" content="${E(desc)}">
 <meta property="og:locale" content="${t.locale}">
 ${SITE_URL ? `<meta property="og:url" content="${SITE_URL}/${[t.lang, ...segs].join("/")}/">
-<meta property="og:image" content="${SITE_URL}/${og}">
+<meta property="og:image" content="${ogUrl(og)}">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">` : ""}
@@ -743,7 +754,7 @@ function rootPage() {
 <meta property="og:locale" content="${vi.locale}">
 <meta property="og:locale:alternate" content="${en.locale}">
 ${SITE_URL ? `<meta property="og:url" content="${SITE_URL}/">
-<meta property="og:image" content="${SITE_URL}/og/vi/home.png">
+<meta property="og:image" content="${ogUrl("og/vi/home.png")}">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">` : ""}
@@ -779,7 +790,7 @@ ${iconLinks("")}
 }
 
 /* ---------- write ---------- */
-const files = { "index.html": rootPage(), "404.html": notFoundPage() };
+const files = { "404.html": notFoundPage() };
 for (const t of LANGS) {
   files[`${t.lang}/index.html`] = homePage(t);
   files[`${t.lang}/follow/index.html`] = followPage(t);
@@ -795,6 +806,7 @@ for (const t of LANGS) {
     if (b.panels && b.full?.[t.lang]) files[`${t.lang}/${b.slug}/full/index.html`] = bookPage(t, b.full, b);
   }
 }
+files["index.html"] = rootPage(); // after the home pages: its preview is the Vietnamese home page's
 // what the RSS feed and the newsletter drafts announce: collections, standalone ideas and books, newest first
 function newsItems(t) {
   return [
@@ -828,7 +840,7 @@ ${items.map(x => `<item>
   <link>${home}${x.name}/</link>
   <guid isPermaLink="true">${home}${x.name}/</guid>
   <pubDate>${new Date(`${x.date}T00:00:00Z`).toUTCString()}</pubDate>
-  <description>${E(`<p><img src="${SITE_URL}/${x.og}" alt="" width="1200" height="630"></p><p>${E(x.text)}</p>`)}</description>
+  <description>${E(`<p><img src="${ogUrl(x.og)}" alt=""" width="1200" height="630"></p><p>${E(x.text)}</p>`)}</description>
 </item>`).join("\n")}
 </channel>
 </rss>
@@ -845,7 +857,7 @@ function newsletterPage() {
   const draft = (t, x) => {
     const url = `${SITE_URL}/${t.lang}/${x.name}/`, id = `mail${++n}`;
     const subject = x.book ? t.ui.emailBookSubject(x.title) : x.title;
-    const html = `<p><a href="${url}"><img src="${SITE_URL}/${x.og}" alt="${E(x.title)}" width="600" style="max-width:100%;height:auto;border-radius:8px"></a></p>
+    const html = `<p><a href="${url}"><img src="${ogUrl(x.og)}" alt=""${E(x.title)}" width="600" style="max-width:100%;height:auto;border-radius:8px"></a></p>
 <h2><a href="${url}">${E(x.title)}</a></h2>
 <p>${E(x.text)}</p>
 <p><a href="${url}"><strong>${E(t.ui.emailRead)}</strong></a></p>
@@ -941,13 +953,10 @@ for (const b of BOOK_PARTS) for (const file of bookPhotos(b)) {
   await copyFile(photoSource(b, file), join(TMP, "photos", photoDir(b), file));
 }
 // a preview image is re-rendered only when its inputs change (text, drawing, photo, or the renderer itself)
-const renderer = readFileSync(join(ROOT, "src/og.js"), "utf8") + readFileSync(join(ROOT, "src/sketch.js"), "utf8");
 let rendered = 0;
 await mkdir(CACHE, { recursive: true });
 for (const [path, o] of Object.entries(images)) {
-  const photos = [o.photo, ...(o.tiles || []).map(x => x.photo)].filter(Boolean).map(p => statSync(p.file).mtimeMs);
-  const key = createHash("sha1").update(renderer + JSON.stringify(o) + photos.join()).digest("hex");
-  const cached = join(CACHE, `${key}.png`);
+  const cached = join(CACHE, `${ogKey(o)}.png`);
   if (!existsSync(cached)) { await writeFile(cached, o.home ? renderHomeOg(o) : renderOg(o)); rendered++; }
   await mkdir(dirname(join(TMP, path)), { recursive: true });
   await writeFile(join(TMP, path), await readFile(cached));
