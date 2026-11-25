@@ -230,13 +230,13 @@ const drawing = (t, spec, label, where) => sketchPicture(art(t, spec, where), { 
 
 // preview images, rendered after the pages: path → renderOg() options
 const images = {};
-// One image per idea, collection and book: the logo and site name, the title, the page's summary, where it sits
-// (Bài 3/15 · Nền tảng AI, or the author), and its first drawing or the book's cover
+// One image per idea, collection and book: the logo and site name, where it sits (Bài 3/15 · Nền tảng AI, or the
+// author), the title, and its first drawing or the book's cover, centred so Facebook's square crop keeps them (og.js)
 const brand = t => ({ mark: BRAND_MARK, site: t.ui.site });
 function ideaImage(t, idea) {
   const path = `og/${t.lang}/${idea.slug}.png`, c = SHELF.find(item => item.ideas?.includes(idea));
   const where = c ? [...(c.ideas.length > 1 ? [t.ui.ideaOf(c.ideas.indexOf(idea) + 1, c.ideas.length)] : []), t.collections[c.id].title].join(" · ") : "";
-  images[path] ??= { title: t.ideas[idea.slug].title, text: t.ideas[idea.slug].gist, footer: where, drawing: art(t, idea.panels[0], path), ...brand(t) };
+  images[path] ??= { title: t.ideas[idea.slug].title, footer: where, drawing: art(t, idea.panels[0], path), ...brand(t) };
   return path;
 }
 // A book's drawings get its facts and its own labels as lb.book.
@@ -247,7 +247,7 @@ function bookArt(t, b, spec, where) {
 // tile and share image: the title with the reviewer's photo of the book, else the first section drawing
 function bookImage(t, b, name = b.slug) {
   const path = `og/${t.lang}/${name}.png`, first = firstDrawing(b);
-  images[path] ??= { title: b[t.lang].title, text: b[t.lang].abstract.replace(/\*/g, ""), footer: b.author, ...brand(t),
+  images[path] ??= { title: b[t.lang].title, footer: b.author, ...brand(t),
     ...(b.cover ? { photo: { file: photoSource(b, b.cover), ...sizeOf(photoSource(b, b.cover)) } }
       : { drawing: first ? bookArt(t, b, b.art.sections[first], path) : "" }) };
   return path;
@@ -263,7 +263,7 @@ function homePreviewTile(t, name, where) {
 const sizeOf = file => { const [width, height] = jpegSize(file); return { width, height }; };
 function collectionImage(t, c) {
   const path = `og/${t.lang}/${c.id}.png`;
-  images[path] ??= { title: t.collections[c.id].title, text: t.collections[c.id].lede, footer: t.ui.ideaCount(c.ideas.length), drawing: art(t, c.ideas[0].panels[0], path), ...brand(t) };
+  images[path] ??= { title: t.collections[c.id].title, footer: t.ui.ideaCount(c.ideas.length), drawing: art(t, c.ideas[0].panels[0], path), ...brand(t) };
   return path;
 }
 // A tile: a picture, the title as text, then a caption. The picture is a drawing inline (theme colors, so it suits

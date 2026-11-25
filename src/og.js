@@ -75,60 +75,81 @@ function sketchPanel(drawing, x, y, w, h, id) {
 <svg x="${x}" y="${y}" width="${w}" height="${h}" viewBox="0 0 320 220">${withArrows(sketchLabels(drawing || ""))}</svg>`;
 }
 
-// A photo, uncropped and right-aligned, scaled to fit a 544 × 470 box, with rounded corners.
-function photoPanel({ file, width, height }) {
-  const k = Math.min(544 / width, 470 / height), w = Math.round(width * k), h = Math.round(height * k);
-  const x = 1168 - w, y = Math.round((630 - h) / 2);
+// Facebook's phone app sometimes crops a preview to the square in its middle (x 285–915), so everything that matters
+// sits in a centred column inside it; the sides only carry decoration: a fanned stack of cards on each side, in the
+// header logo's style, faint enough to stay out of the way.
+const CX = 600, COL = 580;
+function sideStacks() {
+  const card = (x, y, rot, fill, front) => `<g transform="rotate(${rot} ${x} ${y})">
+<rect x="${x - 70}" y="${y - 200}" width="140" height="200" rx="16" fill="${fill}" stroke="${C.ink}" stroke-width="2.5"/>${!front ? "" :
+    `<rect x="${x - 52}" y="${y - 182}" width="104" height="78" rx="9" fill="#ffd466" stroke="${C.ink}" stroke-width="2"/>` +
+    [0, 1, 2].map(i => `<line x1="${x - 52}" y1="${y - 82 + i * 22}" x2="${x + 52 - (i === 2) * 38}" y2="${y - 82 + i * 22}" stroke="${C.ink}" stroke-width="2.5" stroke-linecap="round"/>`).join("")}</g>`;
+  const stack = (x, y, dir) => card(x, y, dir * 16, "#a9bcff") + card(x, y, dir * 8, "#86dcc1") + card(x, y, 0, "#ffffff", true);
+  return `<g opacity=".38">${stack(150, 450, -1)}${stack(1050, 450, 1)}</g>`;
+}
+
+// A photo, uncropped and centred, scaled to fit a w × h box at the given top, with rounded corners.
+function photoPanel({ file, width, height }, top, boxW, boxH) {
+  const k = Math.min(boxW / width, boxH / height), w = Math.round(width * k), h = Math.round(height * k);
+  const x = Math.round(CX - w / 2), y = Math.round(top + (boxH - h) / 2);
   const data = `data:image/jpeg;base64,${readFileSync(file).toString("base64")}`;
-  return `<clipPath id="ph"><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="22"/></clipPath>
+  return `<clipPath id="ph"><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="16"/></clipPath>
 <image href="${data}" x="${x}" y="${y}" width="${w}" height="${h}" clip-path="url(#ph)" preserveAspectRatio="xMidYMid meet"/>
-<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="22" fill="none" stroke="${C.line}" stroke-width="2"/>`;
+<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="16" fill="none" stroke="${C.line}" stroke-width="2"/>`;
+}
+
+// The logo and the site name, centred on a row whose top is y
+function brandRow(mark, site, y, size) {
+  const textW = String(site || "").length * size * .62, w = size * 1.25 + size * .3 + textW, x = CX - w / 2;
+  return `<svg x="${x}" y="${y}" width="${size * 1.25}" height="${size * 1.25}" viewBox="0 0 32 32">${brandMark(mark)}</svg>
+<text x="${x + size * 1.55}" y="${y + size * 1.02}" font-family="Bricolage Grotesque" font-weight="800" font-size="${size}" fill="${C.ink}">${E(site || "")}</text>`;
 }
 
 /**
+ * A page's preview, in a centred column (see sideStacks): the logo and site name, where the page sits as a small
+ * capitalised line, the title, then the drawing or the book's cover as large as the rest allows. The page's summary
+ * isn't drawn: link previews print it (og:description) under the picture.
  * @param {object} o
  * @param {string} o.title
- * @param {string} [o.text]       one-sentence summary; without it the title is bigger and centred
- * @param {string} [o.footer]     small line at the bottom
+ * @param {string} [o.footer]     where the page sits ("Bài 3/15 · Nền tảng AI", "15 bài", the book's author)
  * @param {string} [o.drawing]    inner markup of a 320 × 220 drawing from draw.js
- * @param {object} [o.photo]      { file, width, height }: a JPEG shown whole on the right instead of a drawing
- * @param {string} [o.mark]       the header logo's SVG: drawn with the site name above the title
+ * @param {object} [o.photo]      { file, width, height }: a JPEG shown whole instead of a drawing
+ * @param {string} [o.mark]       the header logo's SVG
  * @param {string} [o.site]       the site name next to the logo
  */
-export function renderOg({ title, text, footer, drawing, photo, mark, site }) {
-  const colW = 528;
-  let size = 64, titleLines;
-  for (size of text ? [64, 54, 46] : [84, 72, 60]) {
-    const perLine = Math.floor(colW / (size * .58));
-    titleLines = wrap(title, perLine, 3);
-    const last = titleLines.at(-1), orphan = titleLines.length > 1 && !last.includes(" ") && last.length < 4;
-    const tooLong = titleLines.some(l => l.length > perLine); // a single word wider than the column
-    if (!last.endsWith("…") && !orphan && !tooLong) break;
+export function renderOg({ title, footer, drawing, photo, mark, site }) {
+  let y = 34, out = "";
+  if (mark) { out += brandRow(mark, site, y, 30); y += 52; }
+  if (footer) {
+    out += `<text x="${CX}" y="${y + 30}" text-anchor="middle" font-family="Lexend" font-weight="700" font-size="19" letter-spacing="1.5" fill="${C.ink2}">${E(footer.toLocaleUpperCase("vi"))}</text>`;
+    y += 38;
   }
-  // without a summary, centre the title block vertically (below the logo, when there is one)
-  const top = text ? (mark ? 140 : 110) : (630 - (titleLines.length - 1) * size * 1.08) / 2 - size * .62 + (mark ? 20 : 0);
-  const titleSvg = titleLines.map((l, i) =>
-    `<text x="64" y="${top + size + i * size * 1.08}" font-family="Bricolage Grotesque" font-weight="800" font-size="${size}" fill="${C.ink}">${E(l)}</text>`).join("");
-  const textTop = top + size + (titleLines.length - 1) * size * 1.08 + 56;
-  const ts = mark ? 24 : 26;
-  // as many lines as fit above the footer (4 without the logo)
-  const textLines = mark ? Math.max(2, Math.floor((532 - textTop) / (ts * 1.42)) + 1) : 4;
-  const textSvg = !text ? "" : wrap(text, Math.floor(colW / (ts * .58)), textLines).map((l, i) =>
-    `<text x="64" y="${textTop + i * ts * 1.42}" font-family="Lexend" font-size="${ts}" fill="${C.ink2}">${E(l)}</text>`).join("");
-  const header = !mark ? "" : `<svg x="60" y="48" width="58" height="58" viewBox="0 0 32 32">${brandMark(mark)}</svg>
-<text x="126" y="91" font-family="Bricolage Grotesque" font-weight="800" font-size="36" fill="${C.ink}">${E(site || "")}</text>`;
-
+  // the largest size that fits the title in two lines, else three smaller ones
+  let size, lines;
+  for ([size, lines] of [[58, 2], [50, 2], [44, 3], [38, 3]]) {
+    const perLine = Math.floor(COL / (size * .56)), wrapped = wrap(title, perLine, lines);
+    const tooLong = wrapped.some(l => l.length > perLine); // a single word wider than the column
+    if (!wrapped.at(-1).endsWith("…") && !tooLong) { lines = wrapped; break; }
+    lines = wrapped;
+  }
+  out += lines.map((l, i) => `<text x="${CX}" y="${y + 12 + size * .92 + i * size * 1.06}" text-anchor="middle" font-family="Bricolage Grotesque" font-weight="800" font-size="${size}" fill="${C.ink}">${E(l)}</text>`).join("");
+  y += 12 + lines.length * size * 1.06;
+  const top = y + 22, boxH = 630 - 32 - top;
+  let picture;
+  if (photo) picture = photoPanel(photo, top, COL, boxH);
+  else {
+    const h = Math.min(boxH, 340), w = h * 320 / 220, x = CX - w / 2, pad = Math.round(h / 24);
+    picture = `<rect x="${x}" y="${top}" width="${w}" height="${h}" rx="${Math.round(h / 12)}" fill="${C.card}" stroke="${C.line}" stroke-width="2"/>
+${sketchPanel(drawing, x + pad, top + pad, w - 2 * pad, h - 2 * pad, "art")}`;
+  }
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
 <defs>
   <style>${DRAWING_CSS}</style>
 </defs>
 <rect width="1200" height="630" fill="${C.paper}"/>
-${header}
-${titleSvg}
-${textSvg}
-${footer ? `<text x="64" y="568" font-family="Patrick Hand" font-size="30" fill="${C.ink2}">${E(footer)}</text>` : ""}
-${photo ? photoPanel(photo) : `<rect x="624" y="123" width="544" height="384" rx="28" fill="${C.card}" stroke="${C.line}" stroke-width="2"/>
-${sketchPanel(drawing, 640, 139, 512, 352, "art")}`}
+${sideStacks()}
+${out}
+${picture}
 </svg>`;
   return new Resvg(svg, { font: { fontFiles: FONTS, loadSystemFonts: false, defaultFontFamily: "Lexend" } }).render().asPng();
 }
@@ -139,8 +160,9 @@ const TOKENS = { ink: C.ink, on: C.ink, fk: "#ffffff", "f-blue": "#a9bcff", "f-y
 const brandMark = mark => mark.replace(/^<svg[^>]*>|<\/svg>$/g, "").replace(/var\(--([\w-]+)\)/g, (m, k) => TOKENS[k] || m);
 
 /**
- * The home page's preview: the logo and site name, the tagline, then a row of three stacks, each a card with its
- * picture (a drawing, or a book's cover photo shown whole) and its title.
+ * The home page's preview: the logo and site name and the tagline, centred, then a row of three stacks, each a card
+ * with its picture (a drawing, or a book's cover photo shown whole) and its title. The middle card sits in the centre
+ * square that Facebook's phone app may crop to (see sideStacks), with the other two peeking in at its sides.
  * @param {object} o
  * @param {string} o.title   the site name
  * @param {string} o.text    the tagline
@@ -148,8 +170,8 @@ const brandMark = mark => mark.replace(/^<svg[^>]*>|<\/svg>$/g, "").replace(/var
  * @param {{ title: string, drawing?: string, photo?: { file, width, height } }[]} o.tiles
  */
 export function renderHomeOg({ title, text, mark, tiles }) {
-  const textSvg = wrap(text, Math.floor(1072 / (28 * .58)), 2).map((l, i) =>
-    `<text x="64" y="${206 + i * 38}" font-family="Lexend" font-size="28" fill="${C.ink2}">${E(l)}</text>`).join("");
+  const textSvg = text.split(/(?<=,) /).flatMap(part => wrap(part, Math.floor(COL / (26 * .55)), 1)).slice(0, 2).map((l, i) =>
+    `<text x="${CX}" y="${178 + i * 36}" text-anchor="middle" font-family="Lexend" font-size="26" fill="${C.ink2}">${E(l)}</text>`).join("");
   const cardW = 334, gap = 35, top = 262, pic = { w: 310, h: 213 };
   const cards = tiles.map((tile, i) => {
     const x = 64 + i * (cardW + gap), px = x + 12, py = top + 12;
@@ -171,8 +193,7 @@ export function renderHomeOg({ title, text, mark, tiles }) {
   <style>${DRAWING_CSS}</style>
 </defs>
 <rect width="1200" height="630" fill="${C.paper}"/>
-<svg x="60" y="52" width="92" height="92" viewBox="0 0 32 32">${brandMark(mark)}</svg>
-<text x="164" y="126" font-family="Bricolage Grotesque" font-weight="800" font-size="76" fill="${C.ink}">${E(title)}</text>
+${brandRow(mark, title, 40, 64)}
 ${textSvg}
 ${cards}
 </svg>`;
