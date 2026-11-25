@@ -234,7 +234,8 @@ const images = {};
 // render cache, and its start is the image's version in links (ogUrl).
 const OG_RENDERER = readFileSync(join(ROOT, "src/og.js"), "utf8") + readFileSync(join(ROOT, "src/sketch.js"), "utf8");
 const ogKey = o => {
-  const hash = createHash("sha1").update(OG_RENDERER + JSON.stringify(o));
+  // photos by their path in the repo, so the version is the same wherever the site is built
+  const hash = createHash("sha1").update(OG_RENDERER + JSON.stringify(o, (k, v) => k === "file" ? relative(ROOT, v) : v));
   for (const p of [o.photo, ...(o.tiles || []).map(x => x.photo)].filter(Boolean)) hash.update(readFileSync(p.file));
   return hash.digest("hex");
 };
