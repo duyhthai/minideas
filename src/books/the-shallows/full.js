@@ -1,6 +1,6 @@
 // The full Shallows review, imported from Sâu Sách review #3 by tools/import-review.mjs. The Vietnamese text is the
 // original review: no sections, so everything sits in the intro. Published at /<lang>/the-shallows/full/ and linked
-// from the quick version in the-shallows.js.
+// from the quick version in book.js.
 // cover: the front cover; photos: the gallery (the review showed no pictures in its text).
 export default {
   "slug": "the-shallows",

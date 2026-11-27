@@ -1,6 +1,6 @@
 // The full Second World War review, imported from Sâu Sách review #6 by tools/import-review.mjs. The Vietnamese
 // text is the original review. Published at /<lang>/the-second-world-war/full/ and linked from the quick version
-// in the-second-world-war.js.
+// in book.js.
 // cover: the front cover; photos: the gallery, every photo from the review's folder. The photo the review showed
 // inline (moscow-counter-offensive.jpg) is the copy without a caption; the Kindle captions on the other photos were
 // cropped off and became their captions here.

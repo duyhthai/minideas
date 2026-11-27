@@ -12,57 +12,81 @@ An explainer is a card stack: 3 to 12 panels, each with a drawing, a short headi
 
 Pick a slug: lowercase words joined by dashes, in English, used in every language (`/en/my-topic/` and `/vi/my-topic/`). It can't be `home`, `follow` or `suggest`, or any name already used.
 
-### 1. The panels: `src/stacks.js`
+Everything about a topic lives in one folder, `src/tech/<slug>/`:
 
-Add an item to `SHELF`. Its place in the list is its place on the home page.
+```
+src/tech/how-qr-payments-work/
+  stack.js   the panels and links (step 1)
+  en.js      the English words (step 2)
+  vi.js      the Vietnamese words (step 2), or leave it out
+  draw.js    the drawings (step 3)
+```
+
+The easiest start is to copy a small topic, such as `src/tech/graph-databases/`, rename the folder to your slug and replace what's inside. Then add the slug to `SHELF` in `src/tech/index.js`. Its place in that list is its place on the home page; a folder that isn't listed isn't published.
+
+### 1. The panels: `stack.js`
 
 ```js
-{
-  slug: "how-qr-payments-work",
+export default {
+  slug: "how-qr-payments-work",       // the same as the folder's name
   date: "2026-12-01",                  // the day it goes on the site
   related: "graph-databases",          // optional: one stack to read next
   panels: [["qrScan"], ["qrBank", 1], ["qrBank", 2]],
   resources: [                         // "Go deeper" links; pages must open without an account
     { key: "napas", name: "NAPAS", url: "https://napas.com.vn/" },
   ],
-},
+};
 ```
 
-Each panel is `[drawingName, ...arguments]`. The drawing is a function in `src/draw.js` (step 3), and the arguments let one drawing show several steps.
+Each panel is `[drawingName, ...arguments]`. The drawing is a function in `draw.js` (step 3), and the arguments let one drawing show several steps.
 
-### 2. The words: `src/i18n/en.js` and/or `src/i18n/vi.js`
+### 2. The words: `en.js` and/or `vi.js`
 
-Under `ideas`, add an entry with the same slug: one `[heading, text]` per panel, in the same order as the drawings.
+One file per language you write. Under `ideas`, add an entry with the slug: one `[heading, text]` per panel, in the same order as the drawings. Put the words inside the drawings under `art`, in a group of your own.
 
 ```js
-"how-qr-payments-work": {
-  title: "How paying by QR code works",
-  gist: "One short sentence that sums it up; it shows on the home page and in link previews.",
-  panels: [
-    ["The code is just an address", "…"],
-    ["Your bank sends the money", "…"],
-    ["The shop hears back in seconds", "…"],
-  ],
-  links: { napas: "Who runs the network behind Vietnam’s QR payments" },
-},
+export default {
+  ideas: {
+    "how-qr-payments-work": {
+      title: "How paying by QR code works",
+      gist: "One short sentence that sums it up; it shows on the home page and in link previews.",
+      panels: [
+        ["The code is just an address", "…"],
+        ["Your bank sends the money", "…"],
+        ["The shop hears back in seconds", "…"],
+      ],
+      links: { napas: "Who runs the network behind Vietnam’s QR payments" },
+    },
+  },
+
+  art: {
+    qr: { phone: "your phone", shop: "shop", bank: "bank", paid: "paid" },
+  },
+};
 ```
 
-Put the words inside the drawings under `art`, in a group of your own:
-
-```js
-art: {
-  // …
-  qr: { phone: "your phone", shop: "shop", bank: "bank", paid: "paid" },
-},
-```
+If you write both languages, keep `en.js` and `vi.js` line for line, so a translator can read them side by side.
 
 A panel’s text can link to a page with `[words](https://…)`. Keep that for the odd card that sends readers to an official page, such as installation steps; other links go in `links`. To point to another stack on Minideas, use its slug, `[How a chatbot writes](next-word)`: it links to that stack in the same language, and the build stops if the slug doesn’t exist there. Wrap something the reader types or presses, such as a command, a path or a key, in backticks (`` `/clear` ``) to show it as code.
 
-Every text the reader sees comes from these files, never from `draw.js`, so the same drawing works in every language.
+Every text the reader sees comes from these files, never from the drawings, so the same drawing works in every language.
 
-### 3. The drawings: `src/draw.js`
+### 3. The drawings: `draw.js`
 
-Each drawing is a function in `ART` that returns SVG for a **320 × 220** box (x to the right, y down). It receives `lb`, the language's `art` labels.
+Import the helpers you use from `src/draw.js` and export your drawings:
+
+```js
+import { T, R, A } from "../../draw.js";
+
+export default {
+  qrScan(lb) { … },
+  qrBank(lb, step) { … },
+};
+```
+
+Drawing names, idea slugs and `art` groups are shared across every topic and book, so pick names that won't clash (start them with your topic, like `qrScan`): the build stops if two have the same name.
+
+Each drawing is a function that returns SVG for a **320 × 220** box (x to the right, y down). It receives `lb`, the language's `art` labels.
 
 ```js
 qrScan(lb) {
@@ -73,7 +97,7 @@ qrScan(lb) {
 },
 ```
 
-The helpers:
+The helpers, from `src/draw.js`:
 
 | Helper | Draws |
 | --- | --- |
@@ -101,17 +125,25 @@ Open your stack on the dev server in light and dark mode (the moon button), in e
 
 ### A collection
 
-A collection groups several stacks that build on each other. In `stacks.js` it has an `id`, a `date`, optional `chapters`, `resources` and a list of `ideas` (each a `slug`, a `chapter` and `panels`). In the i18n files it gets `collections[id]` (`title`, `lede`, `chapters`, `links`) plus one `ideas[slug]` entry per idea. See `ai-fundamentals` for the full shape. Talk to us in an issue before starting one.
+A collection groups several stacks that build on each other. Its folder is named after its `id`. In `stack.js` it has an `id`, a `date`, optional `chapters`, `resources` and a list of `ideas` (each a `slug`, a `chapter` and `panels`). In `en.js` / `vi.js` it gets `collections[id]` (`title`, `lede`, `chapters`, `links`) plus one `ideas[slug]` entry per idea. See `src/tech/ai-fundamentals/` for the full shape. Talk to us in an issue before starting one.
 
 ## A book review
 
-A book is a card stack too: one panel per idea from your review, each with a drawing or a photo. A full-length review behind it is optional.
+A book is a card stack too: one panel per idea from your review, each with a drawing or a photo. A full-length review behind it is optional. Everything about it lives in one folder, `src/books/<slug>/`:
+
+```
+src/books/atomic-habits/
+  book.js    the review (step 2)
+  draw.js    its drawings, if it has any
+  photos/    its photos, if it has any (step 1)
+  full.js    the full review, if you write one
+```
 
 ### 1. Photos (optional)
 
-Put your photos in `src/books/photos/<slug>/` as JPEGs, with their metadata removed (for example `exiftool -all= photo.jpg`). Only use photos you took or have the right to use. Every photo needs a caption in each language you write.
+Put your photos in `src/books/<slug>/photos/` as JPEGs, with their metadata removed (for example `exiftool -all= photo.jpg`). Only use photos you took or have the right to use. Every photo needs a caption in each language you write.
 
-### 2. The review: `src/books/<slug>.js`
+### 2. The review: `book.js`
 
 ```js
 export default {
@@ -139,12 +171,12 @@ export default {
 
 Write it your way: your opinions, your structure, a rating if you want to give one (put it in the text).
 
-Book drawings live in `src/draw.js` like any other (prefix their names with the book, e.g. `habitLoop`). They read their labels from `lb.book`, which holds your `labels` plus the book's `title`, `author` and `facts`.
+The book's drawings go in `draw.js` next to it, written like an explainer's (prefix their names with the book, e.g. `habitLoop`). They read their labels from `lb.book`, which holds your `labels` plus the book's `title`, `author` and `facts`.
 
 ### 3. Put it on the shelf: `src/books/index.js`
 
-Import your file and add it to `BOOKS`. Its place in the list is its place on the home page.
+Add the slug to `BOOKS`. Its place in the list is its place on the home page.
 
 ### A full review (optional)
 
-For a long review, put the article in `src/books/<slug>-full.js`, import it in `<slug>.js` and add it as `full`. It shares the card stack's slug, author, date and cover unless it sets its own. Its language blocks hold `title`, `abstract`, `intro` (paragraphs), `sections` (each `{ h: heading, body: [paragraphs] }`) and an optional `conclusion`. A paragraph can also be `{ quote: "…" }` or `{ photo: "file.jpg" }`. `art.sections` can put a drawing or photo at the top of a section by its number, and `photos` lists a gallery shown before the conclusion. `*italic*` and `**bold**` work in the text. The card stack then ends with a link to the full review. See `steal-like-an-artist-full.js` for a complete example.
+For a long review, put the article in `full.js`, import it in `book.js` (`import full from "./full.js";`) and add it as `full`. It shares the card stack's slug, author, date and cover unless it sets its own. Its language blocks hold `title`, `abstract`, `intro` (paragraphs), `sections` (each `{ h: heading, body: [paragraphs] }`) and an optional `conclusion`. A paragraph can also be `{ quote: "…" }` or `{ photo: "file.jpg" }`. `art.sections` can put a drawing or photo at the top of a section by its number, and `photos` lists a gallery shown before the conclusion. `*italic*` and `**bold**` work in the text. The card stack then ends with a link to the full review. See `src/books/steal-like-an-artist/full.js` for a complete example.

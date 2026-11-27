@@ -1,7 +1,7 @@
 // Steal Like an Artist: the review as a swipeable card stack, one panel per idea, each condensed from the reviewer's
-// own text in steal-like-an-artist-full.js (no new opinions). The last panel leads to the full review.
+// own text in full.js (no new opinions). The last panel leads to the full review.
 // panels: [drawing, ...args] from draw.js, or ["photo", file] for one of the reviewer's photos.
-import full from "./steal-like-an-artist-full.js";
+import full from "./full.js";
 
 export default {
   slug: "steal-like-an-artist",

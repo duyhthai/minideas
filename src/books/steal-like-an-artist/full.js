@@ -1,6 +1,6 @@
 // The full Steal Like an Artist review, imported from Sâu Sách review #43 by tools/import-review.mjs. The Vietnamese
 // text is the original review. Published at /<lang>/steal-like-an-artist/full/ and linked from the quick version in
-// steal-like-an-artist.js.
+// book.js.
 // cover: the front cover; art.sections: the two pictures the review showed inline, in their sections; photos: the
 // gallery, every other photo from the review's folder.
 export default {

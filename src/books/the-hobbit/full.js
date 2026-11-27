@@ -1,7 +1,7 @@
 // The full Hobbit review, imported from Sâu Sách review #29 by tools/import-review.mjs. The Vietnamese text is
 // the original review, with typos fixed with the reviewer's approval (2026-11-08), its two captions of the cover
 // painting moved to that photo (jacket-art.jpg, shown in the text where the review had it), and the YouTube video it
-// embedded as a link. Published at /<lang>/the-hobbit/<full>/ and linked from the quick version in the-hobbit.js.
+// embedded as a link. Published at /<lang>/the-hobbit/<full>/ and linked from the quick version in book.js.
 // cover: the Enhanced Edition cover, from the review's folder; photos: the gallery, every other photo from the review's folder.
 export default {
   "slug": "the-hobbit",

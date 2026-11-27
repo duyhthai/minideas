@@ -6,7 +6,7 @@
 //   <lang>/<slug>/full/index.html    a book's full review as an article
 //   Paths are the same in every language; only the /<lang>/ prefix changes.
 //   og/<lang>/<name>.png             one link preview per page (home, collection, idea, book)
-//   photos/<book>/<file>             a book reviewer's own photos, copied from src/books/photos/
+//   photos/<book>/<file>             a book reviewer's own photos, copied from src/books/<book>/photos/
 //   <lang>/follow/index.html         how to follow new card stacks: an email sign-up (Kit), then the RSS feed
 //   <lang>/follow/confirmed/index.html  where Kit sends new subscribers after they confirm (not in the sitemap)
 //   <lang>/suggest/index.html        a form for suggesting a topic or sending an article's link (Web3Forms emails it)
@@ -25,16 +25,12 @@ import { readFileSync, existsSync } from "node:fs";
 import { createHash } from "node:crypto";
 import { dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { ART, E } from "./src/draw.js";
+import { E } from "./src/draw.js";
 import { renderOg, renderHomeOg, drawingViewBox } from "./src/og.js";
 import { renderSketch, sketchShapes, sketchLabels } from "./src/sketch.js";
 import { Resvg } from "@resvg/resvg-js";
-import { SHELF } from "./src/stacks.js";
-import { BOOKS } from "./src/books/index.js";
-import en from "./src/i18n/en.js";
-import vi from "./src/i18n/vi.js";
+import { SHELF, BOOKS, ART, LANGS, en, vi } from "./src/content.js";
 
-const LANGS = [en, vi];
 const ROOT = dirname(fileURLToPath(import.meta.url));
 // OUT_DIR=<folder> builds somewhere else, e.g. to check a change while the dev server owns dist/
 const OUT = process.env.OUT_DIR ? resolve(process.env.OUT_DIR) : join(ROOT, "dist");
@@ -110,7 +106,7 @@ for (const name of [...SHELF.flatMap(item => item.ideas ? [item.id, ...item.idea
 const inLang = (t, item) => !!(item.ideas ? t.collections[item.id] : t.ideas[item.slug]);
 const shelfIn = t => SHELF.filter(item => inLang(t, item));
 const langsOf = item => LANGS.filter(o => inLang(o, item));
-for (const item of SHELF) if (!langsOf(item).length) problems.push(`"${item.id || item.slug}": no text in any language (i18n/en.js or i18n/vi.js)`);
+for (const item of SHELF) if (!langsOf(item).length) problems.push(`"${item.id || item.slug}": no text in any language (src/tech/<topic>/en.js or vi.js)`);
 for (const t of LANGS) {
   if (!KIT_FORMS[t.lang]) problems.push(`${t.lang}: no Kit form for the email sign-up (KIT_FORMS in build.mjs)`);
   for (const c of COLLECTIONS.filter(c => inLang(t, c))) {
@@ -152,12 +148,12 @@ for (const b of BOOK_PARTS) {
   }
   for (const n of Object.keys(b.art?.sections || {})) if (!original(b).sections?.[n - 1]) problems.push(`book "${b.slug}": a drawing is set for section ${n}, which doesn't exist`);
   for (const file of bookPhotos(b)) {
-    if (!existsSync(photoSource(b, file))) problems.push(`book "${b.slug}": photo src/books/photos/${photoDir(b)}/${file} not found`);
+    if (!existsSync(photoSource(b, file))) problems.push(`book "${b.slug}": photo src/books/${photoDir(b)}/photos/${file} not found`);
     for (const t of LANGS) if (b[t.lang] && !b[t.lang].captions?.[file]) problems.push(`book "${b.slug}" (${t.lang}): no caption for ${file}`);
   }
 }
 // every photo a book uses: cover, gallery, photo panels, section photos and photos in the text ({ photo: file } blocks),
-// all in src/books/photos/<slug>/ (photosFrom overrides)
+// all in src/books/<slug>/photos/ (photosFrom overrides)
 function bookPhotos(b) {
   const photo = specs => specs.filter(p => p[0] === "photo").map(p => p[1]);
   const inText = [...(original(b).intro || []), ...(original(b).sections || []).flatMap(s => s.body)].map(x => x?.photo);
@@ -166,7 +162,7 @@ function bookPhotos(b) {
 // the first section with a drawing (not a photo), for a book without a cover photo
 const firstDrawing = b => Object.keys(b.art?.sections || {}).filter(n => b.art.sections[n][0] !== "photo").sort((x, y) => x - y)[0];
 function photoDir(b) { return b.photosFrom || b.slug; }
-function photoSource(b, file) { return join(ROOT, "src/books/photos", photoDir(b), file); }
+function photoSource(b, file) { return join(ROOT, "src/books", photoDir(b), "photos", file); }
 // width × height from a JPEG's frame header, so the page reserves the right space before the photo loads
 function jpegSize(file) {
   const buf = readFileSync(file);
@@ -234,8 +230,8 @@ const images = {};
 // render cache, and its start is the image's version in links (ogUrl).
 const OG_RENDERER = readFileSync(join(ROOT, "src/og.js"), "utf8") + readFileSync(join(ROOT, "src/sketch.js"), "utf8");
 const ogKey = o => {
-  // photos by their path in the repo, so the version is the same wherever the site is built
-  const hash = createHash("sha1").update(OG_RENDERER + JSON.stringify(o, (k, v) => k === "file" ? relative(ROOT, v) : v));
+  // photos by their bytes, not their path, so the version is the same wherever the site is built or the photo sits
+  const hash = createHash("sha1").update(OG_RENDERER + JSON.stringify(o, (k, v) => k === "file" ? undefined : v));
   for (const p of [o.photo, ...(o.tiles || []).map(x => x.photo)].filter(Boolean)) hash.update(readFileSync(p.file));
   return hash.digest("hex");
 };
@@ -382,7 +378,7 @@ const shareButton = (t, text, cls = "share-solo") => `<div class="share-wrap ${c
   </div>
 </div>`;
 
-// "Go deeper": resources come from stacks.js, their descriptions (and an optional source note) from i18n
+// "Go deeper": resources come from a topic's stack.js, their descriptions (and an optional source note) from its en.js / vi.js
 function deeper(t, resources, text) {
   return `<section class="deeper">
   <h2>${E(t.ui.deeperTitle)}</h2>

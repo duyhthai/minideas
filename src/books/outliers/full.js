@@ -1,6 +1,6 @@
 // The full Outliers review, imported from Sâu Sách review #2 by tools/import-review.mjs. The Vietnamese text is
 // the original review, with typos fixed with the reviewer's approval (2026-11-08). Published at
-// /<lang>/outliers/<full>/ and linked from the quick version in outliers.js.
+// /<lang>/outliers/<full>/ and linked from the quick version in book.js.
 // cover: the front cover; art.sections: drawings for sections by number; photos: the gallery.
 export default {
   "slug": "outliers",

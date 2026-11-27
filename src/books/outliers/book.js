@@ -1,7 +1,7 @@
 // Outliers: the review as a swipeable card stack, one panel per idea, each condensed from the reviewer's own
-// text in outliers-full.js (no new opinions). The last panel leads to the full review.
+// text in full.js (no new opinions). The last panel leads to the full review.
 // panels: [drawing, ...args] from draw.js, or ["photo", file] for one of the reviewer's photos.
-import full from "./outliers-full.js";
+import full from "./full.js";
 
 export default {
   slug: "outliers",
