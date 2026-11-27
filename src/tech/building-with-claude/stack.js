@@ -11,7 +11,8 @@ export default {
   ],
   ideas: [
     { slug: "claude-code-start", chapter: "code", panels: [["agTerminal"], ["ccInstall"], ["ccVSCode"]] },
-    { slug: "claude-code-steering", chapter: "code", panels: [["agPlan"], ["agRewind"], ["agDesk"], ["agHelpers"], ["ccAgentFile"]] },
+    { slug: "claude-code-steering", chapter: "code", panels: [["agPlan"], ["agRewind"], ["agDesk"]] },
+    { slug: "claude-code-subagents", chapter: "code", panels: [["agHelpers"], ["ccAgentKinds"], ["ccAgentFile"], ["ccAgentLimits"], ["ccAgentFresh"]] },
     { slug: "claude-code-rules", chapter: "code", panels: [["agRules"], ["agAllow"], ["ccHookFlow"], ["ccHookJson"]] },
     { slug: "claude-code-unattended", chapter: "code", panels: [["agAway"], ["ccPipe"], ["ccReview"], ["agProof"]] },
     { slug: "skills-basics", chapter: "skills", panels: [["agSkills"], ["skillFile"], ["skillUse"], ["skillDesc"], ["skillFiles"]] },

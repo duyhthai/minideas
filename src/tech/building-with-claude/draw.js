@@ -385,6 +385,59 @@ export default {
     s += T(34, 166, t.agPrompt, { a: "start", size: 12.5, max: 252 });
     return s + T(160, 204, t.agCap, { c: "sm mut", max: 300 });
   },
+  ccAgentKinds(lb) {
+    const t = lb.agent, fills = ["fm", "fy", "fb"];
+    const icons = [
+      (x, y) => ico.search(x, y),
+      (x, y) => R(x - 12, y - 14, 24, 28, "fk", "thin", 3) + [0, 1, 2].map(i => C(x - 6, y - 6 + i * 7, 1.6, "fi") + L(x - 2, y - 6 + i * 7, x + 7, y - 6 + i * 7, "thin")).join(""),
+      (x, y) => ico.search(x - 9, y - 4) + P(`M${x + 2},${y + 12} L${x + 14},${y} L${x + 18},${y + 4} L${x + 6},${y + 16} Z`, "fy", "thin"),
+    ];
+    let s = "";
+    t.kinds.forEach(([name, tools, use], i) => {
+      const x = 10 + i * 102, cx = x + 48;
+      s += R(x, 12, 96, 160, "fk", "", 8) + R(x, 12, 96, 28, fills[i], "", 8) + T(cx, 31, name, { c: "on b", size: 13, max: 86 });
+      s += icons[i](cx, 68) + R(x + 10, 94, 76, 22, i < 2 ? "ft" : "fy", "thin", 6) + T(cx, 109, tools, { size: 12, max: 68, c: i < 2 ? "" : "on" });
+      s += T(cx, 144, use, { size: 12.5, max: 86 });
+    });
+    return s + T(160, 200, t.kindsCap, { c: "sm mut", max: 300 });
+  },
+  ccAgentLimits(lb) {
+    const t = lb.agent;
+    const cross = (x, y) => L(x - 5, y - 5, x + 5, y + 5, "coral-s w3") + L(x + 5, y - 5, x - 5, y + 5, "coral-s w3");
+    // two cards, one per frontmatter field, each under a coloured header band
+    const card = (x, fill, name) => R(x, 8, 142, 144, "fk", "", 8) + R(x, 8, 142, 28, fill, "", 8) + T(x + 71, 28, name, { c: "on b", size: 15 });
+    let s = card(10, "fm", "tools:") + card(168, "fb", "model:");
+    ["Read", "Grep", "Edit", "Bash"].forEach((name, i) => {
+      const y = 56 + i * 25, ok = i < 2;
+      s += R(30, y - 11, 74, 22, ok ? "fk" : "ft", ok ? "thin" : "dash thin", 6) + T(67, y + 4.5, name, { size: 13, c: ok ? "" : "mut" }) + (ok ? tick(124, y) : cross(124, y));
+    });
+    [["haiku", "fy", t.haikuSub], ["opus", "fc", t.opusSub]].forEach(([m, fill, sub], i) => {
+      const y = 60 + i * 50;
+      s += R(197, y - 12, 84, 24, fill, "thin", 12) + T(239, y + 5, m, { c: "on b", size: 14 }) + T(239, y + 28, sub, { c: "sm", max: 128 });
+    });
+    s += T(81, 177, t.noEdit, { c: "sm mut", max: 144 }) + T(239, 177, t.modelDefault, { c: "sm mut", max: 144 });
+    return s + T(160, 211, t.limitCap, { c: "sm b", max: 300 });
+  },
+  ccAgentFresh(lb) {
+    const t = lb.agent;
+    const card = (x, fill, name) => R(x, 6, 132, 112, "fk", "", 8) + R(x, 6, 132, 24, fill, "", 8) + T(x + 66, 23, name, { c: "on b", size: 13, max: 120 });
+    // left: the whole chat, ending in a confident claim
+    let s = card(8, "fm", t.main) + R(16, 38, 62, 11, "fb", "thin", 5) + R(70, 54, 62, 11, "ft", "thin", 5) + R(16, 70, 74, 11, "fb", "thin", 5);
+    s += R(22, 88, 108, 24, "fy", "", 10) + T(76, 104, t.sure, { c: "on b", size: 13, max: 100 });
+    // only the diff crosses over
+    s += T(160, 52, "diff", { c: "sm b", size: 12 }) + A(142, 60, 178, 60, "w3");
+    // right: the diff alone, and what the reviewer finds in it
+    s += card(180, "fb", t.reviewer) + R(214, 36, 36, 38, "fk", "thin", 4);
+    for (let i = 0; i < 4; i++) s += (i === 1 ? R(218, 43 + i * 8, 28, 6, "fc", "", 1) : i === 2 ? R(218, 43 + i * 8, 28, 6, "fm", "", 1) : "") + L(221, 46 + i * 8, 243 - (i % 2) * 6, 46 + i * 8, "thin");
+    s += ico.search(276, 54) + R(188, 82, 116, 32, "fc", "", 10) + T(246, 99, t.found, { c: "on b", size: 11.5, max: 108, lh: 1.15 });
+    s += T(74, 131, t.whole, { c: "sm mut", max: 140 }) + T(246, 131, t.onlyDiff, { c: "sm mut", max: 140 });
+    // the cost
+    const clock = y => C(26, y, 8, "fk", "thin") + L(26, y, 26, y - 5, "thin") + L(26, y, 30, y + 2, "thin");
+    const note = y => R(19, y - 9, 14, 18, "fy", "thin", 2) + L(22, y - 3, 30, y - 3, "thin") + L(22, y + 2, 28, y + 2, "thin");
+    s += L(14, 148, 306, 148, "dash thin faint") + T(160, 152, t.costL, { c: "b cor halo", size: 13.5 });
+    s += clock(168) + T(42, 172, t.costs[0], { a: "start", size: 13, max: 264 }) + note(190) + T(42, 194, t.costs[1], { a: "start", size: 13, max: 264 });
+    return s + T(160, 214, t.freshCap, { c: "sm b", max: 300 });
+  },
   skillVsAgent(lb) {
     const t = lb.skill;
     let s = pill(82, 20, "skill", "fy", { on: true, size: 14, w: 80 }) + R(14, 36, 136, 126, "fk", "", 8) + R(24, 46, 90, 20, "fb", "", 8);
