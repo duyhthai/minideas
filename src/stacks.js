@@ -68,7 +68,7 @@ export const SHELF = [
   {
     slug: "clean-code-refactoring",
     date: "2026-11-19",
-    related: "graph-databases",
+    related: "building-with-claude",
     panels: [["readMore"], ["stamina"], ["sameResult"], ["goodNames"], ["oneJob"], ["sayOnce"], ["onlyNeed"], ["safetyNet"], ["aiWrites"], ["littleCleaner"]],
     resources: [
       { key: "guru", name: "Refactoring.Guru", url: "https://refactoring.guru/refactoring/what-is-refactoring" },
@@ -80,7 +80,6 @@ export const SHELF = [
   {
     slug: "graph-databases",
     date: "2026-11-19",
-    related: "clean-code-refactoring",
     panels: [["graphIntro"], ["graphLabels"], ["graphRel"], ["graphProps"], ["graphTables"], ["graphPattern"], ["graphHops"], ["graphPath"], ["graphRecommend"], ["graphMerge"], ["graphIndex"], ["graphWhen"]],
     resources: [
       { key: "intro", name: "Neo4j", url: "https://neo4j.com/docs/getting-started/graph-database/" },
