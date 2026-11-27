@@ -26,6 +26,7 @@ export default {
     photos: "Ảnh chụp từ cuốn sách",
     fullReview: "Bài review đầy đủ",
     fullReviewNext: "Bài đầy đủ →",
+    startReading: "Bắt đầu đọc →",
     quickLink: n => `← Bản đọc nhanh: ${n} hình`,
     date: iso => iso.split("-").reverse().map(Number).join("/"),
     published: date => `Đăng ngày ${date}`,

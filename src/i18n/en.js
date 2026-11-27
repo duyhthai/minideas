@@ -26,6 +26,7 @@ export default {
     photos: "Photos from the book",
     fullReview: "Full review",
     fullReviewNext: "Full review →",
+    startReading: "Start reading →",
     quickLink: n => `← Quick version: ${n} cards`,
     date: iso => new Date(iso + "T00:00:00Z").toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" }),
     published: date => `Published ${date}`,

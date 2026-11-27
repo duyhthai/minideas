@@ -175,6 +175,22 @@ figure.book-photo img { display: block; width: 100%; height: auto; border-radius
 .tile-title { margin: 0; font: 700 19px/1.2 var(--display); color: var(--ink); text-wrap: balance; }
 .tile-caption { display: block; margin-top: 6px; font-size: 14.5px; line-height: 1.45; color: var(--ink-2); }
 .tile-caption .count { display: block; margin: 0 0 2px; font-family: var(--hand); font-size: 17px; color: var(--ink); }
+/* home shelves: when the last row would hold one tile alone, the first (newest) tile takes the whole row instead, with
+   its picture beside the words. The column counts follow .tile-grid: 3 across from 928px, 2 from 614px */
+.shelves { container: shelves / inline-size; }
+@container shelves (min-width: 928px) { .shelf-grid > :first-child:nth-last-child(3n+1) { grid-column: 1 / -1; } }
+@container shelves (614px <= width < 928px) { .shelf-grid > :first-child:nth-last-child(2n+1) { grid-column: 1 / -1; } }
+.tile .tile-go { display: none; } /* .tile: beats .btn, which comes later */
+.shelf-grid > :first-child { container: first-tile / inline-size; }
+@container first-tile (min-width: 614px) {
+  .tile { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); background: var(--art); }
+  .tile-art { border-bottom: 0; }
+  .tile-body { align-self: center; padding: 24px 32px; }
+  .new-mark:not([hidden]) { float: none; display: inline-block; margin: 0 0 12px; }
+  .tile-title { font-size: 30px; }
+  .tile-caption { margin-top: 8px; max-width: 42ch; font-size: 16px; }
+  .tile .tile-go { display: inline-flex; margin-top: 20px; }
+}
 .series-icon { width: 18px; height: 18px; margin-right: 6px; vertical-align: -3px; fill: var(--chip); stroke: var(--blue); stroke-width: 1.4; stroke-linejoin: round; }
 .series-icon .front { fill: var(--card); }
 

@@ -419,27 +419,29 @@ function readMinutes(t, bl) {
 // home-page tiles, for a page `depth` folders below the site root: one per shelf item (a collection's ideas are on its
 // own page), one per book with a review in this language
 const tileCaption = (count, html, icon = "") => `<span class="tile-caption"><span class="count">${icon}${E(count)}</span>${html}</span>`;
+// shown only when the tile is the wide first one on a home shelf (see .shelf-grid in style.css)
+const tileGo = t => `<span class="btn primary tile-go">${E(t.ui.startReading)}</span>`;
 function shelfTile(t, item, depth) {
   const to = linker(depth), first = (item.ideas ? item.ideas[0] : item).panels[0];
   const pic = tileDrawing(art(t, first, `${t.lang}/${item.id || item.slug} tile`));
   if (!item.ideas) {
     const it = t.ideas[item.slug];
-    return tile(to(t.lang, item.slug), pic, it.title, tileCaption(t.ui.panelCount(item.panels.length), E(it.gist)), newMark(t, item));
+    return tile(to(t.lang, item.slug), pic, it.title, tileCaption(t.ui.panelCount(item.panels.length), E(it.gist)) + tileGo(t), newMark(t, item));
   }
   const ct = t.collections[item.id];
-  return tile(to(t.lang, item.id), pic, ct.title, tileCaption(t.ui.ideaCount(item.ideas.length), E(ct.lede), SERIES_ICON), newMark(t, item));
+  return tile(to(t.lang, item.id), pic, ct.title, tileCaption(t.ui.ideaCount(item.ideas.length), E(ct.lede), SERIES_ICON) + tileGo(t), newMark(t, item));
 }
 const bookTile = (t, b, depth) => tile(linker(depth)(t.lang, b.slug), bookTileArt(t, b, "../".repeat(depth)), b[t.lang].title,
-  tileCaption(b.panels ? `${b.author} · ${t.ui.panelCount(b.panels.length)}` : b.author, rich(b[t.lang].abstract)), newMark(t, b));
+  tileCaption(b.panels ? `${b.author} · ${t.ui.panelCount(b.panels.length)}` : b.author, rich(b[t.lang].abstract)) + tileGo(t), newMark(t, b));
 
 function homePage(t) {
   const ideaTiles = shelfIn(t).map(item => shelfTile(t, item, 1)).join("");
   const books = booksIn(t);
   const bookTiles = books.map(b => bookTile(t, b, 1)).join("");
-  const tiles = !books.length ? `<ul class="tile-grid shelf">${ideaTiles}</ul>` :
-    `<h2 class="shelf-label">${SHELF_ICONS.tech}<span>${E(t.ui.shelfTech)}</span></h2><ul class="tile-grid">${ideaTiles}</ul>
-<h2 class="shelf-label">${SHELF_ICONS.books}<span>${E(t.ui.shelfBooks)}</span></h2><ul class="tile-grid">${bookTiles}</ul>`;
-  const body = `<main>
+  const tiles = !books.length ? `<ul class="tile-grid shelf-grid shelf">${ideaTiles}</ul>` :
+    `<h2 class="shelf-label">${SHELF_ICONS.tech}<span>${E(t.ui.shelfTech)}</span></h2><ul class="tile-grid shelf-grid">${ideaTiles}</ul>
+<h2 class="shelf-label">${SHELF_ICONS.books}<span>${E(t.ui.shelfBooks)}</span></h2><ul class="tile-grid shelf-grid">${bookTiles}</ul>`;
+  const body = `<main class="shelves">
 <section class="hero">
   <h1 class="visually-hidden">${E(t.ui.site)}</h1>
   <p class="lede home-lede">${t.ui.lede.split(/(?<=,) /).map(part => `<span>${E(part)}</span>`).join(" ")}</p>
