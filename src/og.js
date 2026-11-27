@@ -19,7 +19,7 @@ const DRAWING_CSS = `
 .s{fill:none;stroke:${C.ink};stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;filter:url(#rough)}
 .sf{stroke:${C.ink};stroke-width:2.4;stroke-linejoin:round;filter:url(#rough)}
 .head{fill:${C.ink};stroke:${C.ink};stroke-width:1.5;stroke-linejoin:round}
-.fb{fill:#a9bcff}.fy{fill:#ffd466}.fm{fill:#86dcc1}.fc{fill:#ffa595}.ft{fill:#e1e7f6}.fk{fill:#ffffff}.fi{fill:${C.ink}}
+.fb{fill:#8da6ff}.fy{fill:#ffc531}.fm{fill:#5ccca8}.fc{fill:#ff8a72}.ft{fill:#e1e7f6}.fk{fill:#ffffff}.fi{fill:${C.ink}}
 .thin{stroke-width:1.5}.w3{stroke-width:3.2}.dash{stroke-dasharray:5 6}.faint{opacity:.28}
 .grid{stroke:${C.ink2};stroke-width:1;opacity:.5}
 .blue-s{stroke:${C.blue}}.head.blue-s{fill:${C.blue}}.coral-s{stroke:${C.coral}}.head.coral-s{fill:${C.coral}}
@@ -82,9 +82,9 @@ const CX = 600, COL = 580;
 function sideStacks() {
   const card = (x, y, rot, fill, front) => `<g transform="rotate(${rot} ${x} ${y})">
 <rect x="${x - 70}" y="${y - 200}" width="140" height="200" rx="16" fill="${fill}" stroke="${C.ink}" stroke-width="2.5"/>${!front ? "" :
-    `<rect x="${x - 52}" y="${y - 182}" width="104" height="78" rx="9" fill="#ffd466" stroke="${C.ink}" stroke-width="2"/>` +
+    `<rect x="${x - 52}" y="${y - 182}" width="104" height="78" rx="9" fill="#ffc531" stroke="${C.ink}" stroke-width="2"/>` +
     [0, 1, 2].map(i => `<line x1="${x - 52}" y1="${y - 82 + i * 22}" x2="${x + 52 - (i === 2) * 38}" y2="${y - 82 + i * 22}" stroke="${C.ink}" stroke-width="2.5" stroke-linecap="round"/>`).join("")}</g>`;
-  const stack = (x, y, dir) => card(x, y, dir * 16, "#a9bcff") + card(x, y, dir * 8, "#86dcc1") + card(x, y, 0, "#ffffff", true);
+  const stack = (x, y, dir) => card(x, y, dir * 16, "#8da6ff") + card(x, y, dir * 8, "#5ccca8") + card(x, y, 0, "#ffffff", true);
   return `<g opacity=".38">${stack(150, 450, -1)}${stack(1050, 450, 1)}</g>`;
 }
 
@@ -155,7 +155,7 @@ ${picture}
 }
 
 // Light-theme values of the CSS tokens the header logo uses (assets/style.css)
-const TOKENS = { ink: C.ink, on: C.ink, fk: "#ffffff", "f-blue": "#a9bcff", "f-yellow": "#ffd466", "f-mint": "#86dcc1" };
+const TOKENS = { ink: C.ink, on: C.ink, fk: "#ffffff", "f-blue": "#8da6ff", "f-yellow": "#ffc531", "f-mint": "#5ccca8" };
 // the header logo's inner markup, with its theme colors written out
 const brandMark = mark => mark.replace(/^<svg[^>]*>|<\/svg>$/g, "").replace(/var\(--([\w-]+)\)/g, (m, k) => TOKENS[k] || m);
 

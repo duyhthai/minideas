@@ -13,10 +13,10 @@
   --green: #0f6e50; /* chapters: the number circles on a collection page, the chapter headings in the sidebar */
   --on: #1c2333;
   --fk: #ffffff;
-  --f-blue: #a9bcff;
-  --f-yellow: #ffd466;
-  --f-mint: #86dcc1;
-  --f-coral: #ffa595;
+  --f-blue: #8da6ff;
+  --f-yellow: #ffc531;
+  --f-mint: #5ccca8;
+  --f-coral: #ff8a72;
   --f-tint: #e1e7f6;
   --chip: #e3e9f8; /* pale blue behind link arrows and action icons, which are the site's blue */
   --display: "Bricolage Grotesque", "Avenir Next", system-ui, sans-serif;
@@ -28,14 +28,14 @@
   :root:not([data-theme="light"]) {
     --paper: #0f121a; --card: #191e2b; --art: #1b2030; --ink: #e7eaf3; --ink-2: #a3abc0; --line: #2a3145;
     --blue: #8ba5ff; --coral: #ff8d77; --green: #6cd1b1; --on: #141927; --fk: #20263a;
-    --f-blue: #8ea5f7; --f-yellow: #f0c75a; --f-mint: #6cd1b1; --f-coral: #f59a87; --f-tint: #283150; --chip: #252e4a;
+    --f-blue: #7d97ff; --f-yellow: #f5c542; --f-mint: #4fc9a3; --f-coral: #ff8a70; --f-tint: #283150; --chip: #252e4a;
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
   --paper: #0f121a; --card: #191e2b; --art: #1b2030; --ink: #e7eaf3; --ink-2: #a3abc0; --line: #2a3145;
   --blue: #8ba5ff; --coral: #ff8d77; --green: #6cd1b1; --on: #141927; --fk: #20263a;
-  --f-blue: #8ea5f7; --f-yellow: #f0c75a; --f-mint: #6cd1b1; --f-coral: #f59a87; --f-tint: #283150; --chip: #252e4a;
+  --f-blue: #7d97ff; --f-yellow: #f5c542; --f-mint: #4fc9a3; --f-coral: #ff8a70; --f-tint: #283150; --chip: #252e4a;
   color-scheme: dark;
 }
 
