@@ -14,7 +14,7 @@ These are not licensed for reuse by this repository:
 
 - **Photos in `src/books/<book>/photos/`.** Some are the reviewers' own; others are publisher cover scans, author portraits and the authors' own illustrations, which belong to their owners and appear here only to illustrate the reviews.
 - **Quotes from books.** They belong to the books' authors, translators and publishers.
-- **The Minideas name and logo** (`brand/`, `src/assets/icon.svg` and the header mark in `build.mjs`).
+- **The Minideas name and logo** (`brand/`, `src/assets/icon.svg` and the header mark in `src/build/icons.js`).
 - **Fonts in `src/fonts/`.** They keep their own SIL Open Font License; see the `OFL-*.txt` files.
 
 ## Contributions
