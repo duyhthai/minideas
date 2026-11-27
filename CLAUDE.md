@@ -62,6 +62,8 @@ Write Vietnamese the way a Vietnamese tech writer would, not as a word-for-word 
   - huấn luyện, huấn luyện thêm (fine-tuning), trọng số, embedding (vector nhúng), token
   - định kiến (bias against people), độ chệch / phương sai (model bias / variance)
   - code, not "mã" (which readers take as mã giảm giá, mã OTP): "code sạch", "viết code", "review code"; tái cấu trúc (refactoring)
+  - file, not "tệp", which reads like a translated interface: "mở file", "sửa files"
+- **English words keep the English plural.** An English noun in Vietnamese text takes "s" when it means more than one, as it would in English: "các files", "2.000 files", "hàng chục skills", "gộp skills, subagents, hooks và MCP servers", titles like "Skills: …". It stays singular after "mọi", "mỗi", "từng" and "một" ("mọi file", "mỗi skill"), as English says "every file".
 - **Introduce a term plainly**, without crediting a group: "Đó chính là tái cấu trúc (refactoring)", "theo nguyên tắc DRY (…)", "Nguyên tắc này có tên là YAGNI (…)". "Giới lập trình gọi đây là…", "Dân lập trình…" and "Lập trình viên hay nhắc nhau…" sound stiff or forced, especially when repeated within one idea.
 - **Check that short labels can't be misread.** "không có lý do để kiểm tra" was meant as "no reason anyone can check" but reads as "there's no reason to check". "Máy học như thế nào" collides with "máy học", a common name for machine learning, so use "Máy tính học…".
 - **Keep cross-references in step.** When an idea's title changes, search both i18n files for other text that quotes it.
