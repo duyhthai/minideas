@@ -201,8 +201,10 @@ export default {
     ]},
     "made-up-answers": { title: "Why AI makes things up", gist: "It writes what sounds likely, and likely isn’t always true.", panels: [
       ["Confident and wrong", "Ask about a rare detail and a chatbot may invent one: a book nobody wrote, a quote nobody said, a study nobody did. It sounds just as sure as when it’s right. This is called a hallucination."],
-      ["Likely isn’t the same as true", "It writes the words that sound most likely. For famous facts, seen countless times, likely and true line up. For rare names, dates and numbers, a likely-sounding guess fills the gap."],
-      ["How to protect yourself", "Give it a source to work from, ask where each fact came from, and check anything that matters, especially names, numbers and quotes, before you rely on it."],
+      ["It writes, it doesn’t look things up", "As in “[How a chatbot writes](next-word)”, it builds an answer one likely word at a time. Ask for a book and the likely answer has a familiar shape: a title, an author, a year. Each piece only has to fit the words before it. No step checks that the book exists."],
+      ["Likely isn’t the same as true", "For famous facts, seen countless times, the likely words are also the true ones. For a rare detail it saw once or never, there’s no strong pattern to follow, so a guess that sounds right fills the gap."],
+      ["Why it doesn’t say “I don’t know”", "When models are trained and tested, answers are often scored like an exam: a right answer earns a point, a wrong one or “I don’t know” earns nothing. As on a multiple-choice test, guessing beats leaving it blank, so the model learns to guess. Its sure tone comes from the text it learned from, which rarely hedges, so a guess sounds as certain as a fact."],
+      ["How to protect yourself", "Give it a source to work from, the open-book exam from “[Making a model yours](customizing-models)”. Ask where each fact came from, and check anything that matters, especially names, numbers and quotes, before you rely on it."],
     ]},
     "responsible-ai": { title: "Responsible AI", gist: "Four questions to ask before trusting AI with decisions about people.", panels: [
       ["Is it fair?", "A model can be accurate on average and still treat some people badly. One trained on past hires, who were mostly men, can learn to rank women lower. It copies the pattern in its examples, bias included."],
@@ -387,6 +389,9 @@ export default {
       ask: "Any good books on the\nhistory of Vietnamese coffee?", claim: "Try “The Slow Drip” by\nAnna Kessler (2014).", stamp: "made up", sure: "said as surely as a real fact",
       famous: ["a famous fact", "The capital\nof France is", "Paris", "seen countless times"],
       rare: ["a rare detail", "A good book on\nVietnamese coffee is", "The Slow Drip", "seen rarely, if ever"],
+      shapeTag: "the shape of a book tip", shape: "Try “_____” by _____ (____).",
+      fills: [["The Slow Drip", "sounds like a title"], ["Anna Kessler", "sounds like an author"], ["2014", "sounds like a year"]], noCheck: "nothing checks that the book is real",
+      examTitle: "how answers are scored", scored: [["“I don’t know.”", "0 points"], ["a confident guess", "sometimes\nright: 1 point"]], examCaption: "guessing beats leaving it blank",
       checks: ["give it a source", "ask where each\nfact came from", "check names,\nnumbers, quotes"],
     },
     resp: {

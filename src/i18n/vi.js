@@ -201,8 +201,10 @@ export default {
     ]},
     "made-up-answers": { title: "Vì sao AI bịa chuyện", gist: "Nó viết ra điều nghe có vẻ hợp lý, mà hợp lý chưa chắc đã đúng.", panels: [
       ["Tự tin mà sai", "Hỏi về một chi tiết hiếm gặp, chatbot có thể tự bịa ra: một cuốn sách không ai viết, một câu nói không ai nói, một nghiên cứu chưa ai làm. Giọng nó vẫn chắc chắn như khi nói đúng. Hiện tượng này gọi là ảo giác (hallucination)."],
-      ["Nghe hợp lý chưa chắc đã đúng", "Nó viết ra những từ nghe hợp lý nhất. Với các sự thật nổi tiếng, xuất hiện vô số lần, hợp lý và đúng trùng nhau. Với tên người, ngày tháng và con số hiếm gặp, một phỏng đoán nghe xuôi tai sẽ lấp vào chỗ trống."],
-      ["Cách tự bảo vệ mình", "Đưa cho nó nguồn tài liệu để dựa vào, hỏi xem mỗi thông tin lấy từ đâu, và kiểm tra lại những gì quan trọng, nhất là tên, số liệu và trích dẫn, trước khi dùng."],
+      ["Nó viết tiếp, chứ không tra cứu", "Như ở bài “[Chatbot tạo ra câu trả lời thế nào](next-word)”, nó ghép câu trả lời từng từ một, mỗi lần chọn từ nghe hợp lý nhất. Hỏi về sách, câu trả lời hợp lý có một khuôn quen thuộc: tên sách, tác giả, năm xuất bản. Mỗi mảnh chỉ cần khớp với những từ đứng trước. Không có bước nào kiểm tra xem cuốn sách đó có thật hay không."],
+      ["Nghe hợp lý chưa chắc đã đúng", "Với những sự thật nổi tiếng, xuất hiện vô số lần, từ nghe hợp lý nhất cũng chính là từ đúng. Với một chi tiết hiếm, nó chỉ gặp một lần hoặc chưa từng gặp, nên không có quy luật rõ ràng nào để dựa vào, và một phỏng đoán nghe xuôi tai sẽ lấp vào chỗ trống."],
+      ["Vì sao nó không nói “tôi không biết”", "Khi huấn luyện và kiểm tra mô hình, câu trả lời thường được chấm như bài thi: đúng thì được điểm, sai hay “tôi không biết” đều không được gì. Như khi thi trắc nghiệm, thà khoanh bừa còn hơn bỏ trống, nên mô hình cũng học cách đoán. Còn giọng chắc chắn thì nó học từ chính những văn bản đã đọc, vốn hiếm khi ngập ngừng, nên một câu đoán nghe cũng chắc như một sự thật."],
+      ["Cách tự bảo vệ mình", "Đưa cho nó nguồn tài liệu để dựa vào, giống thi được mở tài liệu ở bài “[Tùy chỉnh mô hình cho riêng bạn](customizing-models)”. Hỏi xem mỗi thông tin lấy từ đâu, và kiểm tra lại những gì quan trọng, nhất là tên, số liệu và trích dẫn, trước khi dùng."],
     ]},
     "responsible-ai": { title: "AI có trách nhiệm", gist: "Bốn câu hỏi cần đặt ra trước khi giao cho AI những quyết định liên quan đến con người.", panels: [
       ["Có công bằng không?", "Một mô hình có thể chính xác nếu xét trung bình mà vẫn đối xử bất công với một số người. Nếu học từ hồ sơ những người từng được tuyển, phần lớn là nam giới, nó có thể học cách chấm ứng viên nữ thấp hơn. Nó sao chép khuôn mẫu trong các ví dụ, kể cả định kiến."],
@@ -387,6 +389,9 @@ export default {
       ask: "Có sách nào hay về lịch sử\ncà phê Việt Nam không?", claim: "Bạn thử đọc “Giọt đắng”\ncủa Trần Minh Khang (2014).", stamp: "bịa ra", sure: "nói chắc như đinh đóng cột",
       famous: ["sự thật nổi tiếng", "Thủ đô\ncủa Pháp là", "Paris", "gặp vô số lần"],
       rare: ["chi tiết hiếm gặp", "Sách hay về lịch sử\ncà phê Việt Nam là", "Giọt đắng", "hiếm khi, hoặc chưa từng gặp"],
+      shapeTag: "khuôn của một lời gợi ý sách", shape: "Bạn thử đọc “_____” của _____ (____).",
+      fills: [["Giọt đắng", "nghe như tên sách"], ["Trần Minh Khang", "nghe như tên tác giả"], ["2014", "nghe như năm xuất bản"]], noCheck: "không bước nào kiểm tra sách có thật hay không",
+      examTitle: "cách chấm câu trả lời", scored: [["“Tôi không biết.”", "0 điểm"], ["một câu đoán chắc nịch", "đôi khi\nđúng: 1 điểm"]], examCaption: "thà khoanh bừa còn hơn bỏ trống",
       checks: ["đưa nó nguồn\ntài liệu", "hỏi mỗi thông tin\nlấy từ đâu", "kiểm tra tên,\nsố liệu, trích dẫn"],
     },
     resp: {

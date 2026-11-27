@@ -502,6 +502,15 @@ export const ART = {
     s += `<g transform="rotate(-8 240 170)">` + R(186, 152, 108, 36, "", "coral-s w3", 6) + T(240, 176, t.stamp, { c: "b cor", size: 18, max: 96 }) + "</g>";
     return s + T(16, 208, t.sure, { a: "start", c: "sm mut", size: 12.5, max: 160 });
   },
+  fillShape(lb) {
+    const t = lb.trust;
+    let s = T(20, 20, t.shapeTag, { a: "start", c: "sm b blu", size: 12.5 }) + R(14, 28, 292, 40, "ft", "", 12) + T(160, 54, t.shape, { max: 240 });
+    t.fills.forEach(([word, fits], i) => {
+      const y = 96 + i * 36;
+      s += pill(76, y, word, "fy", { on: true, size: 14, w: 124 }) + A(144, y, 168, y, "thin") + T(176, y + 5, fits, { a: "start", c: "mut", max: 130 });
+    });
+    return s + T(160, 208, t.noCheck, { c: "sm b cor", size: 12.5, max: 290 });
+  },
   likelyTrue(lb) {
     const t = lb.trust;
     const row = (y, tag, tagC, prompt, ans, fill, seen, mark) => {
@@ -514,6 +523,16 @@ export const ART = {
     const ask = (x, y) => T(x, y + 8, "?", { c: "cor b", size: 24 });
     return row(52, t.famous[0], "blu", t.famous[1], t.famous[2], "fm", t.famous[3], tick) + L(14, 106, 306, 106, "dash thin faint") +
       row(156, t.rare[0], "cor", t.rare[1], t.rare[2], "fc", t.rare[3], ask);
+  },
+  examGuess(lb) {
+    const t = lb.trust;
+    let s = R(14, 8, 292, 172, "fk", "", 10) + T(160, 34, t.examTitle, { c: "sm b", size: 12.5, max: 260 }) + L(30, 48, 290, 48, "thin faint");
+    t.scored.forEach(([answer, score], i) => {
+      const y = 84 + i * 60;
+      s += R(28, y - 19, 142, 38, "fb", "", 10) + T(99, y + 5, answer, { c: "on", max: 128 }) + A(176, y, 196, y, "thin") +
+        T(202, y + 5, score, { a: "start", c: `b ${i ? "blu" : "cor"}`, max: 92 });
+    });
+    return s + T(160, 206, t.examCaption, { c: "sm mut", size: 12.5, max: 290 });
   },
   checkIt(lb) {
     const t = lb.trust;
