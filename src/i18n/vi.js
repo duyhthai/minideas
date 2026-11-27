@@ -102,7 +102,6 @@ export default {
         kaggle: "Thực hành với dữ liệu thật cùng cộng đồng khoa học dữ liệu",
         dlai: "Các khóa học ngắn về học sâu và AI tạo sinh",
       },
-      source: "Phát triển từ bộ slide “AI Fundamentals”.",
     },
   },
 

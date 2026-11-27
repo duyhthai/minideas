@@ -102,7 +102,6 @@ export default {
         kaggle: "Practice on real datasets with a data science community",
         dlai: "Short courses on deep learning and generative AI",
       },
-      source: "Grew out of the “AI Fundamentals” slide deck.",
     },
   },
 
