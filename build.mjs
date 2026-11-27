@@ -396,6 +396,12 @@ function deeper(t, resources, text) {
 
 // *italic* and **bold** in book text
 const rich = s => E(s).replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>").replace(/\*(.+?)\*/g, "<em>$1</em>");
+// card text: `…` is code (a command, a path, a key), [words](https://…) a link to an official page and [words](slug) a
+// link to another stack on Minideas in the same language (checked once every page exists). Card stacks sit at /<lang>/<slug>/.
+const siteLinks = [];
+const linked = (s, t) => E(s).replace(/`([^`]+)`/g, "<code>$1</code>")
+  .replace(/\[([^\]]+)\]\((https:\/\/[^)\s]+)\)/g, '<a href="$2">$1</a>')
+  .replace(/\[([^\]]+)\]\(([a-z0-9-]+)\)/g, (_, words, slug) => { siteLinks.push([t.lang, slug]); return `<a href="${linker(2)(t.lang, slug)}">${words}</a>`; });
 
 // "Published 8 November 2026" (or where a review first appeared), plus any extras such as reading time.
 // item: a collection, standalone idea or book, with its date and, for a book, any `source`.
@@ -486,7 +492,7 @@ ${slides.map(({ art, h, p }, j) => `<section class="slide" aria-roledescription=
       <div class="art">${art}</div>
       <div class="count">${j + 1} / ${n}</div>
       <h2>${E(h)}</h2>
-      <p>${E(p)}</p>
+      <p>${linked(p, t)}</p>
     </section>`).join("\n")}
   </div></div>
   <div class="controls" hidden>
@@ -848,6 +854,7 @@ ${items.map(x => `<item>
 `;
 }
 for (const t of LANGS) files[`${t.lang}/feed.xml`] = feed(t);
+for (const [lang, slug] of siteLinks) if (!files[`${lang}/${slug}/index.html`]) problems.push(`${lang}: a card links to "${slug}", which isn’t a page in that language`);
 // Newsletter drafts: Kit's free plan can't send from the feed, so each new stack is sent by hand. This page has the
 // newest stacks in each language as ready-to-paste emails (subject, preview text, body with the preview image, a
 // link and a sign-off). It's written outside dist/ so it's never deployed; the dev server shows it at /newsletter/. The copied email

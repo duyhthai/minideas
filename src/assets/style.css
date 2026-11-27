@@ -217,6 +217,8 @@ figure.book-photo img { display: block; width: 100%; height: auto; border-radius
 .count { font-family: var(--hand); font-size: 16px; color: var(--ink-2); margin: 16px 8px 0; font-variant-numeric: tabular-nums; }
 .slide h2 { font-family: var(--display); font-weight: 700; font-size: 22px; line-height: 1.2; margin: 2px 8px 8px; text-wrap: balance; }
 .slide p { margin: 0 8px; font-size: 16px; line-height: 1.6; max-width: 60ch; }
+.slide p a { color: var(--blue); text-decoration: underline; text-underline-offset: 2px; }
+.slide p code { padding: 1px 5px; border-radius: 6px; background: var(--chip); color: var(--ink); font: 0.88em/1 ui-monospace, Menlo, Consolas, monospace; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
 
 .controls { display: flex; align-items: center; justify-content: space-between; gap: 10px; max-width: 540px; margin-top: 14px; }
 .btn {

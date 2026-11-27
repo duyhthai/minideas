@@ -56,6 +56,8 @@ art: {
 },
 ```
 
+A panel’s text can link to a page with `[words](https://…)`. Keep that for the odd card that sends readers to an official page, such as installation steps; other links go in `links`. To point to another stack on Minideas, use its slug, `[How a chatbot writes](next-word)`: it links to that stack in the same language, and the build stops if the slug doesn’t exist there. Wrap something the reader types or presses, such as a command, a path or a key, in backticks (`` `/clear` ``) to show it as code.
+
 Every text the reader sees comes from these files, never from `draw.js`, so the same drawing works in every language.
 
 ### 3. The drawings: `src/draw.js`
