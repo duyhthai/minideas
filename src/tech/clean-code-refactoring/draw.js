@@ -1,25 +1,26 @@
 // Clean code and refactoring: the drawings. Their labels are in en.js and vi.js, under `art`.
-import { f1, T, L, C, R, P, EL, A, pill, crPath, axes, fig, tick } from "../../draw.js";
+import { f1, T, L, C, R, P, EL, A, pill, crPath, axes, tick } from "../../draw.js";
+
+// the same code in an editor window: keywords blue, strings coral; `upTo` lines, the last one still being typed
+const code = [[0, [[14, "blue-s"], [30, ""]]], [1, [[10, "blue-s"], [24, ""]]], [2, [[18, ""], [24, "coral-s"]]], [1, [[6, ""]]],
+  [1, [[12, "blue-s"], [28, ""]]], [2, [[36, ""]]], [0, [[6, ""]]]];
+const editor = (x, y, upTo = code.length) => {
+  let s = R(x, y, 96, 96, "fk", "", 8) + L(x, y + 16, x + 96, y + 16, "thin") +
+    ["fc", "fy", "fm"].map((f, i) => C(x + 10 + i * 9, y + 8, 2.4, f, "thin")).join("") + L(x + 14, y + 24, x + 14, y + 88, "thin faint");
+  code.slice(0, upTo).forEach(([indent, tokens], i) => {
+    let cx = x + 20 + indent * 8;
+    const cy = y + 27 + i * 10, last = i === upTo - 1 && upTo < code.length;
+    (last ? tokens.slice(0, 1) : tokens).forEach(([w, c]) => { s += L(cx, cy, cx + w, cy, "w3 " + c); cx += w + 5; });
+    if (last) s += L(cx, cy - 5, cx, cy + 5, "w3");
+  });
+  return s;
+};
+// a person seen from behind, facing the screen
+const person = (x, y, shirt, r = 11) => P(`M${x - r * 1.6},${y + r * 2.5} Q${x - r * 1.6},${y + r * 1.2} ${x},${y + r * 1.2} Q${x + r * 1.6},${y + r * 1.2} ${x + r * 1.6},${y + r * 2.5} Z`, shirt, "thin") + C(x, y, r, "fk", "thin");
 
 export default {
   readMore(lb) {
     const t = lb.clean;
-    // the same code in an editor window: keywords blue, strings coral; `upTo` lines, the last one still being typed
-    const code = [[0, [[14, "blue-s"], [30, ""]]], [1, [[10, "blue-s"], [24, ""]]], [2, [[18, ""], [24, "coral-s"]]], [1, [[6, ""]]],
-      [1, [[12, "blue-s"], [28, ""]]], [2, [[36, ""]]], [0, [[6, ""]]]];
-    const editor = (x, y, upTo = code.length) => {
-      let s = R(x, y, 96, 96, "fk", "", 8) + L(x, y + 16, x + 96, y + 16, "thin") +
-        ["fc", "fy", "fm"].map((f, i) => C(x + 10 + i * 9, y + 8, 2.4, f, "thin")).join("") + L(x + 14, y + 24, x + 14, y + 88, "thin faint");
-      code.slice(0, upTo).forEach(([indent, tokens], i) => {
-        let cx = x + 20 + indent * 8;
-        const cy = y + 27 + i * 10, last = i === upTo - 1 && upTo < code.length;
-        (last ? tokens.slice(0, 1) : tokens).forEach(([w, c]) => { s += L(cx, cy, cx + w, cy, "w3 " + c); cx += w + 5; });
-        if (last) s += L(cx, cy - 5, cx, cy + 5, "w3");
-      });
-      return s;
-    };
-    // a person seen from behind, facing the screen
-    const person = (x, y, shirt, r = 11) => P(`M${x - r * 1.6},${y + r * 2.5} Q${x - r * 1.6},${y + r * 1.2} ${x},${y + r * 1.2} Q${x + r * 1.6},${y + r * 1.2} ${x + r * 1.6},${y + r * 2.5} Z`, shirt, "thin") + C(x, y, r, "fk", "thin");
     let s = L(160, 16, 160, 206, "dash thin faint") + editor(32, 16, 5) + person(80, 132, "fy");
     s += editor(192, 16) + person(218, 120, "fm", 10) + person(262, 120, "fc", 10) + person(196, 132, "fb") + person(240, 132, "fy") + person(284, 132, "fb");
     return s + T(80, 190, t.once, { c: "b", max: 140 }) + T(80, 208, "×1", { c: "sm mut" }) +
@@ -70,12 +71,11 @@ export default {
   },
   aiWrites(lb) {
     const t = lb.clean;
-    const card = (x, y) => R(x, y, 64, 84, "fk", "", 6) + [0, 1, 2, 3, 4].map(i => L(x + 10, y + 14 + i * 13, x + 54 - (i % 3) * 10, y + 14 + i * 13, "thin")).join("");
-    let s = R(14, 20, 64, 40, "fb", "", 12) + P("M60,60 l14,14 l-2,-14", "fb") + T(46, 46, "AI", { c: "on b", size: 17 });
-    s += [100, 114, 128].map((y, i) => L(36 + i * 12, y, 100, y, "thin blue-s")).join("");
-    s += card(128, 60) + card(120, 52) + card(112, 44);
-    s += C(232, 104, 15, "ft") + L(243, 115, 267, 138, "w3") + fig(276, 170, "walk");
-    return s + T(110, 192, t.fast, { c: "b", max: 190 }) + T(252, 194, t.you, { c: "b blu", max: 136 });
+    const pins = [-10, 0, 10].map(d => L(56, 140 + d, 62, 140 + d, "thin") + L(98, 140 + d, 104, 140 + d, "thin") + L(80 + d, 116, 80 + d, 122, "thin") + L(80 + d, 158, 80 + d, 164, "thin")).join("");
+    let s = L(160, 16, 160, 206, "dash thin faint") + editor(32, 16) + pins + R(62, 122, 36, 36, "fb", "", 6);
+    s += R(121, 3, 6, 4, "fk", "thin", 1) + C(124, 18, 11, "fy") + L(124, 18, 124, 11, "thin") + L(124, 18, 129, 21, "thin");
+    s += editor(192, 16) + person(240, 132, "fb") + C(284, 18, 11, "fm") + P("M279,18 L283,23 L290,13", "", "w3");
+    return s + T(80, 146, "AI", { c: "on b" }) + T(80, 196, t.fast, { c: "b", max: 140 }) + T(240, 196, t.you, { c: "b blu", max: 150 });
   },
   littleCleaner(lb) {
     const t = lb.clean;

@@ -32,7 +32,7 @@ export default {
       copied: "copied 3 times", missed: "fixed one, missed two", oneHome: "one shared piece", fixedAll: "fix once, fixed everywhere",
       justInCase: "just in case", carry: "every reader carries it", now: "what's needed now", later2: "add more when it's real",
       change: "small change", run: "run tests", pass: "pass", fail: "fail", save: "save", undo: "undo", caption: "repeat, many times a day",
-      fast: "written in seconds", you: "still read and\nchecked by you",
+      fast: "written\nin seconds", you: "still read and\nchecked by you",
       visits: ["visit 1", "visit 2", "visit 3", "visit 4"], habit: "each time you pass by, fix one small thing", noRewrite: "no big rewrite needed",
     },
   },
