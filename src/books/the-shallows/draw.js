@@ -1,25 +1,38 @@
 // The Shallows: the drawings in its card stack and full review. lb.book holds the book's labels (book.js).
-import { T, L, C, R, P, EL, head, A, fig, brain, env } from "../../draw.js";
+import { T, L, C, R, P, EL, head, A, fig, env, f1 } from "../../draw.js";
+
+// a person's brain seen from the side, front to the left (the shared brain() is half circuit: AI Fundamentals' picture).
+// spots: [dx, dy, rx, ry, fill], coloured patches where something has left its mark (offsets at k = 1)
+function brain(cx, cy, k = 1, spots = []) {
+  const at = d => d.replace(/(-?[\d.]+),(-?[\d.]+)/g, (_, x, y) => `${f1(cx + x * k)},${f1(cy + y * k)}`);
+  let s = P(at("M8,24 L14,52 L24,52 L22,26 Z"), "ft", "thin") + EL(f1(cx + 30 * k), f1(cy + 28 * k), f1(18 * k), f1(11 * k), "ft", "thin");
+  s += P(at("M-56,6 C-64,-20 -44,-44 -14,-44 C0,-52 28,-50 40,-40 C58,-36 68,-16 62,2 C66,18 50,30 34,26 C20,34 0,32 -10,26 C-26,34 -48,28 -56,6 Z"), "ft");
+  s += ["M4,-42 C-2,-28 10,-16 2,-2", "M-38,10 C-20,2 0,6 18,2", "M-30,-32 C-34,-20 -24,-14 -30,-4", "M36,-32 C28,-22 40,-12 32,0", "M-14,-20 Q-10,-12 -16,-6", "M24,10 Q36,14 44,8"]
+    .map(d => P(at(d), "", "thin")).join("");
+  return s + spots.map(([x, y, rx, ry, f]) => EL(f1(cx + x * k), f1(cy + y * k), f1(rx * k), f1(ry * k), f, "thin")).join("");
+}
 
 export default {
   shlCraving(lb) {
-    const t = lb.book, fills = ["fy", "fb", "fm", "fc"], hops = [[196, 30], [272, 66], [196, 102], [272, 138]];
-    // a brain hopping from one thing to the next, while the long read lies open and untouched
-    let s = brain(84, 84, .95) + A(136, 64, 160, 40, "thin blue-s", 7);
+    const t = lb.book, fills = ["fy", "fb", "fm", "fc"], hops = [[196, 30], [272, 66], [196, 102], [272, 138], [196, 174]];
+    // an open book: the reading line follows the text, breaks off mid-line and hops from one new thing to the next, with no end
+    let s = P("M14,54 Q48,45 82,54 L82,158 Q48,149 14,158 Z", "fk") + P("M82,54 Q116,45 150,54 L150,158 Q116,149 82,158 Z", "fk");
+    for (let k = 0; k < 7; k++) {
+      const y = 70 + k * 12;
+      s += L(22, y, 74, y, "thin faint") + (k > 2 ? L(90, y, 142, y, "thin faint") : k === 2 ? L(116, y, 142, y, "thin faint") : "");
+    }
+    s += L(90, 70, 142, 70, "blue-s") + L(90, 82, 142, 82, "blue-s") + P("M90,94 L112,94 Q166,94 169,52", "", "blue-s") + head(170, 46, -1.5, "blue-s", 8);
     hops.forEach(([x, y], i) => {
-      s += R(x - 32, y - 13, 64, 26, fills[i], "thin", 6) + T(x, y + 5, t.feeds[i], { size: 13, max: 56, c: "on" });
-      if (i) { const [px, py] = hops[i - 1], d = x > px ? 1 : -1; s += A(px + d * 18, py + 15, x - d * 18, y - 15, "thin blue-s", 7); }
+      s += i < 4 ? R(x - 32, y - 13, 64, 26, fills[i], "thin", 6) + T(x, y + 5, t.feeds[i], { size: 13, max: 56, c: "on" }) + C(x + 31, y - 12, 4.5, "fc", "thin")
+        : R(x - 32, y - 13, 64, 26, "", "thin dash faint", 6) + T(x, y + 6, "…", { size: 22, c: "mut" });
+      if (i) { const [px, py] = hops[i - 1], d = x > px ? 1 : -1; s += A(px + d * 18, py + 15, x - d * 18, y - 15, "thin blue-s" + (i < 4 ? "" : " faint"), 7); }
     });
-    s += T(234, 182, t.newFast, { c: "b blu", max: 150 });
-    s += T(84, 146, t.cantFocus, { c: "sm b cor", max: 150 });
-    s += P("M44,166 Q64,158 84,166 L84,196 Q64,188 44,196 Z", "fk", "faint") + P("M84,166 Q104,158 124,166 L124,196 Q104,188 84,196 Z", "fk", "faint");
-    for (let k = 0; k < 3; k++) s += L(50, 174 + k * 6, 78, 174 + k * 6, "thin faint") + L(90, 174 + k * 6, 118, 174 + k * 6, "thin faint");
-    return s;
+    return s + T(82, 182, t.cantFocus, { c: "sm b cor", max: 136 }) + T(234, 208, t.newFast, { c: "b blu", max: 150 });
   },
   shlBrainBook(lb) {
     const t = lb.book, ys = [44, 96, 148];
     // the book, and the three strands it follows
-    let s = R(28, 34, 86, 118, "fy", "", 4) + L(38, 34, 38, 152, "thin") + brain(78, 92, .42) + L(52, 132, 104, 132, "thin") + L(60, 140, 96, 140, "thin");
+    let s = R(28, 34, 86, 118, "fy", "", 4) + L(38, 34, 38, 152, "thin") + brain(76, 92, .42) + L(52, 132, 104, 132, "thin") + L(60, 140, 96, 140, "thin");
     ys.forEach(y => s += A(118, 93, 140, y, "thin", 7));
     // a nerve cell, a scroll, a screen
     s += C(160, ys[0], 7, "fm", "thin") + [0, 1, 2, 3, 4].map(k => { const a = k * 1.256 - 1.57; return L(160 + 7 * Math.cos(a), ys[0] + 7 * Math.sin(a), 160 + 15 * Math.cos(a), ys[0] + 15 * Math.sin(a), "thin"); }).join("");
@@ -30,17 +43,18 @@ export default {
   },
   shlRewire(lb) {
     const t = lb.book;
-    let s = brain(160, 92, .8);
-    // a violin, braille, the web, a book: each one leaves its mark on the brain
-    s += L(52, 26, 52, 8, "w3") + C(52, 7, 3, "fi") + P("M52,24 C40,24 38,32 43,38 C37,42 36,58 52,60 C68,58 67,42 61,38 C66,32 64,24 52,24 Z", "fy", "thin");
-    s += L(50, 18, 50, 54, "thin") + L(54, 18, 54, 54, "thin") + R(46, 52, 12, 3, "fi", "thin", 1) + L(68, 10, 80, 56, "thin") + L(72, 10, 84, 56, "thin faint");
-    s += R(246, 22, 44, 40, "fk", "thin", 4);
+    // a violin, braille, the web, a book: each one leaves its own mark on the brain, in its own colour
+    let s = brain(160, 94, 1, [[-26, -26, 14, 9, "fy"], [32, -22, 13, 9, "fm"], [-32, 8, 13, 8, "fb"], [38, 6, 12, 8, "fc"]]);
+    s += L(20, 17, 32, 63, "thin") + R(29, 57, 6, 8, "fi", "thin", 1);
+    s += R(50, 11, 4, 16, "fi", "thin", 1) + C(52, 10, 3.5, "fi") + P("M52,25 C44,25 40,30 41,35 C42,39 46,41 46,44 C46,47 39,49 39,56 C39,63 46,66 52,66 C58,66 65,63 65,56 C65,49 58,47 58,44 C58,41 62,39 63,35 C64,30 60,25 52,25 Z", "fy", "thin");
+    s += R(50, 25, 4, 22, "fi", "thin", 1) + P("M46,47 q-2,4 0,8", "", "thin") + P("M58,47 q2,4 0,8", "", "thin") + L(47, 55, 57, 55, "thin") + P("M49,59 L55,59 L53,65 L51,65 Z", "fi", "thin");
+    s += R(246, 22, 44, 40, "fm", "thin", 4);
     [[256, 32, 1], [264, 32, 0], [256, 42, 1], [264, 42, 1], [256, 52, 0], [264, 52, 0], [274, 32, 1], [282, 32, 1], [274, 42, 0], [282, 42, 0], [274, 52, 1], [282, 52, 0]]
       .forEach(([x, y, on]) => s += C(x, y, 2.6, on ? "fi" : "fk", on ? "" : "thin faint"));
     s += C(52, 130, 15, "fb", "thin") + EL(52, 130, 6, 15, "", "thin") + L(37, 130, 67, 130, "thin") + P("M40,122 Q52,126 64,122", "", "thin") + P("M40,138 Q52,134 64,138", "", "thin");
-    s += P("M240,122 Q254,116 268,122 L268,144 Q254,138 240,144 Z", "fk", "thin") + P("M268,122 Q282,116 296,122 L296,144 Q282,138 268,144 Z", "fk", "thin");
-    s += A(88, 60, 114, 74, "thin", 7) + A(236, 52, 208, 70, "thin", 7) + A(84, 124, 112, 108, "thin", 7) + A(236, 124, 208, 108, "thin", 7);
-    [[52, 76], [268, 76], [52, 162], [268, 162]].forEach(([x, y], i) => s += T(x, y, t.who[i], { c: "sm b", max: 100 }));
+    s += P("M240,122 Q254,116 268,122 L268,144 Q254,138 240,144 Z", "fc", "thin") + P("M268,122 Q282,116 296,122 L296,144 Q282,138 268,144 Z", "fc", "thin");
+    s += A(80, 44, 118, 62, "thin", 7) + A(240, 44, 205, 64, "thin", 7) + A(76, 124, 114, 106, "thin", 7) + A(238, 126, 211, 106, "thin", 7);
+    [[52, 78], [268, 78], [52, 162], [268, 162]].forEach(([x, y], i) => s += T(x, y, t.who[i], { c: "sm b", max: 100 }));
     return s + T(160, 198, t.newState, { c: "sm mut", max: 300 });
   },
   shlNoSpaces(lb) {
