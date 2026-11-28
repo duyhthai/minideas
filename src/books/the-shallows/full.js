@@ -2,6 +2,8 @@
 // original review: no sections, so everything sits in the intro. Published at /<lang>/the-shallows/full/ and linked
 // from the quick version in book.js.
 // cover: the front cover; photos: the gallery (the review showed no pictures in its text).
+// Edited by hand since the import: the Vietnamese title matches the cover, "violon" became "violin" (as in Outliers),
+// and the paper-or-Kindle paragraph ends "Vì vậy, theo quan điểm cá nhân, hay nhất là kết hợp cả hai."
 export default {
   "slug": "the-shallows",
   "author": "Nicholas Carr",
@@ -45,10 +47,10 @@ export default {
       {
         "quote": "Chúng ta khao khát cái mới ngay cả khi biết rằng \"cái mới bình thường, chứ không cần thiết\" - Christopher Chabris"
       },
-      "Dù bạn đã làm chủ được tình hình hay chưa thì TTGT cũng là một trải nghiệm thú vị, chúng ta sẽ được giới thiệu về cách trí nhớ ngắn hạn và dài hạn hoạt động, những tăng trưởng và biến đổi não bộ của một nghệ sĩ violon, một người mù, hay khi ta lướt web, đọc sách... ông cũng chỉ ra rằng \"không ai nói được trạng thái mới của não là trạng thái trông đợi\" khi nó được hình thành từ những thói quen xấu.",
+      "Dù bạn đã làm chủ được tình hình hay chưa thì TTGT cũng là một trải nghiệm thú vị, chúng ta sẽ được giới thiệu về cách trí nhớ ngắn hạn và dài hạn hoạt động, những tăng trưởng và biến đổi não bộ của một nghệ sĩ violin, một người mù, hay khi ta lướt web, đọc sách... ông cũng chỉ ra rằng \"không ai nói được trạng thái mới của não là trạng thái trông đợi\" khi nó được hình thành từ những thói quen xấu.",
       "Chắc bạn không biết rằng The Shallows được đưa vào các mục *Neuroscience* và *Neuropsychology* trên Amazon! Và chỉ khi đã đọc sâu vào cuốn sách chúng ta mới nhận ra tại sao NXB Trẻ lại đưa nó vào bộ **Khoa Học Khám Phá**.",
       "Sau vài chương đầu, bạn sẽ bất ngờ khi nhận ra rằng Carr đang chuyển qua nói về lịch sử và các nhu cầu hình thành nên các nhóm công nghệ, rồi ông lại chuyển tiếp đến các phân tích về ngôn ngữ, sự hình thành chữ viết và các loại phương tiện chuyên dụng cho nó, từ đất sét, giấy cuộn, giấy cói, da thuộc, bảng sáp... rồi mới đến sách. Bạn sẽ có thêm một ít kiến thức độc đáo như ban đầu *chữđượcviếtliêntục* mô phỏng theo cách nói, khoảng cách chỉ được \"phát minh\" sau đó và giúp việc đọc dễ hơn nhiều.",
-      "Tác giả cũng có phần so sánh về sách truyền thống và ebook, ông chỉ ra những thế mạnh của sách giấy về tính trực quan và vật lý như dễ đọc và không sợ rơi vỡ, hư hỏng, hết pin... Tuy nhiên với kinh nghiệm của một người dùng Kindle lâu năm, người viết không hoàn toàn đồng quan điểm với tác giả vì các máy đọc sách có mặt mạnh của riêng chúng, công nghệ E-Ink giúp dễ đọc và pin dùng được rất lâu, dễ mua sách nước ngoài và tra từ, và mang theo được nhiều sách bên mình... Nên theo quan điểm cá nhân, một người yêu sách nên có sự kết hợp của cả hai.",
+      "Tác giả cũng có phần so sánh về sách truyền thống và ebook, ông chỉ ra những thế mạnh của sách giấy về tính trực quan và vật lý như dễ đọc và không sợ rơi vỡ, hư hỏng, hết pin... Tuy nhiên với kinh nghiệm của một người dùng Kindle lâu năm, người viết không hoàn toàn đồng quan điểm với tác giả vì các máy đọc sách có mặt mạnh của riêng chúng, công nghệ E-Ink giúp dễ đọc và pin dùng được rất lâu, dễ mua sách nước ngoài và tra từ, và mang theo được nhiều sách bên mình... Vì vậy, theo quan điểm cá nhân, hay nhất là kết hợp cả hai.",
       "Sau những \"bài học lịch sử\" bạn sẽ được mang trở lại thời hiện đại với máy tính và Internet:",
       {
         "quote": "Mỗi khi bật máy tính lên, chúng ta lại lao vào một \"hệ sinh thái các công nghệ gián đoạn\" - Cory Doctorow"
@@ -71,7 +73,7 @@ export default {
       "chapter-4.jpg": "Chương 4, “Sâu trong trang giấy”",
       "chapter-6.jpg": "Chương 6, “Hình ảnh thật sự của một cuốn sách”",
       "blind.jpg": "Khi một người bất ngờ bị mù, vỏ não thị giác chuyển sang xử lý âm thanh và xúc giác",
-      "violinists.jpg": "Thí nghiệm của Edward Taub với các nghệ sĩ violon",
+      "violinists.jpg": "Thí nghiệm của Edward Taub với các nghệ sĩ violin",
       "scriptura-continua.jpg": "Thể viết liên tục (*scriptura continua*), khi các từ chưa có khoảng cách",
       "deep-reading.jpg": "“Trí óc của người đọc sách lão luyện luôn điềm tĩnh chứ không nhốn nháo”",
       "switching-costs.jpg": "“Chi phí chuyển đổi” mỗi khi ta chuyển hướng sự chú ý",
@@ -99,7 +101,7 @@ export default {
       "Whether or not you’ve got things under control, *The Shallows* is an interesting experience: we’re introduced to how short-term and long-term memory work, to the growth and changes in the brain of a violinist, of a blind person, or when we browse the web or read a book... He also points out that \"no one can say that the brain’s new state is a desirable one\" when it has been formed by bad habits.",
       "I bet you didn’t know that *The Shallows* is listed under *Neuroscience* and *Neuropsychology* on Amazon! And only once we’re deep into the book do we realise why NXB Trẻ put it in its **Khoa Học Khám Phá** (Science Discovery) series.",
       "After the first few chapters, you’ll be surprised to notice that Carr has moved on to history and to the needs that gave rise to groups of technologies, then on again to analyses of language, of how writing came about and of the media made for it, from clay, scrolls, papyrus, parchment, wax tablets... and only then books. You’ll pick up some unusual knowledge, such as that at first *wordswerewrittenwithoutspaces*, imitating the way we speak; spaces were only \"invented\" later, and made reading much easier.",
-      "The author also compares traditional books and e-books, pointing out the strengths of paper books in how visual and physical they are: easy to read, and no fear of dropping and breaking them, damaging them or running out of battery... But with the experience of a long-time Kindle user, I don’t entirely agree with the author, because e-readers have strengths of their own: E-Ink technology makes them easy to read and the battery lasts a very long time, it’s easy to buy books from abroad and look up words, and you can carry lots of books with you... So in my personal view, a book lover should have a mix of both.",
+      "The author also compares traditional books and e-books, pointing out the strengths of paper books in how visual and physical they are: easy to read, and no fear of dropping and breaking them, damaging them or running out of battery... But with the experience of a long-time Kindle user, I don’t entirely agree with the author, because e-readers have strengths of their own: E-Ink technology makes them easy to read and the battery lasts a very long time, it’s easy to buy books from abroad and look up words, and you can carry lots of books with you... So in my personal view, the best way is to combine the two.",
       "After these \"history lessons\" you’re brought back to the present, with computers and the Internet:",
       {
         "quote": "Every time we turn on our computers, we plunge into an \"ecosystem of interruption technologies\" - Cory Doctorow"
