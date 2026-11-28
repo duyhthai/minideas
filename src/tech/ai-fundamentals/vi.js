@@ -151,10 +151,10 @@ export default {
     },
     custom: { prompt: "prompt tốt hơn", rag: "tài liệu của bạn (RAG)", fine: "huấn luyện thêm", scratch: "xây\ntừ đầu", effort: "tốn công và chi phí hơn", special: "chuyên biệt hơn" },
     prompt: {
-      parts: [["Yêu cầu", "cần làm gì"], ["Bối cảnh", "vì sao, cho ai"], ["Dữ liệu đầu vào", "làm với dữ liệu nào"], ["Định dạng kết quả", "câu trả lời trông như thế nào"]],
-      example: [["Yêu cầu", "Đơn hàng nào giao được?"], ["Bối cảnh", "Kiểm tra tồn kho cho shop online"], ["Dữ liệu đầu vào", "Đơn 1: 5×A, 3×B · Kho: A 8, B 4"], ["Định dạng kết quả", "Bảng: đơn hàng, giao hay nhập thêm"]],
-      translate: "Dịch sang tiếng Pháp:", cheese: "phô mai →", examples: ["biển → mer", "mèo → chat"], reply: ["Được! Trong tiếng Pháp,", "phô mai là “fromage”…"],
-      question: "3 hộp trứng, mỗi hộp 12 quả. 5 quả bị vỡ.\nCòn bao nhiêu quả lành?", think: "“Hãy suy nghĩ từng bước.”", answer: "đáp án: 31",
+      parts: ["Yêu cầu", "Bối cảnh", "Dữ liệu đầu vào", "Định dạng kết quả"],
+      example: { ask: "Đơn hàng nào giao được?", why: "Kiểm tra tồn kho\ncho shop online", order: "Đơn 1", stock: "Kho", cols: ["đơn hàng", "giao / nhập thêm"] },
+      translate: "Dịch sang tiếng Pháp:", cheese: "phô mai →", examples: ["biển → mer", "mèo → chat"], reply: ["Được thôi!", "Trong tiếng Pháp,", "phô mai là “fromage”.", "Ngoài ra, bạn có thể…"], chatty: "kèm đủ thứ lời thừa", exact: "đúng định dạng mẫu",
+      question: "3 hộp trứng, mỗi hộp 12 quả. 5 quả bị vỡ.\nCòn bao nhiêu quả lành?", think: "“Hãy suy nghĩ từng bước.”", answer: "đáp án", straight: "hỏi thẳng", noSteps: "không có bước nào\nđể dựa vào",
       tricks: ["hỏi vài lần", "xin vài phương án", "đưa nguồn tài liệu", "cho dùng công cụ"],
     },
     trust: {

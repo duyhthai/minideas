@@ -7,6 +7,14 @@ const lineY = x => 165 - .48 * (x - 40);
 const FP = [[50, 112], [65, 148], [85, 138], [105, 160], [125, 146], [145, 162], [165, 140], [185, 148], [205, 122], [225, 128], [240, 100], [260, 104], [275, 62], [295, 70]];
 const GOOD = "M45,122 C90,165 150,165 200,130 S270,70 300,55";
 
+/* an AI as a chip, a square with pins on every side; h is its size */
+const aiChip = (cx, cy, h = 36, label = 15) => {
+  const r = h / 2, d = h * .28, n = h / 6;
+  const pins = [-d, 0, d].map(o => L(cx - r - n, cy + o, cx - r, cy + o, "thin") + L(cx + r, cy + o, cx + r + n, cy + o, "thin") +
+    L(cx + o, cy - r - n, cx + o, cy - r, "thin") + L(cx + o, cy + r, cx + o, cy + r + n, "thin")).join("");
+  return pins + R(cx - r, cy - r, h, h, "fb", "", h / 6) + T(cx, cy + label * .4, "AI", { c: "on b", size: label });
+};
+
 export default {
   /* the AI family: k = highlighted ring, -1 = all */
   nested(lb, k) {
@@ -336,46 +344,73 @@ export default {
   },
 
   /* writing a good prompt */
-  brief(lb, which) {
-    const rows = lb.prompt[which], fills = ["fb", "fy", "fm", "fc"];
-    let s = R(26, 8, 268, 204, "fk", "", 12);
-    rows.forEach(([lab, sub], i) => {
-      const y = 16 + i * 48;
-      s += R(38, y + 6, 7, 34, fills[i], "", 3) + T(56, y + 21, lab, { a: "start", c: "b", size: 14 }) + T(56, y + 38, sub, { a: "start", c: "sm mut", size: 12.5, max: 228 });
+  // a person hands an AI the four-part brief, as they would a new colleague
+  handOff(lb) {
+    const fills = ["fb", "fy", "fm", "fc"];
+    let s = P("M18,148 Q18,124 40,124 Q62,124 62,148 Z", "fy", "thin") + C(40, 104, 14, "fk", "thin") + A(62, 120, 76, 120, "thin");
+    s += R(80, 14, 166, 192, "fk", "", 8);
+    lb.prompt.parts.forEach((lab, i) => {
+      const y = 50 + i * 44;
+      s += R(94, y - 18, 7, 30, fills[i], "", 3) + T(110, y, lab, { a: "start", c: "b", size: 14, max: 126 }) + L(110, y + 9, 196 - i * 10, y + 9, "thin faint");
     });
+    return s + A(248, 110, 262, 110, "thin") + aiChip(286, 110);
+  },
+  // the same brief filled in: the stock check, with its data and the table it should return
+  brief(lb) {
+    const t = lb.prompt.example, fills = ["fb", "fy", "fm", "fc"];
+    let s = R(14, 10, 292, 200, "fk", "", 8) + [57, 106, 157].map(y => L(14, y, 306, y, "thin")).join("");
+    [34, 82, 132, 182].forEach((y, i) => s += R(26, y - 15, 7, 30, fills[i], "", 3) + T(42, y + 5, lb.prompt.parts[i], { a: "start", c: "b", size: 14, max: 94 }));
+    s += T(148, 39, t.ask, { a: "start", size: 13.5, max: 138 }) + T(148, 82, t.why, { a: "start", c: "sm", size: 12.5, max: 146 });
+    // the order and the stock, as two little tables
+    const table = (x, w, title, rows) => R(x, 111, w, 42, "ft", "thin", 6) + T(x + w / 2, 123, title, { c: "sm b", size: 11 }) + L(x, 127, x + w, 127, "thin") +
+      rows.map((r, k) => T(x + w / 2, 139 + k * 11, r, { c: "sm", size: 11 })).join("");
+    s += table(148, 68, t.order, ["A × 5", "B × 3"]) + table(226, 68, t.stock, ["A: 8", "B: 4"]);
+    // the answer's shape: an empty table with its two columns
+    s += R(148, 161, 148, 42, "", "thin", 6) + L(198, 161, 198, 203, "thin") + L(148, 181, 296, 181, "thin") +
+      T(173, 175, t.cols[0], { c: "sm b", size: 11, max: 37 }) + T(247, 175, t.cols[1], { c: "sm b", size: 11, max: 76 }) +
+      L(156, 193, 190, 193, "thin faint") + L(208, 193, 286, 193, "thin faint");
     return s;
   },
+  // the same question asked twice: alone it gets a chatty reply, after two examples just the word
   shots(lb) {
     const t = lb.prompt;
-    const bubble = (x, y, w, h, fl) => R(x, y, w, h, fl, "", 12) + P(`M${x + 16},${y + h} l-4,10 l14,-10`, fl);
-    let s = T(85, 22, "zero-shot", { c: "b" }) + T(235, 22, "few-shot", { c: "b" });
-    s += bubble(14, 34, 142, 50, "ft") + T(24, 54, t.translate, { a: "start", c: "sm", size: 12.5, max: 124 }) + T(24, 72, t.cheese, { a: "start", c: "sm b", size: 12.5 });
-    s += bubble(164, 34, 142, 104, "ft");
-    [t.translate, ...t.examples, t.cheese].forEach((line, i) => s += T(174, 54 + i * 21, line, { a: "start", c: `sm ${i === 3 ? "b" : ""}`, size: 12.5, max: 124 }));
-    s += R(22, 110, 134, 52, "fy", "", 12) + T(32, 131, t.reply[0], { a: "start", c: "sm on", size: 12.5, max: 116 }) + T(32, 149, t.reply[1], { a: "start", c: "sm on", size: 12.5, max: 116 });
-    s += R(222, 164, 84, 34, "fy", "", 12) + T(264, 186, "fromage", { c: "b on" });
-    return s;
+    const ask = (x, y, w, h) => R(x, y, w, h, "ft", "", 12) + P(`M${x + w - 18},${y + h} l6,10 l-16,-10`, "ft");
+    const reply = (x, y, w, h) => R(x, y, w, h, "fy", "", 12) + P(`M${x + 18},${y + h} l-6,10 l16,-10`, "fy");
+    let s = L(160, 10, 160, 210, "dash thin faint") + T(80, 20, "zero-shot", { c: "b" }) + T(240, 20, "few-shot", { c: "b" });
+    s += ask(12, 32, 140, 48) + T(22, 52, t.translate, { a: "start", c: "sm", size: 12.5, max: 120 }) + T(22, 70, t.cheese, { a: "start", c: "sm b", size: 12.5 });
+    s += reply(12, 94, 140, 76) + t.reply.map((line, k) => T(22, 112 + k * 16, line, { a: "start", c: "sm on", size: 12, max: 120 })).join("");
+    s += ask(168, 32, 140, 84);
+    [t.translate, ...t.examples, t.cheese].forEach((line, k) => s += T(178, 52 + k * 18, line, { a: "start", c: `sm ${k === 3 ? "b" : ""}`, size: 12.5, max: 120 }));
+    s += reply(196, 130, 90, 34) + T(241, 152, "fromage", { c: "b on" }) + tick(300, 146);
+    return s + T(80, 204, t.chatty, { c: "sm mut", size: 12.5, max: 140 }) + T(240, 204, t.exact, { c: "sm b blu", size: 12.5, max: 140 });
   },
+  // the egg question asked straight gets a guess; asked to think step by step, it writes the steps and builds on them
   cot(lb) {
     const t = lb.prompt;
-    let s = R(14, 8, 292, 50, "ft", "", 12) + T(160, 37, t.question, { size: 14, max: 276 });
-    s += T(160, 80, t.think, { c: "sm b blu", size: 12.5 });
-    s += pill(80, 106, "3 × 12 = 36", "fk", { size: 14 }) + pill(164, 146, "36 − 5 = 31", "fk", { size: 14 }) + pill(244, 188, t.answer, "fm", { size: 14, on: true });
-    return s + A(104, 120, 132, 134, "thin") + A(190, 160, 216, 174, "thin");
+    let s = R(14, 8, 292, 50, "ft", "", 12) + T(160, 37, t.question, { size: 14, max: 276 }) + L(160, 68, 160, 210, "dash thin faint");
+    s += T(80, 82, t.straight, { c: "sm b mut", size: 12.5, max: 140 }) + R(24, 92, 112, 68, "", "dash thin faint", 12) + T(80, 126, t.noSteps, { c: "sm mut", size: 12.5, max: 100 }) +
+      pill(80, 188, `${t.answer}: 41`, "fc", { size: 14, on: true }) + T(138, 197, "?", { c: "cor b", size: 24 });
+    s += T(240, 82, t.think, { c: "sm b blu", size: 12.5, max: 140 });
+    s += pill(240, 104, "3 × 12 = 36", "fk", { size: 14 }) + pill(240, 146, "36 − 5 = 31", "fk", { size: 14 }) + pill(240, 188, `${t.answer}: 31`, "fm", { size: 14, on: true });
+    return s + A(240, 120, 240, 131, "thin", 7) + A(240, 162, 240, 173, "thin", 7) + tick(300, 188);
   },
   tricks(lb) {
     const t = lb.prompt;
     let s = L(160, 12, 160, 208, "dash thin faint") + L(12, 110, 308, 110, "dash thin faint");
-    s += pill(50, 42, "31", "fm", { on: true, w: 30 }) + pill(80, 42, "31", "fm", { on: true, w: 30 }) + pill(110, 42, "30", "fc", { on: true, w: 30 }) + P("M68,68 l8,8 l14,-16", "", "blue-s w3");
-    s += T(80, 98, t.tricks[0], { c: "sm", size: 12.5, max: 144 });
-    s += L(240, 24, 210, 54) + L(240, 24, 240, 54) + L(240, 24, 270, 54, "blue-s w3") + L(270, 54, 258, 80) + L(270, 54, 284, 80, "blue-s w3");
-    [[240, 24], [210, 54], [240, 54], [270, 54], [258, 80], [284, 80]].forEach(([x, y]) => s += C(x, y, 5, "fk"));
-    s += T(240, 98, t.tricks[1], { c: "sm", size: 12.5, max: 144 });
-    s += R(52, 124, 36, 46, "fk", "", 4) + L(59, 136, 81, 136, "thin") + L(59, 144, 81, 144, "thin") + L(59, 152, 74, 152, "thin") + C(94, 154, 13, "ft") + L(103, 163, 114, 174, "w3");
-    s += T(80, 202, t.tricks[2], { c: "sm", size: 12.5, max: 144 });
-    s += R(222, 122, 40, 52, "fk", "", 6) + R(228, 128, 28, 12, "ft", "thin", 2);
-    for (let r = 0; r < 2; r++) for (let c = 0; c < 3; c++) s += C(232 + c * 10, 150 + r * 12, 3, "fi");
-    return s + T(242, 202, t.tricks[3], { c: "sm", size: 12.5, max: 144 });
+    // ask a few times: the egg answer three times, two agree
+    s += pill(50, 36, "31", "fm", { on: true, w: 30 }) + pill(80, 36, "31", "fm", { on: true, w: 30 }) + pill(110, 36, "30", "fc", { on: true, w: 30 });
+    s += P("M37,54 v6 h56 v-6", "", "blue-s") + tick(66, 72) + T(80, 98, t.tricks[0], { c: "sm", size: 12.5, max: 144 });
+    // ask for options: three cards, one picked
+    ["A", "B", "C"].forEach((k, i) => s += R(194 + i * 34, 20, 28, 38, i === 1 ? "fm" : "fk", "", 5) + T(208 + i * 34, 45, k, { c: `b ${i === 1 ? "on" : ""}` }));
+    s += tick(242, 72) + T(240, 98, t.tricks[1], { c: "sm", size: 12.5, max: 144 });
+    // give it sources: your document goes in with the question
+    s += R(30, 128, 34, 44, "fk", "", 4) + L(37, 140, 57, 140, "thin") + L(37, 148, 57, 148, "thin") + L(37, 156, 51, 156, "thin");
+    s += A(70, 150, 94, 150, "thin") + aiChip(118, 150, 28, 12) + T(80, 202, t.tricks[2], { c: "sm", size: 12.5, max: 144 });
+    // let it use tools: a calculator and a magnifying glass
+    s += R(206, 122, 40, 52, "fk", "", 6) + R(212, 128, 28, 12, "ft", "thin", 2);
+    for (let r = 0; r < 2; r++) for (let c = 0; c < 3; c++) s += C(216 + c * 10, 150 + r * 12, 3, "fi");
+    s += C(274, 142, 12, "ft") + L(283, 151, 294, 162, "w3");
+    return s + T(240, 202, t.tricks[3], { c: "sm", size: 12.5, max: 144 });
   },
 
   /* why AI makes things up */

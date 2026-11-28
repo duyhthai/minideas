@@ -151,10 +151,10 @@ export default {
     },
     custom: { prompt: "a better prompt", rag: "your documents (RAG)", fine: "fine-tune", scratch: "from\nscratch", effort: "more effort and cost", special: "more specialized" },
     prompt: {
-      parts: [["Instruction", "what to do"], ["Context", "why, and for whom"], ["Input data", "what to work with"], ["Output format", "what the answer should look like"]],
-      example: [["Instruction", "Which orders can we ship?"], ["Context", "Stock check for our online shop"], ["Input data", "Order 1: 5×A, 3×B · Stock: A 8, B 4"], ["Output format", "Table: order, ship or restock"]],
-      translate: "Translate to French:", cheese: "cheese →", examples: ["sea → mer", "cat → chat"], reply: ["Sure! In French,", "cheese is “fromage”…"],
-      question: "3 boxes of 12 eggs. 5 broke.\nHow many good eggs?", think: "“Let’s think step by step.”", answer: "answer: 31",
+      parts: ["Instruction", "Context", "Input data", "Output format"],
+      example: { ask: "Which orders can we ship?", why: "Stock check for\nour online shop", order: "Order 1", stock: "Stock", cols: ["order", "ship / restock"] },
+      translate: "Translate to French:", cheese: "cheese →", examples: ["sea → mer", "cat → chat"], reply: ["Sure!", "In French, cheese", "is “fromage”. You", "might also like…"], chatty: "plus extra chatter", exact: "just the format shown",
+      question: "3 boxes of 12 eggs. 5 broke.\nHow many good eggs?", think: "“Let’s think step by step.”", answer: "answer", straight: "asked straight", noSteps: "no steps\nto build on",
       tricks: ["ask a few times", "ask for options", "give it sources", "let it use tools"],
     },
     trust: {

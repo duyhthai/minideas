@@ -20,7 +20,7 @@ export default {
     { slug: "how-chatbots-write", chapter: "gen", panels: [["nextWord"], ["wordLoop"], ["sampling"], ["chatTurns"]] },
     { slug: "foundation-models", chapter: "gen", panels: [["pretrain"], ["adapt"], ["rentOrRun"]] },
     { slug: "embeddings", chapter: "gen", panels: [["vecs"], ["wordMap"], ["analogy"], ["meaningSearch"]] },
-    { slug: "prompting", chapter: "gen", panels: [["brief", "parts"], ["brief", "example"], ["shots"], ["cot"], ["tricks"]] },
+    { slug: "prompting", chapter: "gen", panels: [["handOff"], ["brief"], ["shots"], ["cot"], ["tricks"]] },
     { slug: "customizing-models", chapter: "gen", panels: [["pyramid", -1], ["pyramid", 0], ["pyramid", 1], ["pyramid", 2], ["pyramid", 3]] },
     { slug: "made-up-answers", chapter: "use", panels: [["madeUp"], ["fillShape"], ["likelyTrue"], ["examGuess"], ["checkIt"]] },
     { slug: "responsible-ai", chapter: "use", panels: [["biasHire"], ["dataLeak"], ["blackBox"], ["inCharge"]] },
