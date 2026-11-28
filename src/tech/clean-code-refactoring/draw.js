@@ -4,12 +4,25 @@ import { f1, T, L, C, R, P, EL, A, pill, crPath, axes, fig, tick } from "../../d
 export default {
   readMore(lb) {
     const t = lb.clean;
-    const card = (x, y) => R(x, y, 76, 92, "fk", "", 8) + [0, 1, 2, 3, 4, 5].map(i => L(x + 12, y + 16 + i * 12, x + 64 - (i % 3) * 12, y + 16 + i * 12, "thin")).join("");
-    const eye = (x, y) => EL(x, y, 12, 7, "fk", "thin") + C(x, y, 3.5, "fi");
-    let s = L(160, 16, 160, 206, "dash thin faint") + card(42, 40);
-    s += P("M112,40 L128,24 L136,32 L120,48 Z", "fy", "thin") + P("M112,40 L108,52 L120,48", "fk", "thin");
-    s += card(202, 64) + [[188, 44], [240, 34], [292, 44], [184, 92], [296, 92], [192, 168], [290, 168]].map(([x, y]) => eye(x, y)).join("");
-    return s + T(80, 162, t.once, { c: "b", max: 140 }) + T(80, 182, "×1", { c: "sm mut" }) +
+    // the same code in an editor window: keywords blue, strings coral; `upTo` lines, the last one still being typed
+    const code = [[0, [[14, "blue-s"], [30, ""]]], [1, [[10, "blue-s"], [24, ""]]], [2, [[18, ""], [24, "coral-s"]]], [1, [[6, ""]]],
+      [1, [[12, "blue-s"], [28, ""]]], [2, [[36, ""]]], [0, [[6, ""]]]];
+    const editor = (x, y, upTo = code.length) => {
+      let s = R(x, y, 96, 96, "fk", "", 8) + L(x, y + 16, x + 96, y + 16, "thin") +
+        ["fc", "fy", "fm"].map((f, i) => C(x + 10 + i * 9, y + 8, 2.4, f, "thin")).join("") + L(x + 14, y + 24, x + 14, y + 88, "thin faint");
+      code.slice(0, upTo).forEach(([indent, tokens], i) => {
+        let cx = x + 20 + indent * 8;
+        const cy = y + 27 + i * 10, last = i === upTo - 1 && upTo < code.length;
+        (last ? tokens.slice(0, 1) : tokens).forEach(([w, c]) => { s += L(cx, cy, cx + w, cy, "w3 " + c); cx += w + 5; });
+        if (last) s += L(cx, cy - 5, cx, cy + 5, "w3");
+      });
+      return s;
+    };
+    // a person seen from behind, facing the screen
+    const person = (x, y, shirt, r = 11) => P(`M${x - r * 1.6},${y + r * 2.5} Q${x - r * 1.6},${y + r * 1.2} ${x},${y + r * 1.2} Q${x + r * 1.6},${y + r * 1.2} ${x + r * 1.6},${y + r * 2.5} Z`, shirt, "thin") + C(x, y, r, "fk", "thin");
+    let s = L(160, 16, 160, 206, "dash thin faint") + editor(32, 16, 5) + person(80, 132, "fy");
+    s += editor(192, 16) + person(218, 120, "fm", 10) + person(262, 120, "fc", 10) + person(196, 132, "fb") + person(240, 132, "fy") + person(284, 132, "fb");
+    return s + T(80, 190, t.once, { c: "b", max: 140 }) + T(80, 208, "×1", { c: "sm mut" }) +
       T(240, 190, t.many, { c: "b blu", max: 150 }) + T(240, 208, t.later, { c: "sm mut", max: 150 });
   },
   goodNames(lb) {
