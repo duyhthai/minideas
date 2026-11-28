@@ -17,7 +17,7 @@ export default {
     { slug: "neural-networks", chapter: "learn", panels: [["net", "basic"], ["net", "layers"], ["demand", false], ["demand", true], ["net", "train"]] },
     { slug: "clean-data", chapter: "work", panels: [["table", 1], ["table", 2], ["table", 3], ["table", 4]] },
     { slug: "ml-lifecycle", chapter: "work", panels: [["mlLoop", null], ["mlLoop", ["problem", "data"]], ["mlLoop", ["train", "test"], true], ["mlLoop", ["launch", "monitor"]]] },
-    { slug: "next-word", chapter: "gen", panels: [["nextWord"], ["wordLoop"], ["sampling"], ["chatTurns"]] },
+    { slug: "how-chatbots-write", chapter: "gen", panels: [["nextWord"], ["wordLoop"], ["sampling"], ["chatTurns"]] },
     { slug: "foundation-models", chapter: "gen", panels: [["pretrain"], ["adapt"], ["rentOrRun"]] },
     { slug: "embeddings", chapter: "gen", panels: [["vecs"], ["wordMap"], ["analogy"], ["meaningSearch"]] },
     { slug: "prompting", chapter: "gen", panels: [["brief", "parts"], ["brief", "example"], ["shots"], ["cot"], ["tricks"]] },

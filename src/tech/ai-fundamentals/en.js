@@ -64,7 +64,7 @@ export default {
       ["Nobody names the middle ideas", "We never tell the network to think about affordability. During training it finds whatever in-between ideas help it guess right. That’s where its power comes from."],
       ["How it learns: guess, check, nudge", "It’s the same trick as the line through the house dots. The network guesses, measures how far off it was, and nudges every weight a little to do better next time. Big networks have billions of weights, which is why training takes so much data and computing power."],
     ]},
-    "next-word": { title: "How a chatbot writes", gist: "It guesses the next word, adds it, and guesses again.", panels: [
+    "how-chatbots-write": { title: "How a chatbot writes", gist: "It guesses the next word, adds it, and guesses again.", panels: [
       ["It guesses the next word", "Give it some text and it scores every word that could come next. After “The cat sat on the”, “mat” scores high and “moon” scores low. The scores come from patterns in everything it has read."],
       ["Then it does it again", "It adds the chosen word and guesses the next one, then the next. Every answer, from an email to a poem, is built one piece at a time. (Strictly, the pieces are often parts of words, called tokens.)"],
       ["A little luck in every pick", "It doesn’t always take the top word. A bit of randomness keeps the writing natural, which is why the same question can get a different answer each time."],
@@ -97,7 +97,7 @@ export default {
     ]},
     "made-up-answers": { title: "Why AI makes things up", gist: "It writes what sounds likely, and likely isn’t always true.", panels: [
       ["Confident and wrong", "Ask about a rare detail and a chatbot may invent one: a book nobody wrote, a quote nobody said, a study nobody did. It sounds just as sure as when it’s right. This is called a hallucination."],
-      ["It writes, it doesn’t look things up", "As in “[How a chatbot writes](next-word)”, it builds an answer one likely word at a time. Ask for a book and the likely answer has a familiar shape: a title, an author, a year. Each piece only has to fit the words before it. No step checks that the book exists."],
+      ["It writes, it doesn’t look things up", "As in “[How a chatbot writes](how-chatbots-write)”, it builds an answer one likely word at a time. Ask for a book and the likely answer has a familiar shape: a title, an author, a year. Each piece only has to fit the words before it. No step checks that the book exists."],
       ["Likely isn’t the same as true", "For famous facts, seen countless times, the likely words are also the true ones. For a rare detail it saw once or never, there’s no strong pattern to follow, so a guess that sounds right fills the gap."],
       ["Why it doesn’t say “I don’t know”", "When models are trained and tested, answers are often scored like an exam: a right answer earns a point, a wrong one or “I don’t know” earns nothing. As on a multiple-choice test, guessing beats leaving it blank, so the model learns to guess. Its sure tone comes from the text it learned from, which rarely hedges, so a guess sounds as certain as a fact."],
       ["How to protect yourself", "Give it a source to work from, the open-book exam from “[Making a model yours](customizing-models)”. Ask where each fact came from, and check anything that matters, especially names, numbers and quotes, before you rely on it."],

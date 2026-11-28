@@ -13,6 +13,7 @@
 //   <lang>/feed.xml                  RSS: everything on the shelves, newest first
 //   404.html                         for addresses that don't exist (hosts serve it at any depth)
 //   sitemap.xml, robots.txt          every page's address, for search engines
+//   _redirects                       old addresses of pages whose slug changed (MOVED in config.js), for Cloudflare
 //   Outside dist/, never deployed: node_modules/.cache/newsletter.html, ready-to-paste emails for the newest stacks
 //   (the dev server shows it at /newsletter/)
 //
@@ -31,7 +32,7 @@ import { Resvg } from "@resvg/resvg-js";
 import { mkdir, rm, writeFile, copyFile, rename } from "node:fs/promises";
 import { readFileSync } from "node:fs";
 import { dirname, join, relative } from "node:path";
-import { ROOT, OUT, TMP, SITE_URL, SUGGEST_KEY } from "./src/build/config.js";
+import { ROOT, OUT, TMP, SITE_URL, SUGGEST_KEY, MOVED } from "./src/build/config.js";
 import { siteLinks } from "./src/build/layout.js";
 import { COLLECTIONS, ALL_IDEAS, shelfIn, BOOK_PARTS, bookPhotos, photoSource, booksIn } from "./src/build/shelves.js";
 import { problems, fail, checkContent } from "./src/build/checks.js";
@@ -72,6 +73,16 @@ ${pageUrls.map(u => `<url><loc>${E(u)}</loc></url>`).join("\n")}
 </urlset>
 `;
 files["robots.txt"] = `User-agent: *\nAllow: /\n\nSitemap: ${SITE_URL}/sitemap.xml\n`;
+// a moved page's old address, with and without the trailing slash, in each language that has the new page
+const moves = [];
+for (const [from, to] of Object.entries(MOVED)) {
+  if (!LANGS.some(t => files[`${t.lang}/${to}/index.html`])) problems.push(`MOVED sends "${from}" to "${to}", which isn’t a page`);
+  for (const t of LANGS) {
+    if (files[`${t.lang}/${from}/index.html`]) problems.push(`${t.lang}: "${from}" is a page again, but MOVED still sends it to "${to}"`);
+    else if (files[`${t.lang}/${to}/index.html`]) moves.push(`/${t.lang}/${from} /${t.lang}/${to}/ 301`, `/${t.lang}/${from}/ /${t.lang}/${to}/ 301`);
+  }
+}
+if (moves.length) files["_redirects"] = moves.join("\n") + "\n";
 if (problems.length) fail();
 
 /* ---------- write ---------- */

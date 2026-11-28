@@ -22,3 +22,7 @@ export const CONTRIBUTE_URL = `${REPO_URL}/blob/main/CONTRIBUTING.md`;
 // The home page's preview shows these three stacks (a collection, standalone idea or book each), chosen by hand so the
 // picture says what the site is, tech and books, and doesn't change with every new stack (apps cache previews for weeks)
 export const HOME_PREVIEW = ["ai-fundamentals", "the-shallows", "graph-databases"];
+// Pages whose slug changed after they went live: old slug → new slug. The build writes dist/_redirects, which
+// Cloudflare reads (it isn't served), so links already shared still open, in every language. The old slug stays
+// reserved: the build stops if a page takes it again.
+export const MOVED = { "next-word": "how-chatbots-write" };
