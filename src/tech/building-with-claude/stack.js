@@ -1,6 +1,6 @@
 export default {
   id: "building-with-claude",
-  date: "2026-11-26",
+  date: "2026-11-28",
   related: "clean-code-refactoring",
   chapters: ["code", "skills", "mcp", "api"],
   resources: [
