@@ -428,10 +428,12 @@ export default {
     return s;
   },
 
-  /* responsible AI */
+  /* responsible AI: one hiring model, four questions */
   biasHire(lb) {
     const t = lb.resp;
-    const person = (x, y, f) => C(x, y - 9, 6, f) + P(`M${x - 9},${y + 9} Q${x - 9},${y} ${x},${y} Q${x + 9},${y} ${x + 9},${y + 9} Z`, f);
+    // head and shoulders; a woman (coral) has long hair
+    const person = (x, y, f) => (f === "fc" ? P(`M${x - 8},${y + 1} C${x - 11},${y - 22} ${x + 11},${y - 22} ${x + 8},${y + 1} Z`, f, "thin") : "") +
+      C(x, y - 9, 6, f === "fc" ? "fk" : f) + P(`M${x - 9},${y + 9} Q${x - 9},${y} ${x},${y} Q${x + 9},${y} ${x + 9},${y + 9} Z`, f);
     let s = T(60, 28, t.past, { c: "sm b", size: 12.5, max: 100 }) + R(14, 38, 92, 104, "fk", "", 10);
     [29, 49, 69, 89].forEach((x, i) => s += person(x, 72, "fb") + person(x, 116, i === 1 ? "fc" : "fb"));
     s += A(110, 90, 134, 90) + R(138, 66, 60, 48, "fb", "", 10) + T(168, 95, t.model, { c: "on b", max: 52 }) + A(202, 90, 222, 90);
@@ -444,27 +446,35 @@ export default {
   },
   dataLeak(lb) {
     const t = lb.resp;
-    let s = R(14, 26, 158, 140, "ft", "", 12) + T(26, 46, t.paste, { a: "start", c: "sm mut", size: 12.5, max: 134 });
-    s += R(26, 58, 134, 94, "fk", "coral-s dash", 6);
-    t.card.forEach((line, i) => s += T(38, 82 + i * 24, line, { a: "start", c: "sm", size: 12.5, max: 112 }));
-    [44, 96, 148].forEach((y, i) => s += A(176, 96, 198, y, "thin") + R(202, y - 18, 104, 36, "fk", "", 10) + T(254, y + 5, t.where[i], { c: "sm b", size: 12.5, max: 94 }));
-    return s + T(160, 204, t.leakCaption, { c: "sm mut", size: 12.5, max: 290 });
+    let s = R(12, 14, 166, 170, "fk", "", 12) + T(26, 33, t.chatbot, { a: "start", c: "sm mut b", size: 12.5, max: 136 }) + L(12, 42, 178, 42, "thin");
+    s += R(28, 52, 136, 118, "ft", "", 10) + P("M150,170 l8,9 l-18,-9", "ft") + T(40, 70, t.paste, { a: "start", c: "sm", size: 12.5, max: 112 });
+    s += R(40, 80, 112, 82, "fk", "coral-s dash", 6) + T(50, 99, "CV", { a: "start", c: "sm b", size: 12.5 }) +
+      R(122, 86, 22, 26, "ft", "thin", 3) + C(133, 95, 4, "fk", "thin") + P("M126,112 Q126,103 133,103 Q140,103 140,112", "", "thin");
+    t.card.forEach((line, i) => s += T(50, 122 + i * 15, line, { a: "start", c: "sm", size: 12, max: 96 }));
+    [46, 100, 154].forEach((y, i) => s += A(182, 100, 198, y, "thin") + R(202, y - 18, 104, 36, "fk", "", 10) + T(254, y + 5, t.where[i], { c: "sm b", size: 12.5, max: 94 }));
+    return s + T(160, 207, t.leakCaption, { c: "sm mut", size: 12.5, max: 290 });
   },
   blackBox(lb) {
     const t = lb.resp;
-    let s = R(16, 44, 60, 76, "fk", "", 4);
-    for (let i = 0; i < 4; i++) s += L(26, 62 + i * 14, i === 3 ? 50 : 66, 62 + i * 14, "thin");
+    let s = R(16, 40, 60, 80, "fk", "", 4) + R(24, 48, 16, 20, "ft", "thin", 2) + L(46, 54, 68, 54, "w3") + L(46, 63, 62, 63, "thin");
+    for (let i = 0; i < 4; i++) s += L(24, 82 + i * 10, i === 3 ? 50 : 68, 82 + i * 10, "thin");
     s += T(46, 140, t.application, { c: "sm b", size: 12.5, max: 90 });
-    s += A(82, 82, 108, 82) + R(112, 46, 84, 72, "fk", "w3", 10) + T(154, 96, "?", { c: "cor b", size: 40 }) + T(154, 140, t.model, { c: "sm b", size: 12.5, max: 90 });
-    s += A(200, 82, 222, 82) + pill(266, 82, t.denied, "fc", { on: true, size: 15 });
+    // the model's reasons: a tangle of weights
+    const cols = [[128, [60, 80, 100]], [154, [54, 70, 90, 106]], [180, [80]]];
+    s += A(82, 80, 108, 80) + R(112, 42, 84, 76, "fk", "w3", 10);
+    cols.slice(1).forEach(([x, ys], c) => ys.forEach(y => cols[c][1].forEach(y0 => s += L(cols[c][0], y0, x, y, "thin faint"))));
+    cols.forEach(([x, ys]) => ys.forEach(y => s += C(x, y, 4, "fb", "thin")));
+    s += T(154, 140, t.model, { c: "sm b", size: 12.5, max: 90 });
+    s += A(200, 80, 222, 80) + pill(266, 80, t.denied, "fc", { on: true, size: 15 });
     s += fig(214, 206, "walk") + R(232, 136, 72, 32, "ft", "", 12) + P("M240,168 l-6,8 l14,-8", "ft") + T(268, 157, t.why, { c: "b cor", max: 62 });
     return s + T(20, 190, t.noReason, { a: "start", c: "sm mut", size: 12.5, max: 160 });
   },
   inCharge(lb) {
-    const t = lb.resp;
-    let s = pill(62, 52, t.suggests, "fb", { on: true, size: 14 }) + A(116, 52, 140, 52) + fig(162, 100, "walk") + T(162, 122, t.person, { c: "sm b", size: 12.5, max: 110 });
-    s += A(184, 52, 208, 52) + pill(262, 52, t.decision, "fm", { on: true, size: 14 });
-    s += P("M162,136 Q66,166 62,84", "", "coral-s dash") + head(62, 72, -Math.PI / 2, "coral-s", 10) + T(84, 172, t.override, { a: "start", c: "sm b cor", size: 12.5, max: 150 });
-    return s + T(160, 206, t.owner, { c: "sm mut", size: 12.5, max: 290 });
+    const t = lb.resp, w = pillW(t.reject, 14);
+    let s = T(62, 46, t.suggests, { c: "sm b mut", size: 12.5, max: 110 }) + pill(62, 74, t.reject, "fc", { on: true, size: 14 }) +
+      L(62 - w / 2 - 4, 84, 62 + w / 2 + 4, 64, "w3") + T(62, 112, t.override, { c: "sm b cor", size: 12.5, max: 110 });
+    s += A(102, 74, 136, 74) + fig(160, 140, "walk") + T(160, 160, t.person, { c: "sm b", size: 12.5, max: 120 });
+    s += A(184, 74, 218, 74) + T(262, 46, t.decision, { c: "sm b mut", size: 12.5, max: 100 }) + pill(262, 74, t.interview, "fm", { on: true, size: 14 });
+    return s + T(160, 202, t.owner, { c: "sm mut", size: 12.5, max: 290 });
   },
 };

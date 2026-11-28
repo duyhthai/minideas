@@ -103,10 +103,10 @@ export default {
       ["How to protect yourself", "Give it a source to work from, the open-book exam from “[Making a model yours](customizing-models)”. Ask where each fact came from, and check anything that matters, especially names, numbers and quotes, before you rely on it."],
     ]},
     "responsible-ai": { title: "Responsible AI", gist: "Four questions to ask before trusting AI with decisions about people.", panels: [
-      ["Is it fair?", "A model can be accurate on average and still treat some people badly. One trained on past hires, who were mostly men, can learn to rank women lower. It copies the pattern in its examples, bias included."],
-      ["Does it protect people’s data?", "Personal details in its training data can resurface in answers, and what you paste into a chat may be stored or used for training. Know where data goes before you share it."],
-      ["Can it explain itself?", "If a loan is turned down, the person deserves to know why, and many models can’t say. When the stakes are high, choose systems whose reasons can be checked, and tell people when AI is involved."],
-      ["Who’s in charge?", "Every AI system needs an owner: someone who watches how it behaves, hears complaints, and can step in and override it. “The computer decided” is never the final answer."],
+      ["Is it fair?", "Say a company lets a model sort job applications. It learned from past hires, who were mostly men, so it ranks women lower. As in “[Clean data first](clean-data)”, a model is only as good as its examples, and these carry an old bias."],
+      ["Does it protect people’s data?", "Applications hold phone numbers, home addresses, ID numbers. Paste one into a chatbot for a quick summary and it may be stored, read by the provider’s staff or used for training, and what a model trained on can resurface in someone else’s answers. Know where data goes before you share it, especially someone else’s."],
+      ["Can it explain itself?", "A rejected applicant asks why. They should get a reason, but many models can’t give one: it’s spread over thousands of weights and middle ideas nobody named, as in “[Neural networks](neural-networks)”. When the stakes are high, use a system whose reasons can be checked, and tell people when AI is involved."],
+      ["Who’s in charge?", "Every AI system needs an owner: someone who checks its picks before they count, watches whether any group keeps losing out, hears complaints, and can overrule the model. “The computer decided” is never the final answer."],
     ]},
   },
 
@@ -168,10 +168,10 @@ export default {
     },
     resp: {
       past: "past hires", model: "model", ranked: "new applicants", copies: "it learned the pattern, bias included",
-      paste: "pasted into a chat:", card: ["salary: 52,000", "ID number", "health notes"], where: ["stored where?", "used for\ntraining?", "seen by whom?"],
+      chatbot: "chatbot", paste: "summarize this CV:", card: ["phone number", "home address", "ID number"], where: ["stored where?", "used for\ntraining?", "seen by whom?"],
       leakCaption: "know where data goes before you share it",
-      application: "loan application", denied: "denied", why: "why?", noReason: "no reason anyone can check",
-      suggests: "AI suggests", person: "a person checks", decision: "decision", override: "and can override it", owner: "someone owns it, and answers for it",
+      application: "application", denied: "rejected", why: "why?", noReason: "no reason anyone can check",
+      suggests: "AI suggests", reject: "reject", override: "overruled", person: "a person checks", decision: "decision", interview: "interview", owner: "someone owns it, and answers for it",
     },
   },
 };

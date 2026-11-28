@@ -103,10 +103,10 @@ export default {
       ["Cách tự bảo vệ mình", "Đưa cho nó nguồn tài liệu để dựa vào, giống thi được mở tài liệu ở bài “[Tùy chỉnh mô hình cho riêng bạn](customizing-models)”. Hỏi xem mỗi thông tin lấy từ đâu, và kiểm tra lại những gì quan trọng, nhất là tên, số liệu và trích dẫn, trước khi dùng."],
     ]},
     "responsible-ai": { title: "AI có trách nhiệm", gist: "Bốn câu hỏi cần đặt ra trước khi giao cho AI những quyết định liên quan đến con người.", panels: [
-      ["Có công bằng không?", "Một mô hình có thể chính xác nếu xét trung bình mà vẫn đối xử bất công với một số người. Nếu học từ hồ sơ những người từng được tuyển, phần lớn là nam giới, nó có thể học cách chấm ứng viên nữ thấp hơn. Nó sao chép khuôn mẫu trong các ví dụ, kể cả định kiến."],
-      ["Có bảo vệ dữ liệu cá nhân không?", "Thông tin cá nhân trong dữ liệu huấn luyện có thể lộ ra trong câu trả lời, và những gì bạn dán vào khung chat có thể bị lưu lại hoặc dùng để huấn luyện. Hãy biết dữ liệu đi đâu trước khi chia sẻ."],
-      ["Nó có giải thích được không?", "Nếu một khoản vay bị từ chối, người đó xứng đáng được biết lý do, nhưng nhiều mô hình không nói được. Khi việc hệ trọng, hãy chọn hệ thống có lý do kiểm tra được, và cho mọi người biết khi có AI tham gia."],
-      ["Ai là người chịu trách nhiệm?", "Mỗi hệ thống AI cần có người phụ trách: người theo dõi cách nó hoạt động, tiếp nhận khiếu nại, và có thể can thiệp, bác bỏ quyết định của nó. “Máy tính quyết định” không bao giờ là câu trả lời cuối cùng."],
+      ["Có công bằng không?", "Giả sử một công ty dùng mô hình để lọc hồ sơ xin việc. Nó học từ những người từng được tuyển, phần lớn là nam giới, nên chấm ứng viên nữ thấp hơn. Như ở bài “[Làm sạch dữ liệu trước](clean-data)”, dữ liệu thế nào thì mô hình thế ấy, mà dữ liệu này mang sẵn định kiến cũ."],
+      ["Có bảo vệ dữ liệu cá nhân không?", "Hồ sơ xin việc có số điện thoại, địa chỉ nhà, số CCCD. Dán một bộ hồ sơ vào chatbot để nhờ tóm tắt, nó có thể bị lưu lại, bị nhân viên của công ty làm chatbot đọc, hoặc bị dùng để huấn luyện, và những gì mô hình từng học có thể lộ ra trong câu trả lời cho người khác. Hãy biết dữ liệu đi đâu trước khi chia sẻ, nhất là dữ liệu của người khác."],
+      ["Nó có giải thích được không?", "Một ứng viên bị loại và hỏi vì sao. Họ nên được biết lý do, nhưng nhiều mô hình không nói được, vì lý do nằm rải rác trong hàng nghìn trọng số và những ý trung gian không ai đặt tên, như ở bài “[Mạng nơ-ron](neural-networks)”. Khi việc hệ trọng, hãy dùng hệ thống nêu rõ được lý do để người khác có thể xác minh, và cho mọi người biết khi có AI tham gia."],
+      ["Ai là người chịu trách nhiệm?", "Mỗi hệ thống AI cần có người phụ trách: người xem lại đề xuất của nó trước khi chốt, để ý xem có nhóm người nào luôn chịu thiệt không, tiếp nhận khiếu nại, và có quyền bác bỏ quyết định của mô hình. “Do máy quyết định” không bao giờ là câu trả lời cuối cùng."],
     ]},
   },
 
@@ -168,10 +168,10 @@ export default {
     },
     resp: {
       past: "từng được tuyển", model: "mô hình", ranked: "ứng viên mới", copies: "nó học theo cả định kiến cũ",
-      paste: "dán vào khung chat:", card: ["lương: 52.000", "số CCCD", "hồ sơ sức khỏe"], where: ["lưu ở đâu?", "dùng để\nhuấn luyện?", "ai xem được?"],
+      chatbot: "chatbot", paste: "tóm tắt CV này:", card: ["số điện thoại", "địa chỉ nhà", "số CCCD"], where: ["lưu ở đâu?", "dùng để\nhuấn luyện?", "ai xem được?"],
       leakCaption: "biết dữ liệu đi đâu trước khi chia sẻ",
-      application: "hồ sơ vay", denied: "từ chối", why: "vì sao?", noReason: "không ai giải thích được",
-      suggests: "AI đề xuất", person: "người kiểm tra", decision: "quyết định", override: "và có thể bác bỏ", owner: "luôn có người chịu trách nhiệm",
+      application: "hồ sơ xin việc", denied: "bị loại", why: "vì sao?", noReason: "không ai giải thích được",
+      suggests: "AI đề xuất", reject: "loại", override: "bị bác bỏ", person: "người kiểm tra", decision: "quyết định", interview: "phỏng vấn", owner: "luôn có người chịu trách nhiệm",
     },
   },
 };
