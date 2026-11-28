@@ -44,10 +44,16 @@ ${tiles}
   return shell({ t, depth: 1, segs: [], title: t.ui.site, desc: t.ui.lede, body, og });
 }
 
+// An idea's title where its chapter name is already shown (under the chapter heading, or after it in the eyebrow):
+// "Claude Code: getting started" in the Claude Code chapter reads "Getting started". Elsewhere (tab, link preview,
+// pager, feed) the full title stands alone.
+const titleIn = (t, title, chapter) => !chapter || !title.startsWith(chapter + ": ") ? title
+  : title[chapter.length + 2].toLocaleUpperCase(t.lang) + title.slice(chapter.length + 3);
+
 export function collectionPage(t, c) {
   const ct = t.collections[c.id], to = linker(2);
   const grid = ideas => `<ol class="tile-grid">${ideas.map(idea =>
-    tile(to(t.lang, idea.slug), tileDrawing(art(t, idea.panels[0], `${t.lang}/${idea.slug} tile`)), t.ideas[idea.slug].title,
+    tile(to(t.lang, idea.slug), tileDrawing(art(t, idea.panels[0], `${t.lang}/${idea.slug} tile`)), titleIn(t, t.ideas[idea.slug].title, ct.chapters?.[idea.chapter]),
       `<span class="tile-caption">${E(t.ideas[idea.slug].gist)}</span>`)).join("")}</ol>`;
   const groups = c.chapters
     ? c.chapters.map((ch, k) => `<h2 class="chapter-label"><span class="chapter-num">${k + 1}</span>${E(ct.chapters[ch])}</h2>${grid(c.ideas.filter(idea => idea.chapter === ch))}`).join("\n")
@@ -129,7 +135,7 @@ export function ideaPage(t, idea, c = null, i = 0) {
   const ct = c && t.collections[c.id], it = t.ideas[idea.slug], n = idea.panels.length, to = linker(2);
   const before = c?.ideas[i - 1], after = c?.ideas[i + 1], total = c ? c.ideas.length : 1;
   const slides = idea.panels.map((spec, j) => ({ art: drawing(t, spec, it.panels[j][0], `${t.lang}/${idea.slug}#${j + 1}`), h: it.panels[j][0], p: it.panels[j][1] }));
-  const item = (s, k) => `<li><a href="${to(t.lang, s.slug)}"${k === i ? ' aria-current="page"' : ""}>${total > 1 ? `<span class="n">${k + 1}</span>` : ""}<span>${E(t.ideas[s.slug].title)}</span></a></li>`;
+  const item = (s, k) => `<li><a href="${to(t.lang, s.slug)}"${k === i ? ' aria-current="page"' : ""}>${total > 1 ? `<span class="n">${k + 1}</span>` : ""}<span>${E(titleIn(t, t.ideas[s.slug].title, ct.chapters?.[s.chapter]))}</span></a></li>`;
   const toc = !c ? "" : `<nav class="toc" aria-label="${E(ct.title)}">
   <a class="home" href="${to(t.lang, c.id)}">← ${E(ct.title)}</a>
   ${c.chapters
@@ -149,7 +155,7 @@ export function ideaPage(t, idea, c = null, i = 0) {
   const eyebrow = !c ? "" : total > 1 ? [t.ui.ideaOf(i + 1, total), ...(c.chapters ? [ct.chapters[idea.chapter]] : [])].map(E).join(" · ") : E(ct.title);
   const top = c ? `<p class="eyebrow">${eyebrow}</p>` : `<a class="back" href="${to(t.lang)}">← ${E(t.ui.allTopics)}</a>`;
   const body = `<div class="layout${c ? "" : " solo"}">
-${cardStack({ t, slides, data, top, title: it.title, gist: it.gist, meta: c ? "" : dateline(t, idea), pager: pager && `<nav class="pager">${pager}</nav>` })}
+${cardStack({ t, slides, data, top, title: total > 1 ? titleIn(t, it.title, ct.chapters?.[idea.chapter]) : it.title, gist: it.gist, meta: c ? "" : dateline(t, idea), pager: pager && `<nav class="pager">${pager}</nav>` })}
 ${toc}
 </div>
 ${c ? deeper(t, c.resources, ct) : idea.resources?.length ? deeper(t, idea.resources, it) : ""}`;

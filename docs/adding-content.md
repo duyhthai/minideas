@@ -125,7 +125,7 @@ Open your stack on the dev server in light and dark mode (the moon button), in e
 
 ### A collection
 
-A collection groups several stacks that build on each other. Its folder is named after its `id`. In `stack.js` it has an `id`, a `date`, optional `chapters`, `resources` and a list of `ideas` (each a `slug`, a `chapter` and `panels`). In `en.js` / `vi.js` it gets `collections[id]` (`title`, `lede`, `chapters`, `links`) plus one `ideas[slug]` entry per idea. See `src/tech/ai-fundamentals/` for the full shape. Talk to us in an issue before starting one.
+A collection groups several stacks that build on each other. Its folder is named after its `id`. In `stack.js` it has an `id`, a `date`, optional `chapters`, `resources` and a list of `ideas` (each a `slug`, a `chapter` and `panels`). In `en.js` / `vi.js` it gets `collections[id]` (`title`, `lede`, `chapters`, `links`) plus one `ideas[slug]` entry per idea. See `src/tech/ai-fundamentals/` for the full shape. An idea's title can start with its chapter's name, like “Claude Code: getting started”, so it still makes sense on its own in a link preview; under the chapter's heading (the collection page, its contents list, the idea's own heading) the site leaves that part out. Talk to us in an issue before starting one.
 
 ## A book review
 
