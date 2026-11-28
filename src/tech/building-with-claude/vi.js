@@ -367,7 +367,7 @@ export default {
       go: "cho phép", ask: "hỏi", never: "cấm",
       hooksCap: "Claude Code lần nào cũng chạy, dù mô hình nghĩ gì",
       away: [["trong script", "claude -p"], ["hẹn giờ", "chạy trên cloud"], ["trên GitHub", "trong pull request"]], awayCap: "không ai theo dõi, nên quy tắc và kiểm tra càng quan trọng",
-      doneClaim: "Sửa xong rồi! Giảm giá giờ\nchỉ áp dụng một lần.", proofs: ["bài kiểm thử lỗi giờ đã đạt", "toàn bộ diff", "những gì nó chưa kiểm tra được"], watchCap: "càng ít theo dõi, càng phải kiểm tra kỹ",
+      doneClaim: "Sửa xong rồi! Giảm giá giờ\nchỉ áp dụng một lần.", proofs: ["bài kiểm thử lỗi giờ đã đạt", "toàn bộ diff", "những gì nó chưa thử"], watchCap: "càng ít theo dõi, càng phải kiểm tra kỹ",
       plugin: "plugin", parts: ["skills", "subagents", "hooks", "MCP servers"], pluginCap: "cài một lần, cả nhóm cùng một thiết lập",
     },
   },
