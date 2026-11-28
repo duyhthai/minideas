@@ -10,7 +10,7 @@ import sharp from "sharp";
 // colours from assets/style.css; paper is --art, ink is --sketch-ink
 const THEMES = {
   light: { paper: "#fbf9f3", ink: "#2c3038", ink2: "#56607a", on: "#1c2333", blue: "#2f58d6", coral: "#d4462c",
-    fy: "#ffc531", fb: "#8da6ff", fm: "#5ccca8", fc: "#ff8a72", ft: "#e1e7f6", wash: .5, filter: "pencil", sw: 1.8 },
+    fy: "#ffc531", fb: "#8da6ff", fm: "#5ccca8", fc: "#ff8a72", ft: "#e1e7f6", wash: .75, filter: "pencil", sw: 1.8 },
   dark: { paper: "#1b2030", ink: "#e4e2dc", ink2: "#a3abc0", on: "#141927", blue: "#8ba5ff", coral: "#ff8d77",
     fy: "#f5c542", fb: "#7d97ff", fm: "#4fc9a3", fc: "#ff8a70", ft: "#283150", wash: .9, filter: "pencil-light", sw: 1.9 },
 };
@@ -42,7 +42,7 @@ const FILTERS = `
   <feComposite in="lines" in2="mask" operator="in"/>
 </filter>`;
 
-// coloured pencil: a pale wash under diagonal strokes of uneven pressure
+// coloured pencil: a wash under diagonal strokes of uneven pressure
 const pattern = (id, colour, wash) => `<pattern id="pen-${id}" width="14" height="14" patternUnits="userSpaceOnUse" patternTransform="rotate(-40)">` +
   `<rect width="14" height="14" fill="${colour}" opacity="${wash}"/><g stroke="${colour}" stroke-linecap="round">` +
   `<path d="M0 1.6L14 1.3" stroke-width="3"/><path d="M0 5.8L14 6.2" stroke-width="2.4" opacity=".9"/>` +
